@@ -38,24 +38,29 @@ const project1Images = ref([
 </script>
 
 <template>
-    <v-container>
-      <v-btn @click="showProject1 = !showProject1">Project 1</v-btn>
-  
-      <v-row v-if="showProject1">
-        <v-col cols="12" sm="6" md="3" v-for="image in project1Images" :key="image">
-          <img :src="image" class="responsive-image" />
-        </v-col>
-      </v-row>
-    </v-container>
+  <v-container>
+    <v-btn @click="showProject1 = !showProject1">Project 1</v-btn>
+    <v-row v-if="showProject1" no-gutters>
+      <!-- For screens larger than 'sm' (600px), use 3 columns (out of 12) for each image, resulting in 4 columns -->
+      <!-- For screens smaller or equal to 'sm', use full width for each image -->
+      <v-col cols="12" sm="6" md="3" v-for="image in project1Images" :key="image">
+        <img :src="image" class="responsive-image" />
+      </v-col>
+    </v-row>
+  </v-container>
   </template>
 
 <style scoped>
 
+.v-col {
+    padding: 0;
+}
 .responsive-image {
   width: 200px;
   height: 200px;
   object-fit: cover; 
-
+  margin: 0;
+  padding:0;
 }
 
 @media (max-width: 600px) { /* Phones */
