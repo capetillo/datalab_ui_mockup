@@ -56,8 +56,9 @@ const isSelected = (image) => {
     <v-btn @click="showProject1 = !showProject1">Project 1</v-btn>
     <v-row v-if="showProject1">
       <v-col cols="12" sm="6" md="3" v-for="(image, index) in project1Images" :key="index">
-        <!-- Add @click to toggle selection and :class to conditionally apply styles -->
-        <img :src="image" class="responsive-image" @click="toggleSelection(image)" :class="{ 'selected-image': isSelected(image) }" />
+        <div class="image-wrapper">
+            <img :src="image" class="responsive-image" @click="toggleSelection(image)" :class="{ 'selected-image': isSelected(image) }" />
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -68,9 +69,14 @@ const isSelected = (image) => {
 .v-col {
     padding: 0;
 }
+
+.image-wrapper {
+    width: 250px;
+    height: 250px;
+}
 .responsive-image {
-  width: 200px;
-  height: 250px;
+  width: 100%;
+  height: 100%;
   object-fit: cover; 
   margin: 0;
   padding:0;
@@ -82,15 +88,15 @@ const isSelected = (image) => {
 
 @media (max-width: 932px) { /* Phones */
   .responsive-image {
-   width: 100%;
-   height: 100%;
+   width: 12rem;
+   height: 12rem;
   }
 }
 
 @media (min-width: 932px) and (max-width: 1366px) { /* Tablets */
   .responsive-image {
-    width: 100%;
-    height: 100%;
+    width: 12rem;
+    height: 12rem;
   }
 }
 
