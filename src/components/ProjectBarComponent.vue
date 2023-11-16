@@ -17,7 +17,6 @@
 // }
 
 const showProject1 = ref(false);
-
 const project1Images = ref([
   require('@/assets/images/image1.png'),
   require('@/assets/images/image2.png'),
@@ -35,16 +34,30 @@ const project1Images = ref([
   require('@/assets/images/image14.png'),
   require('@/assets/images/image15.png'),
 ])
+const selectedImages = ref([]);
+
+const toggleSelection = (image) => {
+  const index = selectedImages.value.indexOf(image);
+  if (index === -1) {
+    selectedImages.value.push(image);
+  } else {
+    selectedImages.value.splice(index, 1);
+  }
+};
+
+const isSelected = (image) => {
+  return selectedImages.value.includes(image);
+};
+
 </script>
 
 <template>
   <v-container>
     <v-btn @click="showProject1 = !showProject1">Project 1</v-btn>
     <v-row v-if="showProject1">
-      <!-- For screens larger than 'sm' (600px), use 3 columns (out of 12) for each image, resulting in 4 columns -->
-      <!-- For screens smaller or equal to 'sm', use full width for each image -->
-      <v-col cols="12" sm="6" md="3" v-for="image in project1Images" :key="image">
-        <img :src="image" class="responsive-image" />
+      <v-col cols="12" sm="6" md="3" v-for="(image, index) in project1Images" :key="index">
+        <!-- Add @click to toggle selection and :class to conditionally apply styles -->
+        <img :src="image" class="responsive-image" @click="toggleSelection(image)" :class="{ 'selected-image': isSelected(image) }" />
       </v-col>
     </v-row>
   </v-container>
@@ -57,23 +70,27 @@ const project1Images = ref([
 }
 .responsive-image {
   width: 200px;
-  height: 200px;
+  height: 250px;
   object-fit: cover; 
   margin: 0;
   padding:0;
 }
 
+.selected-image {
+  border: 3px solid rgb(241, 183, 36)
+}
+
 @media (max-width: 932px) { /* Phones */
   .responsive-image {
-   width: 70%;
-   height: 70%;
+   width: 100%;
+   height: 100%;
   }
 }
 
 @media (min-width: 932px) and (max-width: 1366px) { /* Tablets */
   .responsive-image {
-    width: 70%;
-    height: 70%;
+    width: 100%;
+    height: 100%;
   }
 }
 
