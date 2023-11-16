@@ -1,11 +1,20 @@
+<script setup>
+
+  import ProjectView from './views/ProjectView'
+
+</script>
+
 <template>
   <div>
-    <ImageComponent/>
+    <ProjectView/>
   </div>
 </template>
 
-<script setup>
 
-  import ImageComponent from './components/ImageComponent.vue'
+<style>
 
-</script>
+body {
+  background-color: rgb(21,23,24);
+}
+
+</style>
