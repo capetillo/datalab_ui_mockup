@@ -40,7 +40,7 @@ const project1Images = ref([
 <template>
   <v-container>
     <v-btn @click="showProject1 = !showProject1">Project 1</v-btn>
-    <v-row v-if="showProject1" no-gutters>
+    <v-row v-if="showProject1">
       <!-- For screens larger than 'sm' (600px), use 3 columns (out of 12) for each image, resulting in 4 columns -->
       <!-- For screens smaller or equal to 'sm', use full width for each image -->
       <v-col cols="12" sm="6" md="3" v-for="image in project1Images" :key="image">
@@ -63,21 +63,18 @@ const project1Images = ref([
   padding:0;
 }
 
-@media (max-width: 600px) { /* Phones */
+@media (max-width: 932px) { /* Phones */
   .responsive-image {
-    /* Styles for phones */
+   width: 70%;
+   height: 70%;
   }
 }
 
-@media (min-width: 600px) and (max-width: 960px) { /* Tablets */
+@media (min-width: 932px) and (max-width: 1366px) { /* Tablets */
   .responsive-image {
-    /* Styles for tablets */
+    width: 70%;
+    height: 70%;
   }
 }
 
-@media (min-width: 960px) { /* Desktop */
-  .responsive-image {
-    /* Styles for desktop */
-  }
-}
 </style>
