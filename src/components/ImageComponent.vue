@@ -1,7 +1,8 @@
 <script setup>
 
     import { ref } from 'vue'
-    import { VCarousel, VCarouselItem, VBtn } from 'vuetify/lib/components/VCarousel'
+    import { VCarousel, VCarouselItem } from 'vuetify/lib/components/VCarousel'
+    import { VBtn } from 'vuetify/lib/components/VBtn'
     import axios from 'axios'
 
     const images = ref([])
@@ -20,21 +21,15 @@
         }
 }
 
-const imageLoadError = (event) => {
-  console.error("Error loading image:", event.target.src);
-};
-
 </script>
 
 <template>
     <v-carousel>
       <v-carousel-item v-for="(image, index) in images" :key="index">
-
-        <img :src="image.urls.regular" @error="imageLoadError" class="responsive-image" />
-
+        <img :src="image.urls.regular" class="responsive-image" />
       </v-carousel-item>
     </v-carousel>
-    <v-btn @click="fetchRandomImages">Load Random Images</v-btn>
+    <v-btn color="primary" @click="fetchRandomImages" type="button">Import</v-btn>
 
 </template>
 
