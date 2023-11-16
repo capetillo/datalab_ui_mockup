@@ -1,23 +1,20 @@
+<script setup>
+
+  import ProjectView from './views/ProjectView'
+
+</script>
+
 <template>
-  <v-app>
-    <v-main>
-      <HelloWorld/>
-    </v-main>
-  </v-app>
+  <div>
+    <ProjectView/>
+  </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
 
-export default {
-  name: 'App',
+<style>
 
-  components: {
-    HelloWorld,
-  },
-
-  data: () => ({
-    //
-  }),
+body {
+  background-color: rgb(21,23,24);
 }
-</script>
+
+</style>
