@@ -9,7 +9,7 @@
   <ProjectBarComponent/>
   <ProjectBarComponent/>
   <ProjectBarComponent/>
-  </template>
+</template>
 
 <style scoped>
 
