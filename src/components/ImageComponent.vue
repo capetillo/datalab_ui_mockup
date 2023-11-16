@@ -2,21 +2,34 @@
 
     import { ref } from 'vue'
     import { VCarousel, VCarouselItem } from 'vuetify/lib/components/VCarousel'
+    import axios from 'axios'
 
-    const images = ref(['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg/330px-Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg'])
+    const images = ref([])
+    const unsplashAccessKey = process.env.VUE_APP_UNSPLASH_ACCESS_KEY
 
+
+
+    async function fetchRandomImages() {
+        try {
+            const response = await axios.get(`https://api.unsplash.com/photos/random?client_id=${unsplashAccessKey}&count=1`);
+            images.value = response.data;
+            console.log('response.data:', response.data)
+        } catch (error) {
+            console.error("Error fetching images:", error);
+        }
+}
 </script>
 
 <template>
     <v-carousel>
-        <v-carousel-item v-for="(image, index) in images" :key="index">
-            <v-row justify="center">
-                <v-col cols="12" md="10" lg="8">
-                    <img :src="image" class="responsive-image" />
-                </v-col>
-            </v-row>
-        </v-carousel-item>
+      <v-carousel-item v-for="(image, index) in images" :key="index">
+
+            <img :src="image.urls.regular" class="responsive-image" />
+
+      </v-carousel-item>
     </v-carousel>
+    <button @click="fetchRandomImages" type="button">Load Random Images</button>
+
 </template>
 
 
