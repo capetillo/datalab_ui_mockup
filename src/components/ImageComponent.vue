@@ -1,7 +1,7 @@
 <script setup>
 
     import { ref } from 'vue'
-    import { VCarousel, VCarouselItem } from 'vuetify/lib/components/VCarousel'
+    import { VCarousel, VCarouselItem, VBtn } from 'vuetify/lib/components/VCarousel'
     import axios from 'axios'
 
     const images = ref([])
@@ -11,24 +11,30 @@
 
     async function fetchRandomImages() {
         try {
-            const response = await axios.get(`https://api.unsplash.com/photos/random?client_id=${unsplashAccessKey}&count=1`);
-            images.value = response.data;
+            const response = await axios.get(`https://api.unsplash.com/photos/random?client_id=${unsplashAccessKey}&count=5`);
+            images.value = response.data
+            console.log("this is images:", images.value)
             console.log('response.data:', response.data)
         } catch (error) {
             console.error("Error fetching images:", error);
         }
 }
+
+const imageLoadError = (event) => {
+  console.error("Error loading image:", event.target.src);
+};
+
 </script>
 
 <template>
     <v-carousel>
       <v-carousel-item v-for="(image, index) in images" :key="index">
 
-            <img :src="image.urls.regular" class="responsive-image" />
+        <img :src="image.urls.regular" @error="imageLoadError" class="responsive-image" />
 
       </v-carousel-item>
     </v-carousel>
-    <button @click="fetchRandomImages" type="button">Load Random Images</button>
+    <v-btn @click="fetchRandomImages">Load Random Images</v-btn>
 
 </template>
 
