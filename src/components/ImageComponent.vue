@@ -1,6 +1,7 @@
 <script setup>
 
     import ProjectBarComponent from './ProjectBarComponent.vue'
+    import ImportButton from './ImportButton.vue'
 
 </script>
 
@@ -9,6 +10,7 @@
   <ProjectBarComponent/>
   <ProjectBarComponent/>
   <ProjectBarComponent/>
+  <ImportButton :selected-images="selectedImages"/>
 </template>
 
 <style scoped>
