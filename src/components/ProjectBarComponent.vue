@@ -16,6 +16,10 @@
     //     }
 // }
 
+import { inject } from 'vue';
+
+const selectedImages = inject('selectedImages');
+
 const showProject1 = ref(false);
 const project1Images = ref([
   require('@/assets/images/image1.png'),
@@ -34,7 +38,7 @@ const project1Images = ref([
   require('@/assets/images/image14.png'),
   require('@/assets/images/image15.png'),
 ])
-const selectedImages = ref([]);
+
 
 const toggleSelection = (image) => {
   const index = selectedImages.value.indexOf(image);
