@@ -1,9 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import DataSession from '@/views/DataSession.vue';
+import DataSession from '../views/DataSessionView.vue'
+import ProjectView from '../views/ProjectView.vue'
 
 const routes = [
+    {
+        path: '/projects',
+        name: 'ProjectView',
+        component: ProjectView
+    },
   {
-    path: '/datasession',
+    path: '/datasession/:selectedImages',
     name: 'DataSession',
     component: DataSession
   }
