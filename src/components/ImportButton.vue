@@ -6,11 +6,15 @@ const router = useRouter();
 const selectedImages = inject('selectedImages');
 
 const goToDataSession = () => {
-  router.push({ 
-    name: 'DataSession', 
-    params: { selectedImages: JSON.stringify(selectedImages.value) }
-  });
-};
+  if (selectedImages.value && selectedImages.value.length > 0) {
+    router.push({ 
+      name: 'DataSession', 
+      params: { selectedImages: JSON.stringify(selectedImages.value) }
+    });
+  } else {
+    alert("No images selected");
+  }
+}
 </script>
 
 <template>
