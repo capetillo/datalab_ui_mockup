@@ -10,8 +10,9 @@ onMounted(() => {
     selectedImages.value = JSON.parse(route.params.selectedImages);
   }
 });
+import { selectedImages } from './selectedImages';
 </script>
-
+export 
 <template>
   <div>
     <h1>Data Session View</h1>
@@ -19,4 +20,3 @@ onMounted(() => {
       <img :src="image" class="responsive-image" />
     </div>
   </div>
-</template>
