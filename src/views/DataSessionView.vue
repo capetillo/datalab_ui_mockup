@@ -1,23 +1,21 @@
 <script setup>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const selectedImages = ref([]);
 
 onMounted(() => {
+  // Parse the route parameter as JSON
   if (route.params.selectedImages) {
-    selectedImages.value = JSON.parse(route.params.selectedImages);
-  }
-})
-
-defineProps({
-  selectedImages: {
-    type: Array,
-    default: () => []
+    try {
+      selectedImages.value = JSON.parse(route.params.selectedImages);
+    } catch (e) {
+      console.error('Error parsing selected images:', e);
+      selectedImages.value = [];
+    }
   }
 });
-
 </script>
 
 <template>
@@ -30,8 +28,12 @@ defineProps({
 </template>
 
 <style scoped>
-
 h1 {
   color: white;
+}
+.responsive-image {
+  width: 50%;
+  height: auto; 
+  object-fit: cover; 
 }
 </style>
