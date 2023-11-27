@@ -1,25 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import DataSessionView from '../views/DataSessionView.vue'
+import DataSession from '../views/DataSessionView.vue'
 import ProjectView from '../views/ProjectView.vue'
-
-
 
 const routes = [
     {
         path: '/projects',
-        name: 'Project',
+        name: 'ProjectView',
         component: ProjectView
     },
-    {
-        path: '/datasession',
-        name: 'DataSession',
-        component: DataSessionView
-    }
-]
+  {
+    path: '/datasession/:selectedImages',
+    name: 'DataSession',
+    component: DataSession,
+    props: route => ({ selectedImages: route.params.selectedImages ? JSON.parse(route.params.selectedImages) : [] })
+  }
+];
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes
-})
+  history: createWebHistory(process.env.BASE_URL),
+  routes
+});
 
 export default router;

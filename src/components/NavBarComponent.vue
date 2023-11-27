@@ -1,7 +1,7 @@
 <template>
   <nav>
     <router-link to="/projects">Projects</router-link>
-    <router-link to="/datasession">Data Session</router-link>
+    <router-link to="/datasession/:selectedImages">Data Session</router-link>
   </nav>
 </template>
 
@@ -18,7 +18,6 @@ router-link {
   text-decoration: none;
 }
 
-/* Style for the active route */
 .router-link-active {
   font-weight: bold;
 }
