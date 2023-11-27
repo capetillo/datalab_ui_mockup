@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -9,10 +9,17 @@ onMounted(() => {
   if (route.params.selectedImages) {
     selectedImages.value = JSON.parse(route.params.selectedImages);
   }
+})
+
+defineProps({
+  selectedImages: {
+    type: Array,
+    default: () => []
+  }
 });
-import { selectedImages } from './selectedImages';
+
 </script>
-export 
+
 <template>
   <div>
     <h1>Data Session View</h1>
@@ -20,3 +27,11 @@ export
       <img :src="image" class="responsive-image" />
     </div>
   </div>
+</template>
+
+<style scoped>
+
+h1 {
+  color: white;
+}
+</style>
