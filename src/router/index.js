@@ -11,7 +11,8 @@ const routes = [
   {
     path: '/datasession/:selectedImages',
     name: 'DataSession',
-    component: DataSession
+    component: DataSession,
+    props: route => ({ selectedImages: route.params.selectedImages ? JSON.parse(route.params.selectedImages) : [] })
   }
 ];
 
