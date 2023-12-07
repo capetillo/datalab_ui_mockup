@@ -1,15 +1,15 @@
 <script setup>
 
-    import ProjectBarComponent from './ProjectBarComponent.vue'
+    import ProjectBar from './ProjectBar.vue'
     import ImportButton from './ImportButton.vue'
 
 </script>
 
 <template>
-  <ProjectBarComponent/>
-  <ProjectBarComponent/>
-  <ProjectBarComponent/>
-  <ProjectBarComponent/>
+  <ProjectBar/>
+  <ProjectBar/>
+  <ProjectBar/>
+  <ProjectBar/>
   <ImportButton :selected-images="selectedImages"/>
 </template>
 
