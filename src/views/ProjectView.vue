@@ -1,7 +1,7 @@
 <script setup>
-    import ImageComponent from '../components/ImageComponent'
+    import SelectedImage from '../components/SelectedImage'
 </script>
 
 <template>
-    <ImageComponent/>
+    <SelectedImage/>
 </template>
