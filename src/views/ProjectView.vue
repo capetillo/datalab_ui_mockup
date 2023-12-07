@@ -1,5 +1,5 @@
 <script setup>
-    import SelectedImage from '../components/SelectedImage'
+    import SelectedImage from '../components/SelectedImage.vue'
 </script>
 
 <template>
