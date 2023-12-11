@@ -3,5 +3,5 @@
 </script>
 
 <template>
-    <project-list/>
+    <project-list class="h-screen"/>
 </template>
