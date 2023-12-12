@@ -1,12 +1,15 @@
 <script setup>
-import images from '../assets/images'
+import MockData from '../assets/MockData.JSON'
+
 
 </script>
 
 <template>
-    <li v-for="image in images" :key="image.id">
-        <img src={{ image }}>
-    </li>
+    <div class="image-gallery">
+        <div v-for="(item, index) in MockData" :key="index" class="image-container">
+            <img :src="require('@/assets/' + item.image)" />
+        </div>
+  </div>
 </template>
 
 <style scoped>
