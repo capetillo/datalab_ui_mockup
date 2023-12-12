@@ -1,9 +1,9 @@
 <script setup>
- const props = defineProps(['project'])
+ defineProps(['project'])
 </script>
 <template>
     <v-expansion-panel
-        :title = "props.project.projectTitle"
-        :text = "props.project.projectDescription"
+        :title = "project.projectTitle"
+        :text = "project.projectDescription"
     ></v-expansion-panel>
 </template>
