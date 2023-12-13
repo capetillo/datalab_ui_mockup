@@ -1,16 +1,64 @@
 <script setup>
-import MockData from '../assets/MockData.JSON'
 
+import { reactive } from 'vue'
+import MockData from '../assets/MockData.JSON'
+import { Carousel, Slide, Navigation } from 'vue3-carousel'
+import 'vue3-carousel/dist/carousel.css'
+
+const state = reactive({
+    currentSlide: 0
+})
+
+const slideTo = (index) => {
+    state.currentSlide = index
+}
+
+// Refs for the carousels (if needed)
+// const mainCarousel = ref(null);
+// const thumbnailsCarousel = ref(null);
 
 </script>
 
 <template>
-    <div class="image-gallery">
-        <div v-for="(item, index) in MockData" :key="index" class="image-container">
-            <img :src="require('@/assets/' + item.image)" />
+    <!-- Main Carousel -->
+    <Carousel id="gallery" :items-to-show="1" :wrap-around="false" v-model="currentSlide">
+      <Slide v-for="(item, index) in MockData" :key="index">
+        <div class="carousel__item">
+          <img :src="require('@/assets/' + item.image)" class="div__item"/>
         </div>
-  </div>
-</template>
+      </Slide>
+    </Carousel>
+  
+    <!-- Thumbnails Carousel -->
+    <Carousel
+    id="thumbnails"
+    :items-to-show="5"
+    :wrap-around="false"
+    v-model="currentSlide"
+    ref="carousel"
+  >
+    <Slide v-for="(item, index) in MockData" :key="index">
+      <div class="thumbnail__item" @click="slideTo(index)">
+        <!-- Thumbnail Image -->
+        <img :src="require('@/assets/' + item.image)" class="thumbnail__item"/>
+      </div>
+    </Slide>
+    <template #addons>
+      <Navigation />
+    </template>
+  </Carousel>
+  </template>
 
 <style scoped>
+.carousel__item {
+  text-align: center;
+  /* Additional styling as needed for carousel item */
+}
+
+.thumbnail__item {
+  max-width: 200px;
+  max-height: 160px;
+  object-fit: cover;
+  margin: 0 auto;
+}
 </style>
