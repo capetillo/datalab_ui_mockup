@@ -1,9 +1,7 @@
 <script setup>
-    import SelectedImage from '../components/SelectedImage.vue'
-    import ImageCarousel from '../components/ImageCarousel.vue'
+    import ProjectList from '../components/project_view_components/ProjectList.vue'
 </script>
 
 <template>
-    <SelectedImage/>
-    <ImageCarousel/>
+    <project-list class="h-screen"/>
 </template>
