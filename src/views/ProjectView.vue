@@ -1,7 +1,7 @@
 <script setup>
-    import SelectedImage from '../components/SelectedImage.vue'
+    import ProjectList from '../components/project_view_components/ProjectList.vue'
 </script>
 
 <template>
-    <SelectedImage/>
+    <project-list class="h-screen"/>
 </template>
