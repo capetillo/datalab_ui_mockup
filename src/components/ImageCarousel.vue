@@ -12,7 +12,7 @@ const state = reactive({
 
 const handleThumbnailClick = (item, index) => {
 
-
+console.log('state:', state)
     // Updates current slide index
     state.currentSlide = index
     if (!state.selectedImages.find(img => img.basefile_name === item.basefile_name)) {
@@ -48,7 +48,7 @@ const handleThumbnailClick = (item, index) => {
     <Slide v-for="(item, index) in MockData" :key="index">
       <div class="thumbnail__item" @click="handleThumbnailClick(item, index)">
         <!-- Thumbnail Image -->
-        <img :src="require('@/assets/' + item.image)" :class="{'selected-thumbnail': currentSlide === index}" class="thumbnail__item"/>
+        <img :src="require('@/assets/' + item.image)" :class="{'selected-thumbnail': state.currentSlide === index}" class="thumbnail__item"/>
       </div>
     </Slide>
     <template #addons>
