@@ -4,6 +4,7 @@ import MockData from '../assets/MockData.JSON'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 
+// Will move state to parent component or store
 const state = reactive({
     currentSlide: 0,
     selectedImages: []
@@ -64,7 +65,7 @@ const isSelected = (item) => {
       </div>
     </Slide>
     <template #addons>
-      <Navigation />
+      <Navigation/>
     </template>
   </Carousel>
   </template>
