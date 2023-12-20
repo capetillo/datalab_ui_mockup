@@ -32,6 +32,7 @@ export default createStore({
   getters: {
     // By using the some method, we check if any of the images pass the condition in which they have the same basefile_name
     // as the selected image's basefile_name
+    // this should be used to add or remove a check when images are being viewed as archive (maybe? maybe not?? open to suggestions and moving this to ImageCarousel component)
     isSelected: (state) => (image) => {
       return state.selectedImages.some(selectedImage => selectedImage.basefile_name === image.basefile_name)
     },
