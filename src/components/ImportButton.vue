@@ -8,7 +8,7 @@ const store = useStore()
 const importImages = async () => {
   try {
     const selectedImages = store.state.selectedImages
-    const response = await fetch('APIENDPOINT', {
+    const response = await fetch('http://127.0.0.1:8000/api/datasessions/', {
       method: 'POST',
       headers: {
         'Authorization': 'Token 123456789abcdefg',
