@@ -8,17 +8,21 @@ const deleteSessionId = ref(-1);
 const showDeleteSessionDialog = ref(false);
 
 onMounted(() => {
+  loadAllSessions();
+})
+
+function deleteSession(id) {
+  deleteSessionId.value = id;
+  showDeleteSessionDialog.value = true;
+}
+
+function loadAllSessions() {
   // Load in the session details from the API
   fetch('http://127.0.0.1:8000/api/datasessions/', {
     'headers': {'Authorization': 'Token 123456789abcdefg'}
   })
     .then(response => response.json())
     .then(data => dataSessions.value = data.results);
-})
-
-function deleteSession(id) {
-  deleteSessionId.value = id;
-  showDeleteSessionDialog.value = true;
 }
 
 function confirmDeleteSession() {
@@ -47,7 +51,7 @@ function confirmDeleteSession() {
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item v-for="ds in dataSessions" :key="ds.id" :value="ds.id">
-          <data-session :data="ds"></data-session>
+          <data-session :data="ds" @reload-session="loadAllSessions()"></data-session>
         </v-window-item>
       </v-window>
     </v-card>
