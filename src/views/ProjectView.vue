@@ -1,7 +1,9 @@
 <script setup>
-    import ProjectList from '../components/project_view_components/ProjectList.vue'
+    import ProjectList from '../components/ProjectView/ProjectList.vue'
+    import ImportButton from '../components/ImportButton.vue';
 </script>
 
 <template>
     <project-list/>
+    <import-button/>
 </template>
