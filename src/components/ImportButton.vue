@@ -34,7 +34,7 @@ const importImages = async () => {
     }
 
     const data = await response.json();
-    console.log('this is data:', data);
+    console.log(data);
     router.push({ name: 'DataSessions' });
   } catch (error) {
     console.log('Error importing images: ', error);
