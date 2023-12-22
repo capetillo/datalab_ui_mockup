@@ -7,22 +7,41 @@ const store = useStore()
 
 const importImages = async () => {
   try {
-    const selectedImages = store.state.selectedImages
+    const selectedImages = store.state.selectedImages;
+    const inputData = selectedImages.map(image => ({
+      'source': image.image,
+      'basename': image.basefile_name
+    }));
+
+    const requestBody = {
+      'name': 'My New Session Name',
+      'input_data': inputData
+    };
+
     const response = await fetch('http://127.0.0.1:8000/api/datasessions/', {
       method: 'POST',
       headers: {
         'Authorization': 'Token 123456789abcdefg',
-        'Content-type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: JSON.stringify({ images: selectedImages }) 
-    })
-    const data = await response.json()
-    router.push({ name: 'DataSessions' })
-    console.log(data)
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error Response Data:', errorData);
+      throw new Error('Bad request');
+    }
+
+    const data = await response.json();
+    console.log('this is data:', data);
+    router.push({ name: 'DataSessions' });
   } catch (error) {
-    console.log('Error importing images: ', error)
+    console.log('Error importing images: ', error);
   }
-}
+};
+
+
 </script>
 
 <template>
