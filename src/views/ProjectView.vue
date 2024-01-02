@@ -1,9 +1,9 @@
 <script setup>
-    import ProjectList from '../components/ProjectView/ProjectList.vue'
+    import ToggleButton from '../components/ToggleButton.vue';
     import ImportButton from '../components/ImportButton.vue';
 </script>
 
 <template>
-    <project-list/>
-    <import-button/>
+    <ToggleButton />
+    <ImportButton/>
 </template>
