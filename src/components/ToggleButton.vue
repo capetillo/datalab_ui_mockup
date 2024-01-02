@@ -14,16 +14,12 @@ const toggleView = () => {
 <template>
         
     <v-btn @click="toggleView">
-        <div v-if="isCarouselView">List Display</div>
-        <div v-else> Image Display </div>
+      <div v-if="isCarouselView">List Display</div>
+      <div v-else> Image Display </div>
     </v-btn>
-  
-
-
     <div v-if="isCarouselView">
-    <ImageCarousel/>
-  </div>
-
+      <ImageCarousel/>
+    </div>
   <div v-else>
     <ProjectImages/>
   </div>
