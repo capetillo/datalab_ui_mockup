@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from 'vue'
-    import ImageList from './ImageList.vue';
-    import ImageCarousel from '../ImageCarousel.vue';
+    import ImageList from './ImageList.vue'
     // TODO for now we will just import project data from mock data but in the future call an api based on selectedProject
     import MockData from '../../assets/MockData.JSON'
 
@@ -16,10 +15,7 @@
 </script>
 
 <template>
-    <v-card>
         <!-- These divs are just for demonstration purposes, feel free to remove them when implemented -->
-        <div>{{ selectedProject }}</div>
-        <image-list :data="MockData" :selectedImages="selectedImages" @update-selected="updateSelectedImages"/>
-        <ImageCarousel></ImageCarousel>
-    </v-card>
+    <div>{{ selectedProject }}</div>
+    <image-list :data="MockData" :selectedImages="selectedImages" @update-selected="updateSelectedImages"/>
 </template>
