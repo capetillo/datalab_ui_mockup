@@ -1,7 +1,7 @@
 <script setup>
     import { ref } from 'vue'
-    import ProjectImages from './ProjectImages.vue';
-    import ProjectSelector from './ProjectSelector.vue';
+    import ProjectImages from './ProjectImages.vue'
+    import ProjectSelector from './ProjectSelector.vue'
 
     // TODO replace projects with an api call to the users projects
     const projects = ref([
