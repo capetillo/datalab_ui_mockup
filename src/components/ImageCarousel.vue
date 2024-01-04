@@ -41,7 +41,7 @@ const handleThumbnailClick = (item, index) => {
   const handleProjectSelection = (projectTitle) => {
     selectedProject.value = projectTitle
   }
-  
+
 </script>
 
 <template>
@@ -82,13 +82,12 @@ const handleThumbnailClick = (item, index) => {
 
 .project-bar-wrapper {
   display: flex;
-  align-items: flex-start; /* Aligns items at the start of the container */
-  justify-content: space-between; /* Spaces out the items */
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .project-bar {
-  width: 20%; /* Adjust width as needed */
-  /* Ensure no extra margin or padding is causing misalignment */
+  width: 20%;
   margin: 0;
   padding: 2%;
 }

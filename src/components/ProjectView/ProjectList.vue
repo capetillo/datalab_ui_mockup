@@ -20,8 +20,8 @@ const handleProjectSelection = (projectTitle) => {
 <style scoped>
 .project-bar-wrapper {
   display: flex;
-  align-items: flex-start; /* Aligns items at the start of the container */
-  justify-content: space-between; /* Spaces out the items */
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .project-bar {
     width: 26%;
