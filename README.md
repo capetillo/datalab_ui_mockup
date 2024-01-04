@@ -1,4 +1,4 @@
-# datalab_ui_mockup
+# datalab
 
 ## Project setup
 ```
