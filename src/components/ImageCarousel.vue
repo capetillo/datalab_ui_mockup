@@ -4,6 +4,7 @@ import { useStore } from 'vuex'
 import MockData from '../assets/MockData.JSON'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
+import ProjectBar from './ProjectBar.vue'
 
 
 const store = useStore()
@@ -34,17 +35,25 @@ const handleThumbnailClick = (item, index) => {
     currentSlide.value = index;
   }
 }
+  // Used for ProjectBar (temporarily)
+  let selectedProject = ref('no project selected')
 
+  const handleProjectSelection = (projectTitle) => {
+    selectedProject.value = projectTitle
+  }
 </script>
 <template>
-  <!-- Main Carousel -->
-  <Carousel id="gallery" :items-to-show="1" :wrap-around="false" transition=0 v-model="currentSlide">
-    <Slide v-for="(item, index) in MockData" :key="index">
-      <div class="carousel__item">
-        <img :src="require('@/assets/' + item.image)" class="div__item"/>
-      </div>
-    </Slide>
-  </Carousel>
+  <div class="project-bar-wrapper">
+    <ProjectBar @update:selectedProject="handleProjectSelection" class="project-bar"/>
+    <!-- Main Carousel -->
+    <Carousel id="gallery" :items-to-show="1" :wrap-around="false" transition=0 v-model="currentSlide">
+      <Slide v-for="(item, index) in MockData" :key="index">
+        <div class="carousel__item">
+          <img :src="require('@/assets/' + item.image)" class="div__item"/>
+        </div>
+      </Slide>
+    </Carousel>
+  </div>
 
   <!-- Thumbnails Carousel -->
   <Carousel
@@ -68,6 +77,25 @@ const handleThumbnailClick = (item, index) => {
 </template>
 
 <style scoped>
+
+.project-bar-wrapper {
+  display: flex;
+  align-items: flex-start; /* Aligns items at the start of the container */
+  justify-content: space-between; /* Spaces out the items */
+}
+
+.project-bar {
+  width: 20%; /* Adjust width as needed */
+  /* Ensure no extra margin or padding is causing misalignment */
+  margin: 0;
+  padding: 2%;
+}
+
+#gallery{
+  width: 75%;
+  margin: 0;
+  padding: 0;
+}
 .carousel__item {
   text-align: center;
 }
