@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import ProjectImages from './ProjectView/ProjectImages'
-import ImageCarousel from './ImageCarousel'
+import ProjectList from './ProjectView/ProjectList'
+import ImageCarousel from './ProjectView/ImageCarousel'
 
 const isCarouselView = ref(true)
 
@@ -11,16 +11,15 @@ const toggleView = () => {
 
 </script>
 
-<template>
-        
-    <v-btn @click="toggleView">
-      <div v-if="isCarouselView">List Display</div>
-      <div v-else> Image Display </div>
-    </v-btn>
-    <div v-if="isCarouselView">
-      <ImageCarousel/>
-    </div>
+<template>     
+  <v-btn @click="toggleView">
+    <div v-if="isCarouselView">List Display</div>
+    <div v-else> Image Display </div>
+  </v-btn>
+  <div v-if="isCarouselView">
+    <ImageCarousel/>
+  </div>
   <div v-else>
-    <ProjectImages/>
+    <ProjectList/>
   </div>
 </template>
