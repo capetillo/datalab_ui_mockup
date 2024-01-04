@@ -45,5 +45,5 @@ const importImages = async () => {
 </script>
 
 <template>
-  <v-btn @click="importImages">Import</v-btn>
+  <v-btn @click="importImages">Add to Session</v-btn>
 </template>
