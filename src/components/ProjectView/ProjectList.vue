@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ProjectImages from './ProjectImages.vue'
-import ProjectBar from '../ProjectBar.vue'
+import ProjectBar from './ProjectBar.vue'
 
 let selectedProject = ref('no project selected')
 

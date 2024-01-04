@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ProjectList from './ProjectView/ProjectList'
-import ImageCarousel from './ImageCarousel'
+import ImageCarousel from './ProjectView/ImageCarousel'
 
 const isCarouselView = ref(true)
 

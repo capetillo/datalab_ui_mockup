@@ -1,6 +1,8 @@
 <script setup>
- defineProps(['project'])
+defineProps(['project'])
+
 </script>
+
 <template>
     <v-expansion-panel
         :title = "project.projectTitle"

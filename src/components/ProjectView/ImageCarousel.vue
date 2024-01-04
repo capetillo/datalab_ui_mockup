@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
-import MockData from '../assets/MockData.JSON'
+import MockData from '../../assets/MockData.JSON'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-import ProjectBar from './ProjectBar.vue'
+import ProjectBar from '../ProjectView/ProjectBar.vue'
 
 
 const store = useStore()
