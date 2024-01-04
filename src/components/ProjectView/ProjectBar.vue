@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
-import ProjectSelector from './ProjectView/ProjectSelector.vue';
+import ProjectSelector from './ProjectSelector.vue';
 
 const projects = ref([
   { projectTitle: 'project 1', projectDescription: 'things like site code, date, image id, etc can go in here'},
