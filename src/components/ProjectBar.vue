@@ -35,6 +35,6 @@ const selectProject = (projectTitle) => {
 
 <style scoped>
 .project-bar {
-    width: 35%;
+    width: 25%;
 }
 </style>
