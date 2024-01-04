@@ -24,12 +24,12 @@ const handleProjectSelection = (projectTitle) => {
   justify-content: space-between; /* Spaces out the items */
 }
 .project-bar {
-    width: 20%;
+    width: 26%;
     margin: 0;
     padding: 2%
 }
 .project-images {
-    width: 75%;
+    width: 70%;
     margin: 0;
     padding: 0;
 }
