@@ -27,15 +27,9 @@ const selectProject = (projectTitle) => {
                     :key="index"
                     :project="project"
                     @click="selectProject(project.projectTitle)"
+                    class="project-selector"
                 />
             </v-expansion-panels>
         </v-card>
     </div>
 </template>
-
-<!-- <style scoped>
-.project-bar {
-    width: 20%;
-    padding: 2%;
-}
-</style> -->
