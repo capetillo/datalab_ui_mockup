@@ -33,8 +33,9 @@ const selectProject = (projectTitle) => {
     </div>
 </template>
 
-<style scoped>
+<!-- <style scoped>
 .project-bar {
-    width: 25%;
+    width: 20%;
+    padding: 2%;
 }
-</style>
+</style> -->
