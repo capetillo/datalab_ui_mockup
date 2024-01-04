@@ -41,7 +41,9 @@ const handleThumbnailClick = (item, index) => {
   const handleProjectSelection = (projectTitle) => {
     selectedProject.value = projectTitle
   }
+  
 </script>
+
 <template>
   <div class="project-bar-wrapper">
     <ProjectBar @update:selectedProject="handleProjectSelection" class="project-bar"/>
