@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import OperationPipeline from './OperationPipeline.vue';
 
 const emit = defineEmits(['reloadSession'])
-const images = ref([])
+let images = ref([])
 
 const props = defineProps({
   data: {
@@ -29,7 +29,7 @@ function addOperation(operationDefinition) {
 
 const getImages = async () => {
   try {
-    const response = await fetch ('http://127.0.0.1:8000/api/datasessions/', {
+    const response = await fetch ('http://127.0.0.1:8000/api/datasessions/' + props.data.id, {
       method: 'GET',
       headers: {
         'Authorization': 'Token 123456789abcdefg',
@@ -44,11 +44,9 @@ const getImages = async () => {
     }
 
     const data = await response.json()
-    images.value = data.results
-    .flatMap(img => img.input_data)
-    // Filtering out items with 'archive' in the source
-    .filter(src => !src.source.includes('archive'))
-    .map(src => src.source)
+    images.value = data.input_data
+      .filter(img => !img.source.includes('archive'))
+      .map(img => img.source)
   } catch (error) {
     console.log('Error getting images: ', error)
   }
