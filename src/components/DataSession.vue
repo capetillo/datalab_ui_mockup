@@ -71,7 +71,7 @@ onMounted(() => {
           <v-carousel-item
             v-for="(image, index) in images"
             :key="index"
-            :src="require('../assets/' + image)"
+            :src="image ? require('../assets/' + image) : ''"
             cover
           ></v-carousel-item>
         </v-carousel>
