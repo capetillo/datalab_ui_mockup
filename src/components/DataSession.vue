@@ -1,8 +1,9 @@
 <script setup>
-// import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import OperationPipeline from './OperationPipeline.vue';
 
 const emit = defineEmits(['reloadSession'])
+let images = ref([])
 
 const props = defineProps({
   data: {
@@ -26,6 +27,36 @@ function addOperation(operationDefinition) {
     .catch(error => console.error('Error:', error));
 }
 
+const getImages = async () => {
+  try {
+    const response = await fetch ('http://127.0.0.1:8000/api/datasessions/' + props.data.id, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Token 123456789abcdefg',
+        'Content-Type': 'application/json; charset=UTF-8'
+      }
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Error Response Data:', errorData)
+      throw new Error('Bad request')
+    }
+
+    const data = await response.json()
+    images.value = data.input_data
+      .filter(img => !img.source.includes('archive'))
+      .map(img => img.source)
+  } catch (error) {
+    console.log('Error getting images: ', error)
+  }
+
+}
+
+onMounted(() => {
+  getImages()
+})
+
 </script>
 
 <template>
@@ -35,11 +66,9 @@ function addOperation(operationDefinition) {
         <!-- TODO: Place input/output view here -->
         <v-carousel>
           <v-carousel-item
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-            cover
-          ></v-carousel-item>
-          <v-carousel-item
-            src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+            v-for="(image, index) in images"
+            :key="index"
+            :src="image ? require('../assets/' + image) : ''"
             cover
           ></v-carousel-item>
         </v-carousel>
