@@ -44,7 +44,6 @@ const getImages = async () => {
     }
 
     const data = await response.json()
-    console.log(data)
     images.value = data.results
     .flatMap(img => img.input_data)
     // Filtering out items with 'archive' in the source
