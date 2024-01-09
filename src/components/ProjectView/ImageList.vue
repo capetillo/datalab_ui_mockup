@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 
-const props = defineProps(["projectImageObjects", "selectedImages", "data"]);
+const props = defineProps(["data"]);
 const store = useStore();
 
 // v-data-table setup variables
@@ -15,21 +15,34 @@ let headers = ref([
 let items = ref(props.data);
 let itemsPerPage = ref(15);
 
-// selected images logic
-function selectRow(item) {
-  store.dispatch("toggleImageSelection", item);
+// --- Selection Logic ---
+let selected = ref([])
+
+// since item-value for v-data-table is set to basefilename we need to convert it back into an object
+// figuring out how to set item-value to the entire object would be great and then this function can be simplified
+function select(selectedImageNames) {
+  const selectedObjects = selectedImageNames.map(basefileName =>
+    items.value.find(item => item.basefile_name === basefileName)
+  );
+  store.dispatch('setSelectedImages', selectedObjects)
 }
+
+onMounted ( () => {
+  selected.value = store.getters.selectedImages.map(item => item.basefile_name)
+})
 </script>
 
 <template>
   <v-data-table
     :headers="headers"
     :items="items"
-    @click="selectRow(item)"
+    :hover="true"
     v-model:items-per-page="itemsPerPage"
     show-select
+    v-model="selected"
     item-value="basefile_name"
     density="compact"
+    @update:modelValue="select($event)"
   >
     <!-- TODO change src to fetch image from url-->
     <template #[`item.image`]="{ item }">
