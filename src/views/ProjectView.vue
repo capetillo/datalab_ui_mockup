@@ -69,7 +69,6 @@ const addImagesToExistingSession = async (selectedSessionName) => {
 
     const data = await response.json()
     console.log(data)
-    router.push({ name: 'DataSessions' })
   } catch (error) {
     console.log('Error importing images: ', error)
   }
@@ -78,13 +77,13 @@ const addImagesToExistingSession = async (selectedSessionName) => {
 const selectDataSession = (name) => {
   isPopupVisible.value = false
   addImagesToExistingSession(name)
+  router.push({ name: 'DataSessions' })
 }
 
 </script>
 
 <template>
     <ToggleButton/>
-  
     <!--Add to Session Button Functionality -->
     <v-btn @click="getDataSessions">Add to a Session</v-btn>
     
