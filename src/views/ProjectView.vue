@@ -1,44 +1,33 @@
 <script setup>
-import ToggleButton from '../components/ToggleButton.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { fetchApiCall } from '../utils/api'
+import ToggleButton from '../components/ToggleButton.vue'
 
 const router = useRouter()
 const store = useStore()
 const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 
-const getDataSessions = async ()=> {
+const getDataSessions = async () => {
   try {
-    const response = await fetch ('http://127.0.0.1:8000/api/datasessions/', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Token 123456789abcdefg',
-        'Content-Type': 'application/json; charset=UTF-8'
-      }
-    })
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Error Response Data:', errorData)
-      throw new Error('Bad request')
-    }
-    const data = await response.json()
+    const url = 'http://127.0.0.1:8000/api/datasessions/'
+    const data = await fetchApiCall(url, 'GET')
     const results = data.results
+    console.log('this is results:', results)
+    uniqueDataSessions.value = results
+      .map(result => result.name)
+      .filter((name, index, self) => self.indexOf(name) === index)
 
-  for (const result of results) {
-    if (!uniqueDataSessions.value.includes(result.name)) {
-      uniqueDataSessions.value.push(result.name)
-    }
-    }
     isPopupVisible.value = true
   } catch (error) {
-    console.log('Error getting images: ', error)
+    console.error('Error getting data sessions: ', error)
   }
 }
 
 const addImagesToExistingSession = async (selectedSessionName) => {
-  console.log("Selected Data Session for Importing Images: ", selectedSessionName);
+  console.log("Selected Data Session for Importing Images: ", selectedSessionName)
   try {
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
@@ -50,27 +39,13 @@ const addImagesToExistingSession = async (selectedSessionName) => {
       'name': 'My New Session Name',
       'input_data': inputData
     }
-    const response = await fetch('http://127.0.0.1:8000/api/datasessions/', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Token 123456789abcdefg',
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
 
-      body: JSON.stringify(requestBody)
-    })
-    console.log('response', response)
+    const url = 'http://127.0.0.1:8000/api/datasessions/'
+    const data = await fetchApiCall(url, 'PATCH', requestBody)
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Error Response Data:', errorData)
-      throw new Error('Bad request');
-    }
-
-    const data = await response.json()
-    console.log(data)
+    console.log('Response:', data)
   } catch (error) {
-    console.log('Error importing images: ', error)
+    console.error('Error importing images:', error)
   }
 }
 
@@ -79,12 +54,11 @@ const selectDataSession = (name) => {
   addImagesToExistingSession(name)
   router.push({ name: 'DataSessions' })
 }
-
 </script>
 
 <template>
     <ToggleButton/>
-    <!--Add to Session Button Functionality -->
+    <!--Add to a Session Button Functionality -->
     <v-btn @click="getDataSessions">Add to a Session</v-btn>
     
     <v-dialog v-model="isPopupVisible" width="300">
