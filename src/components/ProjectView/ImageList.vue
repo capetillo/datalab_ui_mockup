@@ -19,16 +19,12 @@ let itemsPerPage = ref(15);
 let selected = ref([])
 
 // since item-value for v-data-table is set to basefilename we need to convert it back into an object
-// figuring out how to set item-value to the entire object would be great and then this function can be simplified
 function select(selectedImageNames) {
-  const selectedObjects = selectedImageNames.map(basefileName =>
-    items.value.find(item => item.basefile_name === basefileName)
-  );
-  store.dispatch('setSelectedImages', selectedObjects)
+  store.dispatch('setSelectedImages', selectedImageNames)
 }
 
 onMounted ( () => {
-  selected.value = store.getters.selectedImages.map(item => item.basefile_name)
+  selected.value = store.getters.selectedImages
 })
 </script>
 
@@ -36,13 +32,14 @@ onMounted ( () => {
   <v-data-table
     :headers="headers"
     :items="items"
-    :hover="true"
-    v-model:items-per-page="itemsPerPage"
+    item-value="basefile_name"
+    :return-object="true"
     show-select
     v-model="selected"
-    item-value="basefile_name"
-    density="compact"
     @update:modelValue="select($event)"
+    density="compact"
+    :hover="true"
+    v-model:items-per-page="itemsPerPage"
   >
     <!-- TODO change src to fetch image from url-->
     <template #[`item.image`]="{ item }">
