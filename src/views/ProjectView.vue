@@ -15,10 +15,16 @@ const getDataSessions = async () => {
     const url = 'http://127.0.0.1:8000/api/datasessions/'
     const data = await fetchApiCall(url, 'GET')
     const results = data.results
-    console.log('this is results:', results)
+    const uniqueNames = new Set()
+
     uniqueDataSessions.value = results
-      .map(result => result.name)
-      .filter((name, index, self) => self.indexOf(name) === index)
+      .filter(session => {
+        const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
+        uniqueNames.add(session.name)
+        uniqueNames.add(session.id)
+        return isUnique
+      })
+      .map(session => ({ id: session.id, name: session.name }))
 
     isPopupVisible.value = true
   } catch (error) {
@@ -26,8 +32,7 @@ const getDataSessions = async () => {
   }
 }
 
-const addImagesToExistingSession = async (selectedSessionName) => {
-  console.log("Selected Data Session for Importing Images: ", selectedSessionName)
+const addImagesToExistingSession = async (session) => {
   try {
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
@@ -36,11 +41,11 @@ const addImagesToExistingSession = async (selectedSessionName) => {
     }))
 
     const requestBody = {
-      'name': 'My New Session Name',
+      'name': session.name,
       'input_data': inputData
     }
 
-    const url = 'http://127.0.0.1:8000/api/datasessions/'
+    const url = 'http://127.0.0.1:8000/api/datasessions/' + session.id + '/'
     const data = await fetchApiCall(url, 'PATCH', requestBody)
 
     console.log('Response:', data)
@@ -49,16 +54,15 @@ const addImagesToExistingSession = async (selectedSessionName) => {
   }
 }
 
-const selectDataSession = (name) => {
+const selectDataSession = (session) => {
   isPopupVisible.value = false
-  addImagesToExistingSession(name)
+  addImagesToExistingSession(session)
   router.push({ name: 'DataSessions' })
 }
 </script>
 
 <template>
     <ToggleButton/>
-    <!--Add to a Session Button Functionality -->
     <v-btn @click="getDataSessions">Add to a Session</v-btn>
     
     <v-dialog v-model="isPopupVisible" width="300">
@@ -66,13 +70,9 @@ const selectDataSession = (name) => {
         <v-card-title>Data Sessions</v-card-title>
         <v-card-text>
           <v-list>
-            <v-list-item 
-              v-for="(name, index) in uniqueDataSessions" 
-              :key="index" 
-              @click="selectDataSession(name)"
-            >
+            <v-list-item v-for="session in uniqueDataSessions" :key="session.id" @click="selectDataSession(session)">
               <v-list-item-content>
-                {{ name }}
+                {{ session.name }}
               </v-list-item-content>
             </v-list-item>
           </v-list>

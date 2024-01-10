@@ -1,31 +1,29 @@
-/**
- * Performs a fetch API call.
- * @param {string} url - The URL to fetch.
- * @param {string} method - The HTTP method (GET, POST, etc.).
- * @param {object} [body] - The body of the request for POST, PATCH, etc.
- * @param {object} [headers] - Additional headers for the request.
- * @returns {Promise<object>} - The response data.
- */
-async function fetchApiCall(url, method, body = null, headers = {}) {
+async function fetchApiCall(url, method, body = null) {
     try {
-      const defaultHeaders = {
+      const headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Token 123456789abcdefg', // Default or dynamic token
+        'Accept': 'application/json',
+        'Authorization': 'Token 123456789abcdefg',
       }
   
       const config = {
-        method,
-        headers: { ...defaultHeaders, ...headers },
+        method: method,
+        headers: headers,
         body: body ? JSON.stringify(body) : null
       }
-  
+
       const response = await fetch(url, config)
+  
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Error fetching data')
+        try {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'Error fetching data')
+        } catch (jsonError) {
+          throw new Error('Error fetching data')
+        }
       }
   
-      return response.json()
+      return await response.json()
     } catch (error) {
       console.error('Fetch API Call Error:', error)
       throw error
@@ -33,3 +31,4 @@ async function fetchApiCall(url, method, body = null, headers = {}) {
   }
   
   export { fetchApiCall }
+  
