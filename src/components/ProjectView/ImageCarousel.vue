@@ -1,14 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
-import MockData from '../../assets/MockData.JSON'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-import ProjectBar from '../ProjectView/ProjectBar.vue'
-
 
 const store = useStore()
 const currentSlide = ref(0)
+const props = defineProps(["data"]);
+
+let MockData = ref(props.data);
 
 // Checking if image isSelected to either add or remove yellow borderline
 const isSelected = (item) => store.getters.isSelected(item)
@@ -26,7 +26,7 @@ const handleThumbnailClick = (item, index) => {
     const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
     // Then we find the index of the last selected image in the MockData array
     // This is used to set the current slide to the last selected image
-    const lastSelectedIndex = MockData.findIndex(img => img.basefile_name === lastSelectedImage.basefile_name)
+    const lastSelectedIndex = MockData.value.findIndex(img => img.basefile_name === lastSelectedImage.basefile_name)
     // Set the current slide to the last selected image
     currentSlide.value = lastSelectedIndex
   } else {
@@ -35,18 +35,9 @@ const handleThumbnailClick = (item, index) => {
     currentSlide.value = index;
   }
 }
-  // Used for ProjectBar (temporarily)
-  let selectedProject = ref('no project selected')
-
-  const handleProjectSelection = (projectTitle) => {
-    selectedProject.value = projectTitle
-  }
-
 </script>
 
 <template>
-  <div class="project-bar-wrapper">
-    <ProjectBar @update:selectedProject="handleProjectSelection" class="project-bar"/>
     <!-- Main Carousel -->
     <Carousel id="gallery" :items-to-show="1" :wrap-around="false" transition=0 v-model="currentSlide">
       <Slide v-for="(item, index) in MockData" :key="index">
@@ -55,7 +46,6 @@ const handleThumbnailClick = (item, index) => {
         </div>
       </Slide>
     </Carousel>
-  </div>
 
   <!-- Thumbnails Carousel -->
   <Carousel
@@ -79,24 +69,6 @@ const handleThumbnailClick = (item, index) => {
 </template>
 
 <style scoped>
-
-.project-bar-wrapper {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.project-bar {
-  width: 20%;
-  margin: 0;
-  padding: 2%;
-}
-
-#gallery{
-  width: 75%;
-  margin: 0;
-  padding: 0;
-}
 .carousel__item {
   text-align: center;
 }
