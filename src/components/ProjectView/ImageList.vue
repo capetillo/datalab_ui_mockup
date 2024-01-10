@@ -18,7 +18,6 @@ let itemsPerPage = ref(15);
 // --- Selection Logic ---
 let selected = ref([])
 
-// since item-value for v-data-table is set to basefilename we need to convert it back into an object
 function select(selectedImageNames) {
   store.dispatch('setSelectedImages', selectedImageNames)
 }
