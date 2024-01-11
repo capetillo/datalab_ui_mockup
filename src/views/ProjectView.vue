@@ -31,7 +31,6 @@
     display: grid;
     grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
     grid-template-rows: [row-start] 100% [row-end];
-    justify-content: space-between;
 }
 .project-bar{
     display: flex;
@@ -43,7 +42,6 @@
 .image-area{
     grid-column-start: col2-start;
     grid-column-end: col2-end;
-    margin-left: 10px;
 }
 .control-buttons{
     margin-top: 10px;
