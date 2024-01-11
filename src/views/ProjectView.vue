@@ -124,4 +124,3 @@ const sessionNameExists = (name) => {
         </v-card>
     </v-dialog>
   </template>
-  
