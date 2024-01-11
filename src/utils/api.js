@@ -20,7 +20,7 @@ async function fetchApiCall(url, method, body = null) {
     else {
       return await response.json()
     }
-  } catch(error) {
+  } catch (error) {
     console.error("Error raised when sending request.", error)
     throw Error("Error raised when sending request.", error)
   }

@@ -13,29 +13,27 @@ const newSessionName = ref('')
 const errorMessage = ref('')
 
 const getDataSessions = async () => {
-  try {
     const url = 'http://127.0.0.1:8000/api/datasessions/'
-    const data = await fetchApiCall(url, 'GET')
-    const results = data.results
-    const uniqueNames = new Set()
+    try {
+        const data = await fetchApiCall(url, 'GET')
+        const results = data.results
+        const uniqueNames = new Set()
 
-    uniqueDataSessions.value = results
-      .filter(session => {
-        const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
-        uniqueNames.add(session.name)
-        uniqueNames.add(session.id)
-        return isUnique
-      })
-      .map(session => ({ id: session.id, name: session.name }))
-
-    isPopupVisible.value = true
-  } catch (error) {
-    console.error('Error getting data sessions: ', error)
-  }
+        uniqueDataSessions.value = results
+        .filter(session => {
+            const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
+            uniqueNames.add(session.name)
+            uniqueNames.add(session.id)
+            return isUnique
+        })
+        .map(session => ({ id: session.id, name: session.name }))
+        isPopupVisible.value = true
+    } catch (error) {
+        console.error('Error getting data sessions: ', error)
+    }
 }
 
 const addImagesToExistingSession = async (session) => {
-  try {
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
       'source': image.image,
@@ -48,11 +46,11 @@ const addImagesToExistingSession = async (session) => {
     }
 
     const url = 'http://127.0.0.1:8000/api/datasessions/' + session.id + '/'
-    const data = await fetchApiCall(url, 'PATCH', requestBody)
-
-  } catch (error) {
-    console.error('Error importing images:', error)
-  }
+    try {
+        const data = await fetchApiCall(url, 'PATCH', requestBody)
+    } catch (error) {
+        console.error('Error importing images:', error)
+    }
 }
 
 const selectDataSession = (session) => {
@@ -66,8 +64,6 @@ const createNewDataSession = async () => {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
         return
     }
-
-    try {
         const selectedImages = store.state.selectedImages
         const inputData = selectedImages.map(image => ({
             'source': image.image,
@@ -77,18 +73,19 @@ const createNewDataSession = async () => {
             'name': newSessionName.value,
             'input_data': inputData 
         }
-        const url = 'http://127.0.0.1:8000/api/datasessions/'
-        const data = await fetchApiCall(url, 'POST', requestBody)
+        try {
+            const url = 'http://127.0.0.1:8000/api/datasessions/'
+            const data = await fetchApiCall(url, 'POST', requestBody)
 
-        isPopupVisible.value = false
-        newSessionName.value = ''
-        errorMessage.value = ''
+            isPopupVisible.value = false
+            newSessionName.value = ''
+            errorMessage.value = ''
 
-        router.push({ name: 'DataSessions' })
-    } catch (error) {
+            router.push({ name: 'DataSessions' })
+        } catch (error) {
         console.log('Error creating new data session:', error)
         errorMessage.value = 'Error creating new data session'
-    }
+        }
 }
 
 const sessionNameExists = (name) => {
