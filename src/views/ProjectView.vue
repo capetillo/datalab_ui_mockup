@@ -61,7 +61,7 @@ const selectDataSession = (session) => {
   router.push({ name: 'DataSessions' })
 }
 
-const createNewDataSession = async () => {
+const createNewDataSession = async () => { 
     if (sessionNameExists(newSessionName.value)) {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
         return
@@ -100,7 +100,7 @@ const sessionNameExists = (name) => {
 <template>
     <ToggleButton/>
     <v-btn @click="getDataSessions">Add to a Session</v-btn>
-    
+
     <v-dialog v-model="isPopupVisible" width="300">
         <v-card>
             <v-card-title>Data Sessions</v-card-title>
@@ -123,4 +123,4 @@ const sessionNameExists = (name) => {
             </v-card-actions>
         </v-card>
     </v-dialog>
-  </template>
+</template>
