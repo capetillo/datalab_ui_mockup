@@ -62,7 +62,7 @@ const selectDataSession = (session) => {
 }
 
 const createNewDataSession = async () => {
-    if (doesSessionNameExist(newSessionName.value)) {
+    if (sessionNameExists(newSessionName.value)) {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
         return
     }
@@ -91,7 +91,7 @@ const createNewDataSession = async () => {
     }
 }
 
-const doesSessionNameExist = (name) => {
+const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
 
