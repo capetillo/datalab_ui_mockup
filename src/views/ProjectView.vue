@@ -9,14 +9,17 @@
     // data
     import MockData from '../assets/MockData.JSON'
 
+    // toggle for optional data viewing, controlled by a v-switch
     let imageDisplayToggle = ref(true)
 </script>
 <template>
-    <ProjectBar/>
-    <div>
-        <v-switch v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
-        <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
-        <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
+    <div class="d-flex">
+        <ProjectBar class="w-25"/>
+        <div class="w-75">
+            <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
+            <ImageList class="overflow-auto" v-if="!imageDisplayToggle" :data="MockData"/>
+            <v-switch class="d-flex ml-auto" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
+        </div>
     </div>
     <ImportButton/>
 </template>
