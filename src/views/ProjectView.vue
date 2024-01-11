@@ -50,7 +50,6 @@ const addImagesToExistingSession = async (session) => {
     const url = 'http://127.0.0.1:8000/api/datasessions/' + session.id + '/'
     const data = await fetchApiCall(url, 'PATCH', requestBody)
 
-    console.log('Response:', data)
   } catch (error) {
     console.error('Error importing images:', error)
   }
@@ -80,8 +79,6 @@ const createNewDataSession = async () => {
         }
         const url = 'http://127.0.0.1:8000/api/datasessions/'
         const data = await fetchApiCall(url, 'POST', requestBody)
-
-        console.log('New Session Created:', data)
 
         isPopupVisible.value = false
         newSessionName.value = ''
