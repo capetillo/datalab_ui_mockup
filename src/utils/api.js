@@ -27,4 +27,3 @@ async function fetchApiCall(url, method, body = null) {
 }
   
   export { fetchApiCall }
-  
