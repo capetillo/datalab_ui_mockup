@@ -69,10 +69,6 @@ const handleThumbnailClick = (item, index) => {
 </template>
 
 <style scoped>
-.carousel__item {
-  text-align: center;
-}
-
 .thumbnail__item {
   max-width: 200px;
   max-height: 160px;

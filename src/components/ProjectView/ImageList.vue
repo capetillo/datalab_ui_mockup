@@ -45,8 +45,8 @@ onMounted ( () => {
       <v-img
         :src="require('@/assets/' + item.image)"
         :alt="item.basefile_name"
-        height="72"
-        width="128"
+        height="50"
+        width="200"
         cover
       >
       </v-img>
