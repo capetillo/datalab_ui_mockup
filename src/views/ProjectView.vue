@@ -13,13 +13,15 @@
     let imageDisplayToggle = ref(true)
 </script>
 <template>
-    <div class="d-flex">
-        <ProjectBar class="w-25"/>
-        <div class="w-75">
-            <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
-            <ImageList class="overflow-auto" v-if="!imageDisplayToggle" :data="MockData"/>
-            <v-switch class="d-flex ml-auto" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
+    <v-container fluid>
+        <div class="d-flex">
+            <ProjectBar class="w-25"/>
+            <div class="w-75">
+                <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
+                <ImageList class="overflow-auto" v-if="!imageDisplayToggle" :data="MockData"/>
+                <v-switch class="d-flex ml-auto" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
+            </div>
         </div>
-    </div>
-    <ImportButton/>
+        <ImportButton/>
+    </v-container>
 </template>
