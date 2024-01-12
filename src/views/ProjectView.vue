@@ -139,10 +139,10 @@ const sessionNameExists = (name) => {
 <style scoped>
 @media (min-width: 900px){
     .container{
-    margin: 20px;
-    display: grid;
-    grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
-    grid-template-rows: [row-start] 100% [row-end];
+        margin: 20px;
+        display: grid;
+        grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
+        grid-template-rows: [row-start] 100% [row-end];
     }
     .project-bar{
         display: flex;
