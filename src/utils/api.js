@@ -1,3 +1,4 @@
+// handles api requests with configurable parameters and callback functions
 async function fetchApiCall(url, method, body = null, successCallback, failCallback) {
   const headers = {
     'Content-Type': 'application/json',
@@ -17,10 +18,12 @@ async function fetchApiCall(url, method, body = null, successCallback, failCallb
     if (!response.ok) {
       console.error('Response not OK', responseData)
       if (failCallback) {
+        // invoking failure callback
         failCallback (responseData, response.status)
       } 
     } else {
       if (successCallback) {
+        // invoking success callback with responsedata and returning it for further processing
         successCallback (responseData)
         return responseData
       }
