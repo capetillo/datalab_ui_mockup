@@ -11,27 +11,36 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
+const apiUrl = 'http://127.0.0.1:8000/api/datasessions/'
+
+
+const handleSuccess = (data) => {
+    const results = data.results
+    const uniqueNames = new Set()
+    uniqueDataSessions.value = results
+    .filter(session => {
+        const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
+        uniqueNames.add(session.name)
+        uniqueNames.add(session.id)
+        return isUnique
+    })
+    .map(session => ({ id: session.id, name: session.name }))
+    isPopupVisible.value = true
+}
+
+const handleError = (error) => {
+    console.error('API call failed with error:', error)
+    errorMessage.value = error.message || 'An error occurred'
+}
 
 const getDataSessions = async () => {
-    const url = 'http://127.0.0.1:8000/api/datasessions/'
     try {
-        const data = await fetchApiCall(url, 'GET')
-        const results = data.results
-        const uniqueNames = new Set()
-
-        uniqueDataSessions.value = results
-        .filter(session => {
-            const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
-            uniqueNames.add(session.name)
-            uniqueNames.add(session.id)
-            return isUnique
-        })
-        .map(session => ({ id: session.id, name: session.name }))
-        isPopupVisible.value = true
+        await fetchApiCall(apiUrl, 'GET', null, handleSuccess, handleError)
     } catch (error) {
-        console.error('Error getting data sessions: ', error)
+        handleError(error)
     }
 }
+
 
 const addImagesToExistingSession = async (session) => {
     const selectedImages = store.state.selectedImages
@@ -45,18 +54,19 @@ const addImagesToExistingSession = async (session) => {
       'input_data': inputData
     }
 
-    const url = 'http://127.0.0.1:8000/api/datasessions/' + session.id + '/'
+    const url = apiUrl + session.id + '/'
     try {
-        const data = await fetchApiCall(url, 'PATCH', requestBody)
+        await fetchApiCall(url, 'PATCH', requestBody)
     } catch (error) {
         console.error('Error importing images:', error)
+        handleError(error)
     }
 }
 
 const selectDataSession = (session) => {
-  isPopupVisible.value = false
-  addImagesToExistingSession(session)
-  router.push({ name: 'DataSessions' })
+    isPopupVisible.value = false
+    addImagesToExistingSession(session)
+    router.push({ name: 'DataSessions' })
 }
 
 const createNewDataSession = async () => { 
@@ -74,8 +84,7 @@ const createNewDataSession = async () => {
             'input_data': inputData 
         }
         try {
-            const url = 'http://127.0.0.1:8000/api/datasessions/'
-            const data = await fetchApiCall(url, 'POST', requestBody)
+            const data = await fetchApiCall(apiUrl, 'POST', requestBody)
 
             isPopupVisible.value = false
             newSessionName.value = ''
@@ -83,8 +92,8 @@ const createNewDataSession = async () => {
 
             router.push({ name: 'DataSessions' })
         } catch (error) {
-        console.log('Error creating new data session:', error)
-        errorMessage.value = 'Error creating new data session'
+            console.log('Error creating new data session:', error)
+            errorMessage.value = 'Error creating new data session'
         }
 }
 
