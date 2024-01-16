@@ -1,4 +1,4 @@
-async function fetchApiCall(url, method, body = null) {
+async function fetchApiCall(url, method, body = null, successCallback, failCallback) {
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -13,17 +13,24 @@ async function fetchApiCall(url, method, body = null) {
 
   try {
     const response = await fetch(url, config)
+    const responseData = await response.json()
     if (!response.ok) {
-      console.error("Response not OK", response)
-      throw Error("Response not OK", response)
-    }
-    else {
-      return await response.json()
-    }
+      console.error('Response not OK', responseData)
+      if (failCallback) {
+        failCallback (responseData, response.status)
+        throw new Error ('Reponse not OK')
+      } 
+    } else {
+      if (successCallback) {
+        successCallback (responseData)
+        return responseData
+      }
+    } 
   } catch (error) {
-    console.error("Error raised when sending request.", error)
-    throw Error("Error raised when sending request.", error)
+      console.error('Error raised when sending request', error)
+      if (failCallback) failCallback (error)
+      throw error
   }
 }
-  
-  export { fetchApiCall }
+
+export { fetchApiCall }
