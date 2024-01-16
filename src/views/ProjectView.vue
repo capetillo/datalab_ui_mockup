@@ -11,7 +11,7 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const apiUrl = 'http://127.0.0.1:8000/api/datasessions/'
+const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
 
 
 const handleSuccess = (data) => {
@@ -35,7 +35,7 @@ const handleError = (error) => {
 
 const getDataSessions = async () => {
     try {
-        await fetchApiCall(apiUrl, 'GET', null, handleSuccess, handleError)
+        await fetchApiCall(apiBaseUrl, 'GET', null, handleSuccess, handleError)
     } catch (error) {
         handleError(error)
     }
@@ -54,7 +54,7 @@ const addImagesToExistingSession = async (session) => {
       'input_data': inputData
     }
 
-    const url = apiUrl + session.id + '/'
+    const url = apiBaseUrl + session.id + '/'
     try {
         await fetchApiCall(url, 'PATCH', requestBody)
     } catch (error) {
@@ -84,7 +84,7 @@ const createNewDataSession = async () => {
             'input_data': inputData 
         }
         try {
-            const data = await fetchApiCall(apiUrl, 'POST', requestBody)
+            const data = await fetchApiCall(apiBaseUrl, 'POST', requestBody)
 
             isPopupVisible.value = false
             newSessionName.value = ''
@@ -92,7 +92,7 @@ const createNewDataSession = async () => {
 
             router.push({ name: 'DataSessions' })
         } catch (error) {
-            console.log('Error creating new data session:', error)
+            console.error('Error creating new data session:', error)
             errorMessage.value = 'Error creating new data session'
         }
 }

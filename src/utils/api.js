@@ -18,7 +18,6 @@ async function fetchApiCall(url, method, body = null, successCallback, failCallb
       console.error('Response not OK', responseData)
       if (failCallback) {
         failCallback (responseData, response.status)
-        throw new Error ('Reponse not OK')
       } 
     } else {
       if (successCallback) {
@@ -29,7 +28,6 @@ async function fetchApiCall(url, method, body = null, successCallback, failCallb
   } catch (error) {
       console.error('Error raised when sending request', error)
       if (failCallback) failCallback (error)
-      throw error
   }
 }
 
