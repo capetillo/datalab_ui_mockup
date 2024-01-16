@@ -109,7 +109,7 @@ const sessionNameExists = (name) => {
             <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
-                <v-btn @click="getDataSessions">Add to a Session</v-btn>
+                <v-btn :disabled="store.getters.selectedImages.length === 0" @click="getDataSessions">Add to a Session</v-btn>
             </div>
         </div>
     </div>
