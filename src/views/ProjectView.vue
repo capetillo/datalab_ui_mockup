@@ -46,27 +46,32 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const selectedImages = store.state.selectedImages
-    const inputData = selectedImages.map(image => ({
-      'source': image.image,
-      'basename': image.basefile_name
-    }))
-
-    const requestBody = {
-      'name': session.name,
-      'input_data': inputData
-    }
-
     const url = apiBaseUrl + session.id + '/'
     try {
-        // attempting to patch session data
+        // fetches existing session data
+        const currentSessionResponse = await fetchApiCall(url, 'GET', handleSuccess, handleError)
+        const currentSessionData = currentSessionResponse.input_data
+
+        // merging existing and new image data
+        const selectedImages = store.state.selectedImages
+        const inputData = [...currentSessionData, ...selectedImages.map(image => ({
+          'source': image.image,
+          'basename': image.basefile_name
+        }))]
+
+        const requestBody = {
+          'name': session.name,
+          'input_data': inputData
+        }
+
+        // sending the PATCH request with the merged data
         await fetchApiCall(url, 'PATCH', requestBody)
     } catch (error) {
         console.error('Error importing images:', error)
-        // handling error
         handleError(error)
     }
 }
+
 
 // closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
 const selectDataSession = (session) => {
@@ -81,28 +86,28 @@ const createNewDataSession = async () => {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
         return
     }
-        const selectedImages = store.state.selectedImages
-        const inputData = selectedImages.map(image => ({
-            'source': image.image,
-            'basename': image.basefile_name
-        }))
-        const requestBody = { 
-            'name': newSessionName.value,
-            'input_data': inputData 
-        }
-        try {
-            // attempting a POST request for new session
-            const data = await fetchApiCall(apiBaseUrl, 'POST', requestBody)
+    const selectedImages = store.state.selectedImages
+    const inputData = selectedImages.map(image => ({
+        'source': image.image,
+        'basename': image.basefile_name
+    }))
+    const requestBody = { 
+        'name': newSessionName.value,
+        'input_data': inputData 
+    }
+    try {
+        // attempting a POST request for new session
+        const data = await fetchApiCall(apiBaseUrl, 'POST', requestBody)
 
-            // resetting state an rerouting to DataSessions view upon successful creation of new session
-            isPopupVisible.value = false
-            newSessionName.value = ''
-            errorMessage.value = ''
-            router.push({ name: 'DataSessions' })
-        } catch (error) {
-            console.error('Error creating new data session:', error)
-            errorMessage.value = 'Error creating new data session'
-        }
+        // resetting state an rerouting to DataSessions view upon successful creation of new session
+        isPopupVisible.value = false
+        newSessionName.value = ''
+        errorMessage.value = ''
+        router.push({ name: 'DataSessions' })
+    } catch (error) {
+        console.error('Error creating new data session:', error)
+        errorMessage.value = 'Error creating new data session'
+    }
 }
 
 const sessionNameExists = (name) => {

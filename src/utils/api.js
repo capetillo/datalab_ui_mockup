@@ -11,7 +11,6 @@ async function fetchApiCall(url, method, body = null, successCallback, failCallb
     headers: headers,
     body: body ? JSON.stringify(body) : null
   }
-
   try {
     const response = await fetch(url, config)
     const responseData = await response.json()
