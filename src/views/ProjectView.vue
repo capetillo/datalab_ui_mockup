@@ -13,11 +13,12 @@ const newSessionName = ref('')
 const errorMessage = ref('')
 const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
 
-
+// manages successful api response by filtering and mapping data to unique sessions
 const handleSuccess = (data) => {
     const results = data.results
     const uniqueNames = new Set()
     uniqueDataSessions.value = results
+    // filtering to ensure each session is unique by name and id, then map to required structure
     .filter(session => {
         const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
         uniqueNames.add(session.name)
@@ -28,11 +29,13 @@ const handleSuccess = (data) => {
     isPopupVisible.value = true
 }
 
+// manages api call failures by logging errors
 const handleError = (error) => {
     console.error('API call failed with error:', error)
     errorMessage.value = error.message || 'An error occurred'
 }
 
+// fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
         await fetchApiCall(apiBaseUrl, 'GET', null, handleSuccess, handleError)
@@ -41,7 +44,7 @@ const getDataSessions = async () => {
     }
 }
 
-
+// updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
@@ -56,19 +59,23 @@ const addImagesToExistingSession = async (session) => {
 
     const url = apiBaseUrl + session.id + '/'
     try {
+        // attempting to patch session data
         await fetchApiCall(url, 'PATCH', requestBody)
     } catch (error) {
         console.error('Error importing images:', error)
+        // handling error
         handleError(error)
     }
 }
 
+// closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
 const selectDataSession = (session) => {
     isPopupVisible.value = false
     addImagesToExistingSession(session)
     router.push({ name: 'DataSessions' })
 }
 
+// handles creation of a new session 
 const createNewDataSession = async () => { 
     if (sessionNameExists(newSessionName.value)) {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
@@ -84,12 +91,13 @@ const createNewDataSession = async () => {
             'input_data': inputData 
         }
         try {
+            // attempting a POST request for new session
             const data = await fetchApiCall(apiBaseUrl, 'POST', requestBody)
 
+            // resetting state an rerouting to DataSessions view upon successful creation of new session
             isPopupVisible.value = false
             newSessionName.value = ''
             errorMessage.value = ''
-
             router.push({ name: 'DataSessions' })
         } catch (error) {
             console.error('Error creating new data session:', error)
