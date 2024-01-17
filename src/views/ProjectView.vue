@@ -1,6 +1,6 @@
 <script setup>
 // libraries
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 // components
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
@@ -29,6 +29,10 @@ const handleSuccess = (data) => {
     .map(session => ({ id: session.id, name: session.name }))
     isPopupVisible.value = true
 }
+// boolean computed property used to disable the add to session button
+const noSelectedImages = computed(() => {
+  return store.getters.selectedImages.length === 0
+})
 
 // manages api call failures by logging errors
 const handleError = (error) => {
@@ -124,7 +128,7 @@ const sessionNameExists = (name) => {
             <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
-                <v-btn @click="getDataSessions">Add to a Session</v-btn>
+                <v-btn :disabled="noSelectedImages" @click="getDataSessions">Add to a Session</v-btn>
             </div>
         </div>
     </div>
