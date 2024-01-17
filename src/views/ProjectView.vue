@@ -22,6 +22,11 @@ const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
 
+// boolean computed property used to disable the add to session button
+const noSelectedImages = computed(() => {
+  return store.getters.selectedImages.length === 0
+})
+
 // manages successful api response by mapping data to unique sessions
 const handleSuccess = (data) => {
     const results = data.results
@@ -29,10 +34,6 @@ const handleSuccess = (data) => {
     .map(session => ({ id: session.id, name: session.name }))
     isPopupVisible.value = true
 }
-// boolean computed property used to disable the add to session button
-const noSelectedImages = computed(() => {
-  return store.getters.selectedImages.length === 0
-})
 
 // manages api call failures by logging errors
 const handleError = (error) => {
