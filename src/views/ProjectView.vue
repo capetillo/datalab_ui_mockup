@@ -1,6 +1,6 @@
 <script setup>
 // libraries
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 // components
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
@@ -20,6 +20,11 @@ const errorMessage = ref('')
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
+
+// boolean computed property used to disable the add to session button
+const noSelectedImages = computed(() => {
+  return store.getters.selectedImages.length === 0
+})
 
 const getDataSessions = async () => {
     const url = 'http://127.0.0.1:8000/api/datasessions/'
@@ -109,7 +114,7 @@ const sessionNameExists = (name) => {
             <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
-                <v-btn @click="getDataSessions">Add to a Session</v-btn>
+                <v-btn :disabled="noSelectedImages" @click="getDataSessions">Add to a Session</v-btn>
             </div>
         </div>
     </div>
