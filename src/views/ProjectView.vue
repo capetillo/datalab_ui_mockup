@@ -1,9 +1,15 @@
 <script setup>
+// libraries
 import { ref } from 'vue'
+// components
+import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
+import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
+import ImageList from '@/components/ProjectView/ImageList.vue';
+// data
+import MockData from '../assets/MockData.JSON'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { fetchApiCall } from '../utils/api'
-import ToggleButton from '../components/ToggleButton.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -12,6 +18,9 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
+
+// toggle for optional data viewing, controlled by a v-switch
+let imageDisplayToggle = ref(true)
 
 // manages successful api response by filtering and mapping data to unique sessions
 const handleSuccess = (data) => {
@@ -97,7 +106,7 @@ const createNewDataSession = async () => {
     }
     try {
         // attempting a POST request for new session
-        const data = await fetchApiCall(apiBaseUrl, 'POST', requestBody)
+        await fetchApiCall(apiBaseUrl, 'POST', requestBody)
 
         // resetting state an rerouting to DataSessions view upon successful creation of new session
         isPopupVisible.value = false
@@ -113,13 +122,19 @@ const createNewDataSession = async () => {
 const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
-
 </script>
-
 <template>
-    <ToggleButton/>
-    <v-btn @click="getDataSessions">Add to a Session</v-btn>
-
+    <div class="container">
+        <ProjectBar class="project-bar"/>
+        <div class="image-area">
+            <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
+            <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
+            <div class="control-buttons">
+                <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
+                <v-btn @click="getDataSessions">Add to a Session</v-btn>
+            </div>
+        </div>
+    </div>
     <v-dialog v-model="isPopupVisible" width="300">
         <v-card>
             <v-card-title>Data Sessions</v-card-title>
@@ -143,3 +158,30 @@ const sessionNameExists = (name) => {
         </v-card>
     </v-dialog>
 </template>
+<style scoped>
+@media (min-width: 900px){
+    .container{
+        margin: 20px;
+        display: grid;
+        grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
+        grid-template-rows: [row-start] 100% [row-end];
+    }
+    .project-bar{
+        display: flex;
+        grid-column-start: col1-start;
+        grid-column-end: col1-end;
+        grid-row-start: row-start;
+        grid-row-end: row-end;
+    }
+    .image-area{
+        grid-column-start: col2-start;
+        grid-column-end: col2-end;
+    }
+}
+.control-buttons{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    float: right;
+}
+</style>
