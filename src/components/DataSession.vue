@@ -63,21 +63,17 @@ onMounted(() => {
   <v-container class="d-lg-flex">
     <v-row>
       <v-col cols="9">
-        <!-- TODO: Place input/output view here -->
-        <v-carousel>
+        <v-carousel v-if="images.length">
           <v-carousel-item
             v-for="(image, index) in images"
             :key="index"
-            :src="image ? require('../assets/' + image) : ''"
+            :src="require('../assets/' + image)"
             cover
           ></v-carousel-item>
         </v-carousel>
       </v-col>
       <v-col cols="3" justify="center" align="center">
-        <!-- The operations bar list goes here -->
-        <operation-pipeline :operations="data.operations" @add-operation="addOperation">
-
-        </operation-pipeline>
+        <operation-pipeline :operations="data.operations" @add-operation="addOperation"></operation-pipeline>
       </v-col>
     </v-row>
   </v-container>

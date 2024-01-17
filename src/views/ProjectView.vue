@@ -22,18 +22,10 @@ const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
 
-// manages successful api response by filtering and mapping data to unique sessions
+// manages successful api response by mapping data to unique sessions
 const handleSuccess = (data) => {
     const results = data.results
-    const uniqueNames = new Set()
     uniqueDataSessions.value = results
-    // filtering to ensure each session is unique by name and id, then map to required structure
-    .filter(session => {
-        const isUnique = !uniqueNames.has(session.name) && !uniqueNames.has(session.id)
-        uniqueNames.add(session.name)
-        uniqueNames.add(session.id)
-        return isUnique
-    })
     .map(session => ({ id: session.id, name: session.name }))
     isPopupVisible.value = true
 }
@@ -47,7 +39,7 @@ const handleError = (error) => {
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
-        await fetchApiCall(apiBaseUrl, 'GET', null, handleSuccess, handleError)
+        await fetchApiCall({ url: apiBaseUrl, method: 'GET', successCallback: handleSuccess, failCallback: handleError })
     } catch (error) {
         handleError(error)
     }
@@ -55,10 +47,10 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const url = apiBaseUrl + session.id + '/'
+    const sessionIdUrl = apiBaseUrl + session.id + '/'
     try {
         // fetches existing session data
-        const currentSessionResponse = await fetchApiCall(url, 'GET', handleSuccess, handleError)
+        const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
         const currentSessionData = currentSessionResponse.input_data
 
         // merging existing and new image data
@@ -74,7 +66,7 @@ const addImagesToExistingSession = async (session) => {
         }
 
         // sending the PATCH request with the merged data
-        await fetchApiCall(url, 'PATCH', requestBody)
+        await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody })
     } catch (error) {
         console.error('Error importing images:', error)
         handleError(error)
@@ -106,7 +98,7 @@ const createNewDataSession = async () => {
     }
     try {
         // attempting a POST request for new session
-        await fetchApiCall(apiBaseUrl, 'POST', requestBody)
+        await fetchApiCall({ url: apiBaseUrl, method: 'POST', body: requestBody })
 
         // resetting state an rerouting to DataSessions view upon successful creation of new session
         isPopupVisible.value = false
@@ -122,6 +114,7 @@ const createNewDataSession = async () => {
 const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
+
 </script>
 <template>
     <div class="container">
