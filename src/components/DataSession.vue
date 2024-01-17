@@ -73,7 +73,10 @@ onMounted(() => {
         </v-carousel>
       </v-col>
       <v-col cols="3" justify="center" align="center">
-        <operation-pipeline :operations="data.operations" @add-operation="addOperation"></operation-pipeline>
+        <!-- The operations bar list goes here -->
+        <operation-pipeline :operations="data.operations" @add-operation="addOperation">
+        
+        </operation-pipeline>
       </v-col>
     </v-row>
   </v-container>
