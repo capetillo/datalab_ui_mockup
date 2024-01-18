@@ -63,12 +63,11 @@ onMounted(() => {
   <v-container class="d-lg-flex">
     <v-row>
       <v-col cols="9">
-        <!-- TODO: Place input/output view here -->
-        <v-carousel>
+        <v-carousel v-if="images.length">
           <v-carousel-item
             v-for="(image, index) in images"
             :key="index"
-            :src="image ? require('../assets/' + image) : ''"
+            :src="require('../assets/' + image)"
             cover
           ></v-carousel-item>
         </v-carousel>
