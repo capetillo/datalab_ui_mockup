@@ -28,7 +28,7 @@ const noSelectedImages = computed(() => {
 })
 
 // manages successful api response by mapping data to unique sessions
-const handleSuccess = (data) => {
+const mapDataSessions = (data) => {
     const results = data.results
     uniqueDataSessions.value = results
     .map(session => ({ id: session.id, name: session.name }))
@@ -44,7 +44,7 @@ const handleError = (error) => {
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
-        await fetchApiCall({ url: apiBaseUrl, method: 'GET', successCallback: handleSuccess, failCallback: handleError })
+        await fetchApiCall({ url: apiBaseUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
     } catch (error) {
         handleError(error)
     }
@@ -59,6 +59,8 @@ const addImagesToExistingSession = async (session) => {
         const currentSessionData = currentSessionResponse.input_data
 
         // merging existing and new image data
+        // this is temporary since the backend has to be updated to handle this
+        // remove this when backend gets updated
         const selectedImages = store.state.selectedImages
         const inputData = [...currentSessionData, ...selectedImages.map(image => ({
           'source': image.image,
