@@ -14,12 +14,10 @@ async function loadConfig() {
 
 // handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
-  const dataConfig = await loadConfig()
-  const token = dataConfig.authorizationToken
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': token,
+    'Authorization': 'Token 123456789abcdefg',
   }
   
   const config = {
