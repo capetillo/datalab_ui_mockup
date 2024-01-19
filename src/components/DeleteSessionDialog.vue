@@ -1,22 +1,17 @@
 <script setup>
 import { fetchApiCall } from '@/utils/api';
 const props = defineProps([ 'modelValue', 'deleteId'])
-const emit = defineEmits(['update:modelValue', 'refreshDataSessions'])
+const emit = defineEmits(['update:modelValue', 'reloadSession'])
 
 function closeDialog() { emit('update:modelValue', false)}
 
 async function confirmDeleteSession() {
   if (props.deleteId != -1) {
-    console.log('deleting session with id ' + props.deleteId)
-    const url = 'http://127.0.0.1:8000/api/datasessions/'+props.deleteId+'/'
-    try {
-      await fetchApiCall(url, 'DELETE' )
-      .then(response => response.json())
-    } catch (error) {
-      console.log('error calling api: ', error)
-    }
-    emit('refreshDataSessions')
-    closeDialog()
+    const url = 'http://127.0.0.1:8000/api/datasessions/' + props.deleteId
+    fetchApiCall({url:url, method:'DELETE'})
+    .then(function() {emit('reloadSession')})
+    .then(function() {closeDialog()})
+    .catch(error => console.error('Error:', error));
   }
 }
 </script>

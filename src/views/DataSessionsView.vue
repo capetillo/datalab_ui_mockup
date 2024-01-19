@@ -48,6 +48,6 @@ function loadAllSessions() {
         </v-window-item>
       </v-window>
     </v-card>
-    <delete-session-dialog v-model="showDeleteDialog" :deleteId="deleteSessionId" @refreshDataSessions="console.log('emitted event heard by parrent')"/>
+    <delete-session-dialog v-model="showDeleteDialog" :deleteId="deleteSessionId" @reload-session="loadAllSessions()"/>
   </v-container>
 </template>
