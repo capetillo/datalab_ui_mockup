@@ -20,7 +20,9 @@ export default createStore({
         state.selectedImages.push(image)
       }
     },
-    selectedImages(state, val) { state.selectedImages = val },
+    selectedImages(state, value) { 
+      state.selectedImages = value
+    },
 
     setIsConfigLoaded(state, value) {
       state.isConfigLoaded = value
