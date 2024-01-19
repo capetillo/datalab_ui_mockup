@@ -13,6 +13,7 @@ onMounted(async () => {
   // only render if config is loaded
   if (config) {
     store.commit('setIsConfigLoaded', true)
+    store.commit('setApiBaseUrl', config.apiBaseUrl)
     store.commit('setDataSessionsUrl', config.dataSessionsUrl)
     store.commit('setArchiveUrl', config.dataLabArchiveUrl)
   }  
