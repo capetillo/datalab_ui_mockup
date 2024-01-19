@@ -5,10 +5,11 @@ export default createStore({
     return {
       selectedImages: [],
       isConfigLoaded: false,
-      getDataSessionsUrl: '',
-      getArchiveUrl: ''
+      dataSessionsUrl: '',
+      archiveUrl: '',
     }
   },
+
   mutations: {
     // toggle image selection
     toggleImageSelection(state, image) {
@@ -24,7 +25,16 @@ export default createStore({
     setIsConfigLoaded(state, value) {
       state.isConfigLoaded = value
     },
+
+    setDataSessionsUrl(state, url) {
+      state.dataSessionsUrl = url
+    },
+
+    setArchiveUrl(state, url) {
+      state.archiveUrl = url
+    }
   },
+
   actions: {
     toggleImageSelection({ commit }, image) {
       commit('toggleImageSelection', image)
