@@ -16,8 +16,8 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
     const response = await fetch(url, config)
 
     // Check for empty or non-JSON response
-    if (response.status === 204 || response.status === 301) {
-      // No content, handle accordingly (e.g., invoke successCallback with null)
+    if (response.ok && response.headers.get('Content-Length') === '0') {
+      // No content, handle accordingly
       if (successCallback) successCallback(null);
       return null;
     }

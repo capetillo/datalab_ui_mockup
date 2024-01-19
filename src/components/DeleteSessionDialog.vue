@@ -1,19 +1,19 @@
 <script setup>
+import { ref } from 'vue';
 import { fetchApiCall } from '@/utils/api';
 const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
 
-function closeDialog() { emit('update:modelValue', false)}
+let showSnackBar = ref(false)
+
+function closeDialog() { 
+  emit('update:modelValue', false)
+  emit('reloadSession')
+}
 
 async function confirmDeleteSession() {
-  if (props.deleteId != -1) {
-    const url = 'http://127.0.0.1:8000/api/datasessions/' + props.deleteId
-    fetchApiCall({url:url, method:'DELETE'})
-    .then(function() {emit('reloadSession')})
-    .then(function() {closeDialog()})
-    .catch(error => console.error('Error:', error));
-  }
-  closeDialog()
+  const url = 'http://127.0.0.1:8000/api/datasessions/' + props.deleteId
+  fetchApiCall({url:url, method:'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
@@ -47,4 +47,11 @@ async function confirmDeleteSession() {
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-snackbar
+    v-model="showSnackBar"
+    color="red"
+    :timeout="2000"
+  >
+    Error: Item couldn't be deleted
+  </v-snackbar>
 </template>
