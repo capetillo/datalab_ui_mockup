@@ -3,7 +3,9 @@ import { createStore } from 'vuex'
 export default createStore({
   state() {
     return {
-      selectedImages: []
+      selectedImages: [],
+      getDataSessionsUrl: '',
+      getArchiveUrl: ''
     }
   },
   mutations: {
