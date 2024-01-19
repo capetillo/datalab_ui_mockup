@@ -1,9 +1,25 @@
-// handles api requests with configurable parameters and callback functions
+
+async function loadConfig() {
+  try {
+    const response = await fetch('/config/config.json')
+    if (!response.ok) {
+      throw Error('Failed to load configuration')
+    }
+    const configData = response.json()
+    return configData
+  } catch (error) {
+    console.error('Error loading configuration:', error)
+  }
+}
+
+// handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
+  const dataConfig = await loadConfig()
+  const token = dataConfig.authorizationToken
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Token 123456789abcdefg',
+    'Authorization': token,
   }
   
   const config = {
