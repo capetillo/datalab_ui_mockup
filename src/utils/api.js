@@ -14,7 +14,16 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
 
   try {
     const response = await fetch(url, config)
+
+    // Check for empty or non-JSON response
+    if (response.status === 204 || response.status === 301) {
+      // No content, handle accordingly (e.g., invoke successCallback with null)
+      if (successCallback) successCallback(null);
+      return null;
+    }
+
     const responseData = await response.json()
+
     if (!response.ok) {
       console.error('Response not OK', responseData)
       if (failCallback) {
@@ -26,7 +35,7 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
         // invoking success callback with responsedata and returning it for further processing
         successCallback (responseData)
       }
-    } 
+    }
     return responseData
   } catch (error) {
       console.error('Error raised when sending request', error)
