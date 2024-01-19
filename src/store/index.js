@@ -29,6 +29,10 @@ export default createStore({
       state.isConfigLoaded = value
     },
 
+    setApiBaseUrl(state, url) {
+      state.apiBaseUrl = url
+    },
+
     setDataSessionsUrl(state, url) {
       state.dataSessionsUrl = url
     },
