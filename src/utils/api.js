@@ -1,17 +1,3 @@
-// loads config data
-async function loadConfig() {
-  try {
-    const response = await fetch('/config/config.json')
-    if (!response.ok) {
-      throw Error('Failed to load configuration')
-    }
-    const configData = response.json()
-    return configData
-  } catch (error) {
-    console.error('Error loading configuration:', error)
-  }
-}
-
 // handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
 
@@ -49,4 +35,4 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
   }
 }
 
-export { fetchApiCall, loadConfig }
+export { fetchApiCall }
