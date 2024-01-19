@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import { loadConfig } from './utils/api'
 
 const store = useStore()
 const loadedConfig = computed(() => store.state.isConfigLoaded)
@@ -20,7 +19,7 @@ async function loadConfiguration() {
     console.error('Error loading configuration:', error)
   }
 }
-// invoking loadConfig when app first mounts
+// invoking loadConfiguration when app first mounts
 onMounted(async () => {
   const config = await loadConfiguration()
 
