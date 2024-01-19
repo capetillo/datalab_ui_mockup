@@ -5,6 +5,7 @@ export default createStore({
     return {
       selectedImages: [],
       isConfigLoaded: false,
+      apiBaseUrl: '',
       dataSessionsUrl: '',
       archiveUrl: '',
     }
