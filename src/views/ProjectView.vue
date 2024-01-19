@@ -1,6 +1,6 @@
 <script setup>
 // libraries
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 // components
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
@@ -9,17 +9,15 @@ import ImageList from '@/components/ProjectView/ImageList.vue';
 import MockData from '../assets/MockData.JSON'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { fetchApiCall, loadConfig } from '../utils/api'
+import { fetchApiCall } from '../utils/api'
 
 const router = useRouter()
 const store = useStore()
-const isConfigLoaded = ref(false)
 const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-
-let apiBaseUrl
+const dataSessionsUrl = store.state.dataSessionsUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
@@ -46,7 +44,7 @@ const handleError = (error) => {
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
-        await fetchApiCall({ url: apiBaseUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
     } catch (error) {
         handleError(error)
     }
@@ -54,7 +52,7 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const sessionIdUrl = apiBaseUrl + session.id + '/'
+    const sessionIdUrl = dataSessionsUrl.value + session.id + '/'
     try {
         // fetches existing session data
         const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
@@ -107,7 +105,7 @@ const createNewDataSession = async () => {
     }
     try {
         // attempting a POST request for new session
-        await fetchApiCall({ url: apiBaseUrl, method: 'POST', body: requestBody })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
 
         // resetting state an rerouting to DataSessions view upon successful creation of new session
         isPopupVisible.value = false
@@ -124,18 +122,10 @@ const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
 
-// invoking loadConfig when view first mounts
-onMounted(async () => {
-  const config = await loadConfig()
-  apiBaseUrl = config.dataSessionApiUrl + '/datasessions/'
-  // for rendering purposes
-  isConfigLoaded.value = true
-})
-
 </script>
 <template>
     <!-- only load if config is loaded -->
-    <div v-if="isConfigLoaded" class="container">
+    <div class="container">
         <ProjectBar class="project-bar"/>
         <div class="image-area">
             <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
