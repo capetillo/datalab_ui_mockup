@@ -13,6 +13,7 @@ async function confirmDeleteSession() {
     .then(function() {closeDialog()})
     .catch(error => console.error('Error:', error));
   }
+  closeDialog()
 }
 </script>
 <template>
