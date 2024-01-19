@@ -17,29 +17,22 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
 
     // Check for empty or non-JSON response
     if (response.ok && response.headers.get('Content-Length') === '0') {
-      // No content, handle accordingly
-      if (successCallback) successCallback(null);
-      return null;
-    }
-
-    const responseData = await response.json()
-
-    if (!response.ok) {
-      console.error('Response not OK', responseData)
-      if (failCallback) {
-        // invoking failure callback
-        failCallback (responseData, response.status)
-      } 
+      // No content, handle accordingl
+      successCallback ? successCallback(null) : null
     } else {
-      if (successCallback) {
-        // invoking success callback with responsedata and returning it for further processing
-        successCallback (responseData)
+      const responseData = await response.json()
+
+      if (!response.ok) {
+        console.error('Response not OK', responseData)
+        failCallback ? failCallback(responseData, response.status) : null
+      } else {
+        // Invoking success callback with responseData
+        successCallback ? successCallback(responseData) : null
       }
     }
-    return responseData
   } catch (error) {
-      console.error('Error raised when sending request', error)
-      if (failCallback) failCallback (error)
+    console.error('Error raised when sending request', error)
+    failCallback ? failCallback(error) : null
   }
 }
 
