@@ -52,7 +52,8 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const sessionIdUrl = dataSessionsUrl.value + session.id + '/'
+    const sessionIdUrl = dataSessionsUrl + session.id + '/'
+    console.log('sessionidurl', sessionIdUrl)
     try {
         // fetches existing session data
         const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
