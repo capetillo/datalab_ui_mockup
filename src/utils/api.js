@@ -1,4 +1,4 @@
-
+// loads config data
 async function loadConfig() {
   try {
     const response = await fetch('/config/config.json')
