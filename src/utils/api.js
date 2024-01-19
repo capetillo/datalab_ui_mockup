@@ -17,7 +17,7 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
 
     // Check for empty or non-JSON response
     if (response.ok && response.headers.get('Content-Length') === '0') {
-      // No content, handle accordingl
+      // No content return a success with null
       successCallback ? successCallback(null) : null
     } else {
       const responseData = await response.json()
@@ -29,6 +29,7 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
         // Invoking success callback with responseData
         successCallback ? successCallback(responseData) : null
       }
+      return responseData
     }
   } catch (error) {
     console.error('Error raised when sending request', error)
