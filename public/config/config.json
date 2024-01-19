@@ -1,4 +1,4 @@
 {
     "dataSessionApiUrl": "http://127.0.0.1:8000/api",
-    "dataLabARchiveApiUrl": "https://datalab-archive.photonranch.org/"
+    "dataLabArchiveApiUrl": "https://datalab-archive.photonranch.org/"
   }
