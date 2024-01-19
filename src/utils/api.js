@@ -50,4 +50,4 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
   }
 }
 
-export { fetchApiCall }
+export { fetchApiCall, loadConfig }

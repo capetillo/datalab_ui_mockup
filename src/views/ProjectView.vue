@@ -1,6 +1,6 @@
 <script setup>
 // libraries
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 // components
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
@@ -9,15 +9,17 @@ import ImageList from '@/components/ProjectView/ImageList.vue';
 import MockData from '../assets/MockData.JSON'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { fetchApiCall } from '../utils/api'
+import { fetchApiCall, loadConfig } from '../utils/api'
 
 const router = useRouter()
 const store = useStore()
+const isConfigLoaded = ref(false)
 const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
+
+let apiBaseUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
@@ -122,9 +124,18 @@ const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
 
+// invoking loadConfig when view first mounts
+onMounted(async () => {
+  const config = await loadConfig()
+  apiBaseUrl = config.dataSessionApiUrl + '/datasessions/'
+  // for rendering purposes
+  isConfigLoaded.value = true
+})
+
 </script>
 <template>
-    <div class="container">
+    <!-- only load if config is loaded -->
+    <div v-if="isConfigLoaded" class="container">
         <ProjectBar class="project-bar"/>
         <div class="image-area">
             <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
