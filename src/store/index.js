@@ -4,6 +4,7 @@ export default createStore({
   state() {
     return {
       selectedImages: [],
+      isConfigLoaded: false,
       getDataSessionsUrl: '',
       getArchiveUrl: ''
     }
