@@ -19,7 +19,11 @@ export default createStore({
         state.selectedImages.push(image)
       }
     },
-    selectedImages(state, val) { state.selectedImages = val }
+    selectedImages(state, val) { state.selectedImages = val },
+
+    setIsConfigLoaded(state, value) {
+      state.isConfigLoaded = value
+    },
   },
   actions: {
     toggleImageSelection({ commit }, image) {
