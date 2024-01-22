@@ -18,7 +18,6 @@ onMounted(async () => {
       store.commit('setApiBaseUrl', config.apiBaseUrl)
       store.commit('setDataSessionsUrl', config.dataSessionsUrl)
       store.commit('setArchiveUrl', config.dataLabArchiveUrl)
-      store.commit('setUserProfileUrl', config.setUserProfileUrl)
     }  
   } catch (error) {
     console.error('Error loading configuration:', error)
