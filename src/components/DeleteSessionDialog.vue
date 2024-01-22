@@ -17,7 +17,7 @@ function closeDialog() {
 
 async function confirmDeleteSession() {
   const url = dataSessionsUrl + props.deleteId
-  await fetchApiCall({url:url, method:'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+  await fetchApiCall({url: url, method: 'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
