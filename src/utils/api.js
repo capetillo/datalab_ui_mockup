@@ -1,5 +1,6 @@
-// handles api requests with configurable parameters and callback functions
+// handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
+
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
