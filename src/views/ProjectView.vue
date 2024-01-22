@@ -17,7 +17,7 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const apiBaseUrl = 'http://127.0.0.1:8000/api/datasessions/'
+const dataSessionsUrl = store.state.dataSessionsUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
@@ -44,7 +44,7 @@ const handleError = (error) => {
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
-        await fetchApiCall({ url: apiBaseUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
     } catch (error) {
         handleError(error)
     }
@@ -52,7 +52,8 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const sessionIdUrl = apiBaseUrl + session.id + '/'
+    const sessionIdUrl = dataSessionsUrl + session.id + '/'
+    console.log('sessionidurl', sessionIdUrl)
     try {
         // fetches existing session data
         const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
@@ -105,7 +106,7 @@ const createNewDataSession = async () => {
     }
     try {
         // attempting a POST request for new session
-        await fetchApiCall({ url: apiBaseUrl, method: 'POST', body: requestBody })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
 
         // resetting state an rerouting to DataSessions view upon successful creation of new session
         isPopupVisible.value = false
@@ -124,6 +125,7 @@ const sessionNameExists = (name) => {
 
 </script>
 <template>
+    <!-- only load if config is loaded -->
     <div class="container">
         <ProjectBar class="project-bar"/>
         <div class="image-area">
