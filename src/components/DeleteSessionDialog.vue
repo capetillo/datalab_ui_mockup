@@ -1,10 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import { fetchApiCall } from '@/utils/api';
+import { useStore } from 'vuex'
+
 const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
+const store = useStore()
 
 let showSnackBar = ref(false)
+const dataSessionsUrl = store.state.dataSessionsUrl
 
 function closeDialog() { 
   emit('update:modelValue', false)
@@ -12,8 +16,8 @@ function closeDialog() {
 }
 
 async function confirmDeleteSession() {
-  const url = 'http://127.0.0.1:8000/api/datasessions/' + props.deleteId
-  fetchApiCall({url:url, method:'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+  const url = dataSessionsUrl + props.deleteId
+  await fetchApiCall({url:url, method:'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
