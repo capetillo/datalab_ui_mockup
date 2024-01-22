@@ -8,6 +8,7 @@ export default createStore({
       apiBaseUrl: '',
       dataSessionsUrl: '',
       archiveUrl: '',
+      userProfileUrl: ''
     }
   },
 
@@ -39,6 +40,10 @@ export default createStore({
 
     setArchiveUrl(state, url) {
       state.archiveUrl = url
+    },
+    
+    setUserProfileUrl(state, url) {
+      state.userProfileUrl = url
     }
   },
 
