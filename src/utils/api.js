@@ -28,6 +28,7 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
         successCallback (responseData)
       }
     } 
+    console.log('response data:', responseData)
     return responseData
   } catch (error) {
       console.error('Error raised when sending request', error)
@@ -35,4 +36,33 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
   }
 }
 
-export { fetchApiCall }
+async function authenticateAndGetToken() {
+  const authUrl = 'https://datalab-archive.photonranch.org/api-token-auth/'
+  const credentials = {
+      username: 'eng',
+      password: 'sbatoo1'
+  }
+
+  try {
+      const response = await fetch(authUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credentials)
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+          console.log('Authentication successful:', data)
+          return data.token
+      } else {
+          console.error('Authentication failed:', data)
+          throw new Error('Authentication failed')
+      }
+  } catch (error) {
+      console.error('Error during authentication request:', error)
+      throw error
+  }
+}
+
+export { fetchApiCall, authenticateAndGetToken }
