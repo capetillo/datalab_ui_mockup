@@ -1,15 +1,11 @@
 <script setup>
-// libraries
-import { ref, computed } from 'vue'
-// components
+import { ref, computed, onMounted } from 'vue'
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
 import ImageList from '@/components/ProjectView/ImageList.vue';
-// data
-import MockData from '../assets/MockData.JSON'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { fetchApiCall } from '../utils/api'
+import { fetchApiCall, fetchImagesfromLinks } from '../utils/api'
 
 const router = useRouter()
 const store = useStore()
@@ -18,10 +14,17 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const dataSessionsUrl = store.state.dataSessionsUrl
-
-// toggle for optional data viewing, controlled by a v-switch
+const data = ref(null)
 let imageDisplayToggle = ref(true)
 
+// Logic for fetching data from OCS and Archive for displaying in Projects
+const getUserImages = async () => {
+    // url and body for getting the list of the user's images
+    const url = ""
+    const body = ""
+    const imageLinks = await fetchApiCall(url, 'GET', body, console.log("success"), console.log("failure"))
+    data.value = await fetchImagesfromLinks(imageLinks)
+}
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
   return store.getters.selectedImages.length === 0
@@ -123,14 +126,19 @@ const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
 
+onMounted(() => {
+  getUserImages()
+})
+
 </script>
 <template>
     <!-- only load if config is loaded -->
     <div class="container">
         <ProjectBar class="project-bar"/>
-        <div class="image-area">
-            <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
-            <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
+        <div class="image-area h-screen">
+            <ImageCarousel v-if="imageDisplayToggle && data" :data="data"/>
+            <ImageList v-if="!imageDisplayToggle && data" :data="data"/>
+            <v-skeleton-loader v-else type="card"></v-skeleton-loader>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
                 <v-btn :disabled="noSelectedImages" @click="getDataSessions">Add to a Session</v-btn>
