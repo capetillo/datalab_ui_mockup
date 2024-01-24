@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import DataSession from '@/components/DataSession.vue';
+import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue';
 
 const dataSessions = ref([]);
 const tab = ref();
 const deleteSessionId = ref(-1);
-const showDeleteSessionDialog = ref(false);
+const showDeleteDialog = ref(false);
 
 onMounted(() => {
   loadAllSessions();
@@ -13,7 +14,7 @@ onMounted(() => {
 
 function deleteSession(id) {
   deleteSessionId.value = id;
-  showDeleteSessionDialog.value = true;
+  showDeleteDialog.value = true;
 }
 
 function loadAllSessions() {
@@ -23,14 +24,6 @@ function loadAllSessions() {
   })
     .then(response => response.json())
     .then(data => dataSessions.value = data.results);
-}
-
-function confirmDeleteSession() {
-  if (deleteSessionId.value != -1) {
-    console.log('deleting session id ' + deleteSessionId.value);
-    deleteSessionId.value = -1;
-  }
-  showDeleteSessionDialog.value = false;
 }
 
 </script>
@@ -55,35 +48,6 @@ function confirmDeleteSession() {
         </v-window-item>
       </v-window>
     </v-card>
-  <!-- Shared dialog used to confirm deleting of sessions -->
-  <v-dialog
-    v-model="showDeleteSessionDialog"
-    persistent
-    width="auto"
-  >
-    <v-card>
-      <v-card-title class="text-h5" color="red-lighten-1">
-        Delete Session
-      </v-card-title>
-      <v-card-text>Are you sure you want to delete this Datalab Session? This operation is not reversible!</v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="green-darken-1"
-          variant="text"
-          @click="showDeleteSessionDialog = false"
-        >
-          Go Back
-        </v-btn>
-        <v-btn
-          color="red-darken-1"
-          variant="text"
-          @click="confirmDeleteSession()"
-        >
-          Delete
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <delete-session-dialog v-model="showDeleteDialog" :deleteId="deleteSessionId" @reload-session="loadAllSessions()"/>
   </v-container>
 </template>
