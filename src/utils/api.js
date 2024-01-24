@@ -35,4 +35,13 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
   }
 }
 
-export { fetchApiCall }
+async function fetchImagesfromLinks(imageLinks){
+  // api endpoint to archive images
+  const url = ""
+  // add image link list to body in json form
+  const body = ""
+  // return the images
+  return await fetchApiCall(url, 'GET', body, console.log('success'), console.log('failure'))
+}
+
+export { fetchApiCall, fetchImagesfromLinks }
