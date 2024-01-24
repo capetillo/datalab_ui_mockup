@@ -8,7 +8,10 @@ export default createStore({
       apiBaseUrl: '',
       dataSessionsUrl: '',
       archiveUrl: '',
-      userProfileUrl: ''
+      userProfileUrl: '',
+      username: '',
+      userPassword: '',
+      authToken: ''
     }
   },
 
@@ -44,6 +47,18 @@ export default createStore({
     
     setUserProfileUrl(state, url) {
       state.userProfileUrl = url
+    },
+
+    setUsername(state, username) {
+      state.username = username
+    },
+
+    setUserPassword(state, password) {
+      state.userPassword = password
+    },
+
+    setAuthToken(state, token) {
+      state.authToken = token
     }
   },
 
