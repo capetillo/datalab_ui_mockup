@@ -36,6 +36,7 @@ async function authenticateAndGetToken() {
 
     const data = await response.json()
     if (response.ok) {
+        store.commit('setUsername', username.value)
         store.commit('setAuthToken', data.token)
         return data.token
     } else {
@@ -73,14 +74,14 @@ async function getUserProfile() {
 }
 
 const onSubmit = () => {
-    store.commit('setUsername', username.value)
+    
 }
 
 </script>
 
 <template>
     <v-container>
-    <v-form @submit.prevent="onSubmit">
+    <v-form @submit.prevent="getUserProfile">
       <v-text-field
         label="Username"
         v-model="username"
