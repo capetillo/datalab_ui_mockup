@@ -10,6 +10,11 @@ const profileBaseUrl = store.state.userProfileUrl
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
+const showPassword = ref(false)
+
+const rules = {
+    required: value => !!value || 'Required.'
+}
 
 async function authenticateAndGetToken() {
     const authUrl = profileBaseUrl + 'api-token-auth/'
@@ -76,18 +81,28 @@ const onSubmit = () => {
       <v-text-field
         label="Username"
         v-model="username"
+        :rules="[rules.required]"
         required
-      ></v-text-field>
+    ></v-text-field>
 
       <v-text-field
         label="Password"
         v-model="password"
-        type="password"
+        :type="showPassword ? 'text' : 'password'"
+        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append="showPassword = !showPassword"
+        :rules="[rules.required]"
         required
-      ></v-text-field>
-
-      <v-btn type="submit" color="primary" @click="getUser">Login</v-btn>
+    ></v-text-field>
+        <v-btn type="submit" color="primary" @click="getUser">Login</v-btn>
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </v-form>
-    <div v-if="errorMessage">{{ errorMessage }}</div>
   </v-container>
 </template>
+
+<style scoped>
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+</style>
