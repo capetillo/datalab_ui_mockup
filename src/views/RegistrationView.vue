@@ -62,6 +62,7 @@ async function getUser() {
             },
         })
         const data = await response.json()
+        store.commit('setUserProfile', data)
         store.commit('setProjects', data.proposals)
         router.push({ name: 'ProjectView' })
         } catch (error) {
