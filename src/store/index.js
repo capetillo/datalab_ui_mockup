@@ -54,7 +54,7 @@ export default createStore({
     },
 
     setUserProfile(state, profile) {
-      state.profile = profile
+      state.profile.push(profile)
     },
 
     setProjects(state, projects) {
