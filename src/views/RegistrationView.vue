@@ -48,7 +48,7 @@ async function authenticateAndGetToken() {
   }
 }
 
-async function getUser() {
+async function getUserProfile() {
     const token = await authenticateAndGetToken()
     const profileUrl = profileBaseUrl + 'profile/'
 
@@ -97,7 +97,7 @@ const onSubmit = () => {
         :rules="[rules.required]"
         required
     ></v-text-field>
-        <v-btn type="submit" color="primary" @click="getUser">Login</v-btn>
+        <v-btn type="submit" color="primary" @click="getUserProfile">Login</v-btn>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </v-form>
   </v-container>
