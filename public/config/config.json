@@ -2,5 +2,5 @@
   "apiBaseUrl": "http://127.0.0.1:8000/api/",
   "dataSessionsUrl": "http://127.0.0.1:8000/api/datasessions/",
   "dataLabArchiveUrl": "https://datalab-archive.photonranch.org/",
-  "userProfileUrl": "https://datalab-archive.photonranch.org/api-token-auth/"
+  "userProfileUrl": "https://observe.photonranch.org/api/"
 }
