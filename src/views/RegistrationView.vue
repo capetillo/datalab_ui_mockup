@@ -66,7 +66,7 @@ async function getUser() {
         router.push({ name: 'ProjectView' })
         } catch (error) {
             console.error('Error:', error)
-            errorMessage.value = 'Oops, there was an unexpected error logging in. Please try again, and if the problem persists, you are on your own.'
+            errorMessage.value = 'Oops, there was an unexpected error logging in. Please try again.'
         }
     }
 }
