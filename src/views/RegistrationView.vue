@@ -1,17 +1,20 @@
 <script setup>
-import LogIn from '@/components/LogIn/LogIn.vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
 const profileBaseUrl = store.state.userProfileUrl
 
+const username = ref('')
+const password = ref('')
+
 async function authenticateAndGetToken() {
     const authUrl = profileBaseUrl + 'api-token-auth/'
     const credentials = {
-      username: store.state.username,
-      password: store.state.userPassword
+      username: username.value,
+      password: password.value
   }
-
+  console.log('credentials:', credentials)
   try {
     const response = await fetch(authUrl, {
         method: 'POST',
@@ -49,16 +52,37 @@ async function getUser() {
             },
         })
         const data = await response.json()
-        return data
+        console.log('this is data:', data)
+        store.commit('setProjects', data.proposals)
         } catch (error) {
             console.error('ERROR:', error)
         }
     }
 }
 
+const onSubmit = () => {
+    store.commit('setUsername', username.value)
+}
 
 </script>
 
 <template>
-    <LogIn @credentialsSubmitted="getUser"/>
+    <v-container>
+    <v-form @submit.prevent="onSubmit">
+      <v-text-field
+        label="Username"
+        v-model="username"
+        required
+      ></v-text-field>
+
+      <v-text-field
+        label="Password"
+        v-model="password"
+        type="password"
+        required
+      ></v-text-field>
+
+      <v-btn type="submit" color="primary" @click="getUser">Login</v-btn>
+    </v-form>
+  </v-container>
 </template>

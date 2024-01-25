@@ -9,7 +9,6 @@ export default createStore({
       archiveUrl: '',
       userProfileUrl: '',
       username: '',
-      userPassword: '',
       authToken: '',
       projects: []
     }
@@ -47,10 +46,6 @@ export default createStore({
 
     setUsername(state, username) {
       state.username = username
-    },
-
-    setUserPassword(state, password) {
-      state.userPassword = password
     },
 
     setAuthToken(state, token) {
