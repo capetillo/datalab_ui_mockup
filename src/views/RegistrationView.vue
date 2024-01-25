@@ -73,10 +73,6 @@ async function getUserProfile() {
     }
 }
 
-const onSubmit = () => {
-    
-}
-
 </script>
 
 <template>
