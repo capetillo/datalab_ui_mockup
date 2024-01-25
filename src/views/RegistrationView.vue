@@ -9,6 +9,7 @@ const profileBaseUrl = store.state.userProfileUrl
 
 const username = ref('')
 const password = ref('')
+const errorMessage = ref('')
 
 async function authenticateAndGetToken() {
     const authUrl = profileBaseUrl + 'api-token-auth/'
@@ -32,11 +33,11 @@ async function authenticateAndGetToken() {
         return data.token
     } else {
         console.error('Authentication failed:', data)
-        throw new Error('Authentication failed')
+        errorMessage.value = 'Authentication failed. Please try again.'
     }
   } catch (error) {
       console.error('Error during authentication request:', error)
-      throw error
+      errorMessage.value = 'Error during authentication request. Please try again with the right authentication.'
   }
 }
 
@@ -57,7 +58,8 @@ async function getUser() {
         store.commit('setProjects', data.proposals)
         router.push({ name: 'ProjectView' })
         } catch (error) {
-            console.error('ERROR:', error)
+            console.error('Error:', error)
+            errorMessage.value = 'Oops, there was an unexpected error logging in. Please try again, and if the problem persists, you are on your own.'
         }
     }
 }
@@ -86,5 +88,6 @@ const onSubmit = () => {
 
       <v-btn type="submit" color="primary" @click="getUser">Login</v-btn>
     </v-form>
+    <div v-if="errorMessage">{{ errorMessage }}</div>
   </v-container>
 </template>
