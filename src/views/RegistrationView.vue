@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const router = useRouter()
 const profileBaseUrl = store.state.userProfileUrl
 
 const username = ref('')
@@ -14,7 +16,7 @@ async function authenticateAndGetToken() {
       username: username.value,
       password: password.value
   }
-  console.log('credentials:', credentials)
+
   try {
     const response = await fetch(authUrl, {
         method: 'POST',
@@ -52,8 +54,8 @@ async function getUser() {
             },
         })
         const data = await response.json()
-        console.log('this is data:', data)
         store.commit('setProjects', data.proposals)
+        router.push({ name: 'ProjectView' })
         } catch (error) {
             console.error('ERROR:', error)
         }
