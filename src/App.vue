@@ -16,7 +16,6 @@ onMounted(async () => {
     if (config) {
       store.commit('setIsConfigLoaded', true)
       store.commit('setApiBaseUrl', config.apiBaseUrl)
-      store.commit('setDataSessionsUrl', config.dataSessionsUrl)
       store.commit('setUserProfileUrl', config.userProfileUrl)
     }  
   } catch (error) {
