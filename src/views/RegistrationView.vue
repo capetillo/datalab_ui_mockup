@@ -12,6 +12,8 @@ const password = ref('')
 const errorMessage = ref('')
 const showPassword = ref(false)
 
+// validation rule for vuetify components
+// we can add rules here in the future for passwords
 const rules = {
     required: value => !!value || 'Required.'
 }
