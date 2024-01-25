@@ -6,12 +6,12 @@ export default createStore({
       selectedImages: [],
       isConfigLoaded: false,
       apiBaseUrl: '',
-      dataSessionsUrl: '',
       archiveUrl: '',
       userProfileUrl: '',
       username: '',
       userPassword: '',
-      authToken: ''
+      authToken: '',
+      projects: []
     }
   },
 
@@ -37,10 +37,6 @@ export default createStore({
       state.apiBaseUrl = url
     },
 
-    setDataSessionsUrl(state, url) {
-      state.dataSessionsUrl = url
-    },
-
     setArchiveUrl(state, url) {
       state.archiveUrl = url
     },
@@ -59,6 +55,12 @@ export default createStore({
 
     setAuthToken(state, token) {
       state.authToken = token
+    },
+
+    setProjects(state, projects) {
+      for (const project of projects) {
+        state.projects.push(project)
+      }
     }
   },
 
