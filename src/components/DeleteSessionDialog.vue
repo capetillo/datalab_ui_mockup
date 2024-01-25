@@ -8,7 +8,8 @@ const emit = defineEmits(['update:modelValue', 'reloadSession'])
 const store = useStore()
 
 let showSnackBar = ref(false)
-const dataSessionsUrl = store.state.dataSessionsUrl
+const apiBaseUrl = store.state.apiBaseUrl
+const dataSessionsUrl = apiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
   emit('update:modelValue', false)
