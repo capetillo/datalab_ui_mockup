@@ -17,7 +17,7 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const dataSessionsUrl = store.state.dataSessionsUrl
+const apiBaseUrl = store.state.apiBaseUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
@@ -43,6 +43,7 @@ const handleError = (error) => {
 
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
+    const dataSessionsUrl = apiBaseUrl + 'datasessions/'
     try {
         await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
     } catch (error) {
@@ -52,7 +53,7 @@ const getDataSessions = async () => {
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-    const sessionIdUrl = dataSessionsUrl + session.id + '/'
+    const sessionIdUrl = apiBaseUrl + session.id + '/'
     console.log('sessionidurl', sessionIdUrl)
     try {
         // fetches existing session data
@@ -91,6 +92,7 @@ const selectDataSession = (session) => {
 
 // handles creation of a new session 
 const createNewDataSession = async () => { 
+    const dataSessionsUrl = apiBaseUrl + 'datasessions/'
     if (sessionNameExists(newSessionName.value)) {
         errorMessage.value = 'Data Session name already exists. Please choose a different name.'
         return
