@@ -10,6 +10,7 @@ export default createStore({
       userProfileUrl: '',
       username: '',
       authToken: '',
+      profile: [],
       projects: []
     }
   },
@@ -50,6 +51,10 @@ export default createStore({
 
     setAuthToken(state, token) {
       state.authToken = token
+    },
+
+    setUserProfile(state, profile) {
+      state.profile = profile
     },
 
     setProjects(state, projects) {
