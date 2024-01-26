@@ -59,7 +59,7 @@ async function getUserProfile() {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
+            'Authorization': token ? `Token ${token}` : null
             },
         })
         const data = await response.json()
