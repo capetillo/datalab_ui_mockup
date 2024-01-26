@@ -1,5 +1,5 @@
 {
   "apiBaseUrl": "http://127.0.0.1:8000/api/",
   "dataLabArchiveUrl": "https://datalab-archive.photonranch.org/",
-  "userProfileUrl": "https://observe.photonranch.org/api/"
+  "ocsApiUrl": "https://observe.photonranch.org/api/"
 }

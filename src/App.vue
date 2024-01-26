@@ -16,7 +16,7 @@ onMounted(async () => {
     if (config) {
       store.commit('setIsConfigLoaded', true)
       store.commit('setApiBaseUrl', config.apiBaseUrl)
-      store.commit('setUserProfileUrl', config.userProfileUrl)
+      store.commit('setocsApiUrl', config.ocsApiUrl)
     }  
   } catch (error) {
     console.error('Error loading configuration:', error)

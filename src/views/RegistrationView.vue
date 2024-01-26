@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 
 const store = useStore()
 const router = useRouter()
-const profileBaseUrl = store.state.userProfileUrl
+const profileBaseUrl = store.state.ocsApiUrl
 
 const username = ref('')
 const password = ref('')
