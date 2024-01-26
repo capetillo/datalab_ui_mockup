@@ -1,12 +1,5 @@
 // handles api requests for datasessions with configurable parameters and callback functions
-async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
-
-  const headers = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': 'Token 123456789abcdefg',
-  }
-  
+async function fetchApiCall({ url, method, body = null, headers, successCallback = null, failCallback = null }) {
   const config = {
     method: method,
     headers: headers,
