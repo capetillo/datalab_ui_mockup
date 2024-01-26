@@ -15,7 +15,7 @@ onMounted(async () => {
     const config = await response.json()
     if (config) {
       store.commit('setIsConfigLoaded', true)
-      store.commit('setApiBaseUrl', config.apiBaseUrl)
+      store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
       store.commit('setObservationPortalUrl', config.observationPortalUrl)
     }  
   } catch (error) {
