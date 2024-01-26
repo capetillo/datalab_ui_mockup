@@ -5,7 +5,7 @@ export default createStore({
     return {
       selectedImages: [],
       isConfigLoaded: false,
-      apiBaseUrl: '',
+      datalabApiBaseUrl: '',
       archiveUrl: '',
       observationPortalUrl: '',
       username: '',
@@ -33,8 +33,8 @@ export default createStore({
       state.isConfigLoaded = value
     },
 
-    setApiBaseUrl(state, url) {
-      state.apiBaseUrl = url
+    setDatalabApiBaseUrl(state, url) {
+      state.datalabApiBaseUrl = url
     },
 
     setArchiveUrl(state, url) {

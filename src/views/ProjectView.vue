@@ -17,7 +17,7 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const dataSessionsUrl = store.state.apiBaseUrl + 'datasessions/'
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 const authHeaders = {
     'Content-Type': 'application/json',

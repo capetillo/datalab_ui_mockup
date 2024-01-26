@@ -14,8 +14,8 @@ const authHeaders = {
   }
 
 let showSnackBar = ref(false)
-const apiBaseUrl = store.state.apiBaseUrl
-const dataSessionsUrl = apiBaseUrl + 'datasessions/'
+const datalabApiBaseUrl = store.state.datalabApiBaseUrl
+const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
   emit('update:modelValue', false)
