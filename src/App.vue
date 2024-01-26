@@ -16,7 +16,7 @@ onMounted(async () => {
     if (config) {
       store.commit('setIsConfigLoaded', true)
       store.commit('setApiBaseUrl', config.apiBaseUrl)
-      store.commit('setOcsApiUrlUrl', config.ocsApiUrl)
+      store.commit('setObservationPortalUrl', config.observationPortalUrl)
     }  
   } catch (error) {
     console.error('Error loading configuration:', error)
