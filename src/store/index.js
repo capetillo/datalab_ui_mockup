@@ -41,7 +41,7 @@ export default createStore({
       state.archiveUrl = url
     },
     
-    setocsApiUrl(state, url) {
+    setOcsApiUrlUrl(state, url) {
       state.ocsApiUrl = url
     },
 
