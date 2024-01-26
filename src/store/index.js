@@ -7,7 +7,7 @@ export default createStore({
       isConfigLoaded: false,
       apiBaseUrl: '',
       archiveUrl: '',
-      userProfileUrl: '',
+      ocsApiUrl: '',
       username: '',
       authToken: '',
       profile: [],
@@ -41,8 +41,8 @@ export default createStore({
       state.archiveUrl = url
     },
     
-    setUserProfileUrl(state, url) {
-      state.userProfileUrl = url
+    setocsApiUrl(state, url) {
+      state.ocsApiUrl = url
     },
 
     setUsername(state, username) {
