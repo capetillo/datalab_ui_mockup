@@ -63,6 +63,7 @@ async function getUserProfile() {
             },
         })
         const data = await response.json()
+        console.log('this is data:', data)
         store.commit('setUserProfile', data)
         store.commit('setProjects', data.proposals)
         router.push({ name: 'ProjectView' })
@@ -94,7 +95,7 @@ async function getUserProfile() {
         :rules="[rules.required]"
         required
     ></v-text-field>
-        <v-btn type="submit" color="primary" @click="getUserProfile">Login</v-btn>
+        <v-btn type="submit" color="primary">Login</v-btn>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </v-form>
   </v-container>
