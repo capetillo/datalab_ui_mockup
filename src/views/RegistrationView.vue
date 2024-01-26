@@ -63,7 +63,6 @@ async function getUserProfile() {
             },
         })
         const data = await response.json()
-        console.log('this is data:', data)
         store.commit('setUserProfile', data)
         store.commit('setProjects', data.proposals)
         router.push({ name: 'ProjectView' })
