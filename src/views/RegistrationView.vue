@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { fetchApiCall } from '@/utils/api';
 
 const store = useStore()
 const router = useRouter()
@@ -16,57 +17,57 @@ const rules = {
     required: value => !!value || 'Required.'
 }
 
-async function authenticateAndGetToken() {
-    const credentials = {
-      username: username.value,
-      password: password.value
-  }
-
-  try {
-    const response = await fetch(store.state.ocsApiUrl + 'api-token-auth/', {
-        method: 'POST',
-        headers: { 
-        'Content-Type': 'application/json',
-    },
-        body: JSON.stringify(credentials)
-    })
-
-    const data = await response.json()
-    if (response.ok) {
-        store.commit('setUsername', username.value)
-        store.commit('setAuthToken', data.token)
-        return data.token
-    } else {
-        console.error('Authentication failed:', data)
-        errorMessage.value = 'Authentication failed. Please try again.'
+const storeToken = (data) => {
+    const authToken = data.token
+    if (authToken) {
+        store.commit('setAuthToken', authToken)
+        return authToken
     }
-  } catch (error) {
-      console.error('Error during authentication request:', error)
-      errorMessage.value = 'Error during authentication request. Please try again with the right authentication.'
-  }
 }
 
-async function getUserProfile() {
-    const token = await authenticateAndGetToken()
+const handleError = (error) => {
+    console.error('API call failed with error:', error)
+    errorMessage.value = 'Failed to authenticate user'
+}
 
-    if (token) {
-        try {
-            const response = await fetch(store.state.ocsApiUrl + 'profile/', {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-            },
-        })
-        const data = await response.json()
-        store.commit('setUserProfile', data)
-        store.commit('setProjects', data.proposals)
-        router.push({ name: 'ProjectView' })
-        } catch (error) {
-            console.error('Error:', error)
-            errorMessage.value = 'Oops, there was an unexpected error logging in. Please try again.'
-        }
-    } 
+const authenticateUser = async () => {
+    const requestBody = {
+        username: username.value,
+        password: password.value
+    }
+
+    const authHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+
+    try {
+        await fetchApiCall({ url: store.state.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, headers: authHeaders, successCallback: storeToken, failCallback: handleError })
+    } catch (error) {
+        handleError(error)
+    }
+}
+
+const storeUser = (user) => {
+    store.commit('setUsername', username.value)
+    store.commit('setUserProfile', user)
+    store.commit('setProjects', user.proposals)
+    router.push({ name: 'ProjectView' })
+}
+
+const getUserProfile = async () => {
+    await authenticateUser ()
+    const token = store.state.authToken
+    const authHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': token ? `Token ${token}` : null,
+    }
+    try {
+        await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', headers: authHeaders, successCallback: storeUser, failCallback: handleError })
+    } catch (error) {
+        handleError(error)
+    }
 }
 
 </script>
