@@ -7,6 +7,12 @@ const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
 const store = useStore()
 
+const authHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Token 123456789abcdefg',
+  }
+
 let showSnackBar = ref(false)
 const apiBaseUrl = store.state.apiBaseUrl
 const dataSessionsUrl = apiBaseUrl + 'datasessions/'
@@ -18,7 +24,7 @@ function closeDialog() {
 
 async function confirmDeleteSession() {
   const url = dataSessionsUrl + props.deleteId
-  await fetchApiCall({url: url, method: 'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+  await fetchApiCall({url: url, method: 'DELETE', headers: authHeaders, successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
