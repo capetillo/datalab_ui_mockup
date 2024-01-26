@@ -7,7 +7,7 @@ export default createStore({
       isConfigLoaded: false,
       apiBaseUrl: '',
       archiveUrl: '',
-      ocsApiUrl: '',
+      observationPortalUrl: '',
       username: '',
       authToken: '',
       profile: [],
@@ -41,8 +41,8 @@ export default createStore({
       state.archiveUrl = url
     },
     
-    setOcsApiUrlUrl(state, url) {
-      state.ocsApiUrl = url
+    setObservationPortalUrl(state, url) {
+      state.observationPortalUrl = url
     },
 
     setUsername(state, username) {
