@@ -5,8 +5,6 @@ import { useRouter } from 'vue-router'
 
 const store = useStore()
 const router = useRouter()
-const profileBaseUrl = store.state.ocsApiUrl
-
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -19,14 +17,13 @@ const rules = {
 }
 
 async function authenticateAndGetToken() {
-    const authUrl = profileBaseUrl + 'api-token-auth/'
     const credentials = {
       username: username.value,
       password: password.value
   }
 
   try {
-    const response = await fetch(authUrl, {
+    const response = await fetch(store.state.ocsApiUrl + 'api-token-auth/', {
         method: 'POST',
         headers: { 
         'Content-Type': 'application/json',
@@ -51,15 +48,14 @@ async function authenticateAndGetToken() {
 
 async function getUserProfile() {
     const token = await authenticateAndGetToken()
-    const profileUrl = profileBaseUrl + 'profile/'
 
     if (token) {
         try {
-            const response = await fetch(profileUrl, {
+            const response = await fetch(store.state.ocsApiUrl + 'profile/', {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
-            'Authorization': token ? `Token ${token}` : null
+            'Authorization': `Token ${token}`
             },
         })
         const data = await response.json()
@@ -70,7 +66,7 @@ async function getUserProfile() {
             console.error('Error:', error)
             errorMessage.value = 'Oops, there was an unexpected error logging in. Please try again.'
         }
-    }
+    } 
 }
 
 </script>
