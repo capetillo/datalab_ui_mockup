@@ -22,8 +22,8 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 const authHeaders = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Token 123456789abcdefg',
-  }
+    'Authorization': `Token ${store.state.authToken}`,
+}
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)

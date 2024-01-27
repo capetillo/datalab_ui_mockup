@@ -10,7 +10,7 @@ const store = useStore()
 const authHeaders = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Token 123456789abcdefg',
+    'Authorization': `Token ${store.state.authToken}`,
   }
 
 let showSnackBar = ref(false)
