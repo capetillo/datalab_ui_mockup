@@ -17,7 +17,13 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const dataSessionsUrl = store.state.dataSessionsUrl
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
+const authHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Token ${store.state.authToken}`,
+}
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
@@ -44,7 +50,7 @@ const handleError = (error) => {
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
     try {
-        await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'GET', headers: authHeaders, successCallback: mapDataSessions, failCallback: handleError })
     } catch (error) {
         handleError(error)
     }
@@ -53,10 +59,9 @@ const getDataSessions = async () => {
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
     const sessionIdUrl = dataSessionsUrl + session.id + '/'
-    console.log('sessionidurl', sessionIdUrl)
     try {
         // fetches existing session data
-        const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
+        const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET', headers: authHeaders })
         const currentSessionData = currentSessionResponse.input_data
 
         // merging existing and new image data
@@ -74,7 +79,7 @@ const addImagesToExistingSession = async (session) => {
         }
 
         // sending the PATCH request with the merged data
-        await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody })
+        await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody, headers: authHeaders })
     } catch (error) {
         console.error('Error importing images:', error)
         handleError(error)
@@ -106,7 +111,7 @@ const createNewDataSession = async () => {
     }
     try {
         // attempting a POST request for new session
-        await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
+        await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody, headers: authHeaders })
 
         // resetting state an rerouting to DataSessions view upon successful creation of new session
         isPopupVisible.value = false

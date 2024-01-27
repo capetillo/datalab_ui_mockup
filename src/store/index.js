@@ -5,9 +5,13 @@ export default createStore({
     return {
       selectedImages: [],
       isConfigLoaded: false,
-      apiBaseUrl: '',
-      dataSessionsUrl: '',
+      datalabApiBaseUrl: '',
       archiveUrl: '',
+      observationPortalUrl: '',
+      username: '',
+      authToken: '',
+      profile: [],
+      projects: []
     }
   },
 
@@ -29,16 +33,34 @@ export default createStore({
       state.isConfigLoaded = value
     },
 
-    setApiBaseUrl(state, url) {
-      state.apiBaseUrl = url
-    },
-
-    setDataSessionsUrl(state, url) {
-      state.dataSessionsUrl = url
+    setDatalabApiBaseUrl(state, url) {
+      state.datalabApiBaseUrl = url
     },
 
     setArchiveUrl(state, url) {
       state.archiveUrl = url
+    },
+    
+    setObservationPortalUrl(state, url) {
+      state.observationPortalUrl = url
+    },
+
+    setUsername(state, username) {
+      state.username = username
+    },
+
+    setAuthToken(state, token) {
+      state.authToken = token
+    },
+
+    setUserProfile(state, profile) {
+      state.profile.push(profile)
+    },
+
+    setProjects(state, projects) {
+      for (const project of projects) {
+        state.projects.push(project)
+      }
     }
   },
 
