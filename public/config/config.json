@@ -1,5 +1,5 @@
 {
-  "datalabApiBaseUrl": "http://127.0.0.1:8000/api/",
+  "datalabApiBaseUrl": "https://datalab-server.photonranch.org/api/",
   "dataLabArchiveApiUrl": "https://datalab-archive.photonranch.org/",
   "observationPortalUrl": "https://observe.photonranch.org/api/"
 }
