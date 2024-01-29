@@ -5,7 +5,7 @@ import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
 import ImageList from '@/components/ProjectView/ImageList.vue';
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { fetchApiCall, fetchImagesfromLinks } from '../utils/api'
+import { fetchApiCall } from '../utils/api'
 
 const router = useRouter()
 const store = useStore()
@@ -14,6 +14,7 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const archiveUrl = store.state.datalabArchiveApiUrl
 
 const authHeaders = {
     'Content-Type': 'application/json',
@@ -25,13 +26,9 @@ const authHeaders = {
 let imageDisplayToggle = ref(true)
 let userFrames = ref(null)
 
-// Loads the user's Images from their profile into userImages
+// Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async () => {
-    // TODO Get profile Data from store
-    // Get s3 image links for user for all proposals
-    // user links to get images from the archive
-    // cache images a ref
-    const url = 'https://datalab-archive.photonranch.org/frames/?reduction_level=95'
+    const url = archiveUrl + 'frames/?reduction_level=95'
     userFrames.value = await fetchApiCall({url: url, method: 'GET', token: 'Token 2da74cb5262a52bc479e5b63b548fd5910592475'})
 }
 // boolean computed property used to disable the add to session button
