@@ -14,7 +14,7 @@ export default createStore({
   mutations: {
     // toggle image selection
     toggleImageSelection(state, image) {
-      const index = state.selectedImages.findIndex(img => img.basefile_name === image.basefile_name)
+      const index = state.selectedImages.findIndex(img => img.basename === image.basename)
       if (index >= 0) {
         state.selectedImages.splice(index, 1)
       } else {
@@ -53,7 +53,7 @@ export default createStore({
   },
   getters: {
     isSelected: (state) => (image) => {
-      return state.selectedImages.some(selectedImage => selectedImage.basefile_name === image.basefile_name)
+      return state.selectedImages.some(selectedImage => selectedImage.basename === image.basename)
     },
     selectedImages: (state) => state.selectedImages
   }

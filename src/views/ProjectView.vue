@@ -14,16 +14,18 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const dataSessionsUrl = store.state.dataSessionsUrl
-const data = ref(null)
 let imageDisplayToggle = ref(true)
+let userFrames = ref(null)
 
-// Logic for fetching data from OCS and Archive for displaying in Projects
-const getUserImages = async () => {
-    // url and body for getting the list of the user's images
-    const url = ""
-    const body = ""
-    const imageLinks = await fetchApiCall(url, 'GET', body, console.log("success"), console.log("failure"))
-    data.value = await fetchImagesfromLinks(imageLinks)
+// Loads the user's Images from their profile into userImages
+const loadUserImages = async () => {
+    // TODO Get profile Data from store
+    // Get s3 image links for user for all proposals
+    // user links to get images from the archive
+    // cache images a ref
+    const url = 'https://datalab-archive.photonranch.org/frames/?reduction_level=95'
+    userFrames.value = await fetchApiCall({url: url, method: 'GET', token: 'Token 2da74cb5262a52bc479e5b63b548fd5910592475'})
+    console.log(userFrames.value.results)
 }
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
@@ -127,7 +129,7 @@ const sessionNameExists = (name) => {
 }
 
 onMounted(() => {
-  getUserImages()
+  loadUserImages()
 })
 
 </script>
@@ -136,9 +138,9 @@ onMounted(() => {
     <div class="container">
         <ProjectBar class="project-bar"/>
         <div class="image-area h-screen">
-            <ImageCarousel v-if="imageDisplayToggle && data" :data="data"/>
-            <ImageList v-if="!imageDisplayToggle && data" :data="data"/>
-            <v-skeleton-loader v-else type="card"></v-skeleton-loader>
+            <ImageCarousel v-if="imageDisplayToggle && userFrames" :data="userFrames.results"/>
+            <ImageList v-if="!imageDisplayToggle && userFrames" :data="userFrames.results"/>
+            <v-skeleton-loader v-if="!userFrames" type="card"></v-skeleton-loader>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
                 <v-btn :disabled="noSelectedImages" @click="getDataSessions">Add to a Session</v-btn>
