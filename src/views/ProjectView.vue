@@ -25,7 +25,6 @@ const loadUserImages = async () => {
     // cache images a ref
     const url = 'https://datalab-archive.photonranch.org/frames/?reduction_level=95'
     userFrames.value = await fetchApiCall({url: url, method: 'GET', token: 'Token 2da74cb5262a52bc479e5b63b548fd5910592475'})
-    console.log(userFrames.value.results)
 }
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
@@ -58,7 +57,6 @@ const getDataSessions = async () => {
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
     const sessionIdUrl = dataSessionsUrl + session.id + '/'
-    console.log('sessionidurl', sessionIdUrl)
     try {
         // fetches existing session data
         const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
@@ -102,8 +100,8 @@ const createNewDataSession = async () => {
     }
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
-        'source': image.image,
-        'basename': image.basefile_name
+        'source': image.url,
+        'basename': image.basename
     }))
     const requestBody = { 
         'name': newSessionName.value,

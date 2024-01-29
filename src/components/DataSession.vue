@@ -45,8 +45,6 @@ const getImages = async () => {
 
     const data = await response.json()
     images.value = data.input_data
-      .filter(img => !img.source.includes('archive'))
-      .map(img => img.source)
   } catch (error) {
     console.log('Error getting images: ', error)
   }
@@ -65,9 +63,10 @@ onMounted(() => {
       <v-col cols="9">
         <v-carousel v-if="images.length">
           <v-carousel-item
-            v-for="(image, index) in images"
-            :key="index"
-            :src="require('../assets/' + image)"
+            v-for="(image) in images"
+            :key="image.basename"
+            :src="image.source"
+            :alt="image.basename"
             cover
           ></v-carousel-item>
         </v-carousel>
