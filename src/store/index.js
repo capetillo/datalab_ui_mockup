@@ -6,7 +6,7 @@ export default createStore({
       selectedImages: [],
       isConfigLoaded: false,
       datalabApiBaseUrl: '',
-      archiveUrl: '',
+      datalabArchiveApiUrl: '',
       observationPortalUrl: '',
       username: '',
       authToken: '',
@@ -37,8 +37,8 @@ export default createStore({
       state.datalabApiBaseUrl = url
     },
 
-    setArchiveUrl(state, url) {
-      state.archiveUrl = url
+    setDatalabArchiveUrl(state, url) {
+      state.datalabArchiveApiUrl = url
     },
     
     setObservationPortalUrl(state, url) {
