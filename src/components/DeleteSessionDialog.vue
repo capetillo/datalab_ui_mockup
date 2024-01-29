@@ -1,6 +1,7 @@
+<!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref } from 'vue';
-import { fetchApiCall } from '@/utils/api';
+import { ref } from 'vue'
+import { fetchApiCall } from '@/utils/api'
 import { useStore } from 'vuex'
 
 const props = defineProps([ 'modelValue', 'deleteId'])
@@ -8,23 +9,23 @@ const emit = defineEmits(['update:modelValue', 'reloadSession'])
 const store = useStore()
 
 const authHeaders = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': `Token ${store.state.authToken}`,
-  }
+	'Content-Type': 'application/json',
+	'Accept': 'application/json',
+	'Authorization': `Token ${store.state.authToken}`,
+}
 
 let showSnackBar = ref(false)
 const datalabApiBaseUrl = store.state.datalabApiBaseUrl
 const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
-  emit('update:modelValue', false)
-  emit('reloadSession')
+	emit('update:modelValue', false)
+	emit('reloadSession')
 }
 
 async function confirmDeleteSession() {
-  const url = dataSessionsUrl + props.deleteId
-  await fetchApiCall({url: url, method: 'DELETE', headers: authHeaders, successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+	const url = dataSessionsUrl + props.deleteId
+	await fetchApiCall({url: url, method: 'DELETE', headers: authHeaders, successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
@@ -35,12 +36,15 @@ async function confirmDeleteSession() {
     width="auto"
   >
     <v-card>
-      <v-card-title class="text-h5" color="red-lighten-1">
+      <v-card-title
+        class="text-h5"
+        color="red-lighten-1"
+      >
         Delete Session
       </v-card-title>
       <v-card-text>Are you sure you want to delete this Datalab Session? This operation is not reversible!</v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="green-darken-1"
           variant="text"
