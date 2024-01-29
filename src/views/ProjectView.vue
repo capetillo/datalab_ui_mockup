@@ -27,8 +27,8 @@ let imageDisplayToggle = ref(true)
 let userFrames = ref(null)
 
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
-const loadUserImages = async () => {
-    const url = archiveUrl + 'frames/?reduction_level=95'
+const loadUserImages = async (option) => {
+    const url = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
     userFrames.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders})
 }
 // boolean computed property used to disable the add to session button
@@ -132,7 +132,7 @@ const sessionNameExists = (name) => {
 }
 
 onMounted(() => {
-  loadUserImages()
+  loadUserImages('reduction_level=95')
 })
 
 </script>
