@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import DataSessions from '../views/DataSessionsView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import Home from '../views/HomeView.vue'
+import Registration from '../views/RegistrationView.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/datasessions/',
     name: 'DataSessions',
     component: DataSessions,
+  },
+  {
+    path: '/register/',
+    name: 'Registration',
+    component: Registration,
   }
 ];
 

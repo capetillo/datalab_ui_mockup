@@ -7,8 +7,15 @@ const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
 const store = useStore()
 
+const authHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Token ${store.state.authToken}`,
+  }
+
 let showSnackBar = ref(false)
-const dataSessionsUrl = store.state.dataSessionsUrl
+const datalabApiBaseUrl = store.state.datalabApiBaseUrl
+const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
   emit('update:modelValue', false)
@@ -17,7 +24,7 @@ function closeDialog() {
 
 async function confirmDeleteSession() {
   const url = dataSessionsUrl + props.deleteId
-  await fetchApiCall({url: url, method: 'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+  await fetchApiCall({url: url, method: 'DELETE', headers: authHeaders, successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
