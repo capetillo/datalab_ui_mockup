@@ -132,79 +132,80 @@ const sessionNameExists = (name) => {
 </script>
 <template>
   <!-- only load if config is loaded -->
-  <!-- <div class="container"> -->
-  <ProjectBar class="project-bar" />
-  <div class="image-area">
-    <ImageCarousel
-      v-if="imageDisplayToggle"
-      :data="MockData"
-    />
-    <ImageList
-      v-if="!imageDisplayToggle"
-      :data="MockData"
-    />
-    <div class="control-buttons">
-      <v-switch
-        v-model="imageDisplayToggle"
-        class="d-flex mr-4"
-        inset
-        prepend-icon="mdi-view-list"
-        append-icon="mdi-image"
+  <div class="container">
+    <ProjectBar class="project-bar" />
+    <div class="image-area">
+      <ImageCarousel
+        v-if="imageDisplayToggle"
+        :data="MockData"
       />
-      <v-btn
-        :disabled="noSelectedImages"
-        @click="getDataSessions"
-      >
-        Add to a Session
-      </v-btn>
-    </div>
-  </div>
-  <v-dialog
-    v-model="isPopupVisible"
-    width="300"
-  >
-    <v-card>
-      <v-card-title>Data Sessions</v-card-title>
-      <v-card-text>
-        <v-list>
-          <v-list-item
-            v-for="session in uniqueDataSessions"
-            :key="session.id"
-            @click="selectDataSession(session)"
-          >
-            <v-list-item-content>
-              {{ session.name }}
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <!-- Input for new session name -->
-        <v-text-field
-          v-model="newSessionName"
-          label="New Session Name"
+      <ImageList
+        v-if="!imageDisplayToggle"
+        :data="MockData"
+      />
+      <div class="control-buttons">
+        <v-switch
+          v-model="imageDisplayToggle"
+          class="d-flex mr-4"
+          inset
+          prepend-icon="mdi-view-list"
+          append-icon="mdi-image"
         />
-        <!-- Error message -->
-        <div v-if="errorMessage">
-          {{ errorMessage }}
-        </div>
-      </v-card-text>
-      <v-card-actions>
         <v-btn
-          color="primary"
-          text
-          @click="createNewDataSession"
+          :disabled="noSelectedImages"
+          @click="getDataSessions"
         >
-          Create New Session
+          Add to a Session
         </v-btn>
-        <v-btn
-          color="primary"
-          text
-          @click="isPopupVisible = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+      </div>
+    </div>
+    <v-dialog
+      v-model="isPopupVisible"
+      width="300"
+    >
+      <v-card>
+        <v-card-title>Data Sessions</v-card-title>
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="session in uniqueDataSessions"
+              :key="session.id"
+              @click="selectDataSession(session)"
+            >
+              <v-list-item-content>
+                {{ session.name }}
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <!-- Input for new session name -->
+          <v-text-field
+            v-model="newSessionName"
+            label="New Session Name"
+          />
+          <!-- Error message -->
+          <div v-if="errorMessage">
+            {{ errorMessage }}
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            @click="createNewDataSession"
+          >
+            Create New Session
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="isPopupVisible = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 <style scoped>
 @media (min-width: 900px){
