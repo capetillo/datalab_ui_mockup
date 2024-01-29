@@ -29,7 +29,7 @@ let userFrames = ref(null)
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async () => {
     const url = archiveUrl + 'frames/?reduction_level=95'
-    userFrames.value = await fetchApiCall({url: url, method: 'GET', token: 'Token 2da74cb5262a52bc479e5b63b548fd5910592475'})
+    userFrames.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders})
 }
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
