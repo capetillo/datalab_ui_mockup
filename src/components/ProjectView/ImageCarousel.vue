@@ -8,7 +8,7 @@ const store = useStore()
 const currentSlide = ref(0)
 const props = defineProps(["data"]);
 
-let MockData = ref(props.data);
+let data = ref(props.data);
 
 // Checking if image isSelected to either add or remove yellow borderline
 const isSelected = (item) => store.getters.isSelected(item)
@@ -24,9 +24,9 @@ const handleThumbnailClick = (item, index) => {
   if (store.state.selectedImages.length > 0) {
     // If there are selected images, then we find the last selected image
     const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
-    // Then we find the index of the last selected image in the MockData array
+    // Then we find the index of the last selected image in the data array
     // This is used to set the current slide to the last selected image
-    const lastSelectedIndex = MockData.value.findIndex(img => img.basefile_name === lastSelectedImage.basefile_name)
+    const lastSelectedIndex = data.value.findIndex(img => img.basename === lastSelectedImage.basename)
     // Set the current slide to the last selected image
     currentSlide.value = lastSelectedIndex
   } else {
@@ -39,10 +39,10 @@ const handleThumbnailClick = (item, index) => {
 
 <template>
     <!-- Main Carousel -->
-    <Carousel id="gallery" :items-to-show="1" :wrap-around="false" transition=0 v-model="currentSlide">
-      <Slide v-for="(item, index) in MockData" :key="index">
+    <Carousel id="gallery" :items-to-show="1" :wrap-around="false" :transition=0 v-model="currentSlide">
+      <Slide v-for="(item, index) in data" :key="index">
         <div class="carousel__item">
-          <img :src="require('@/assets/' + item.image)" class="div__item"/>
+          <img :src="item.url" class="div__item" :alt="item.OBJECT"/>
         </div>
       </Slide>
     </Carousel>
@@ -52,14 +52,14 @@ const handleThumbnailClick = (item, index) => {
     id="thumbnails"
     :items-to-show="5"
     :wrap-around="false"
-    transition=0
+    :transition=0
     v-model="currentSlide"
     ref="carousel"
   >
-    <Slide v-for="(item, index) in MockData" :key="index">
+    <Slide v-for="(item, index) in data" :key="index">
       <div class="thumbnail__item" @click="handleThumbnailClick(item, index)">
         <!-- Thumbnail Image -->
-        <img :src="require('@/assets/' + item.image)" :class="{'selected-thumbnail': isSelected(item)}" class="thumbnail__item"/>
+        <img :src="item.url" :class="{'selected-thumbnail': isSelected(item)}" class="thumbnail__item" :alt="item.OBJECT"/>
       </div>
     </Slide>
     <template #addons>
