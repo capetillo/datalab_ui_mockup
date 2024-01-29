@@ -7,10 +7,10 @@ const store = useStore();
 
 // v-data-table setup variables
 let headers = ref([
-  { title: "Image Name", align: "start", sortable: true, key: "basefile_name" },
-  { title: "Time", align: "start", sortable: true, key: "time" },
-  { title: "Object", align: "start", sortable: true, key: "object" },
-  { title: "Image", align: "start", sortable: false, key: "image" },
+  { title: "Image Name", align: "start", sortable: true, key: "basename" },
+  { title: "Time", align: "start", sortable: true, key: "observation_date" },
+  { title: "Object", align: "start", sortable: true, key: "OBJECT" },
+  { title: "Image", align: "start", sortable: false, key: "url" },
 ]);
 let items = ref(props.data);
 let itemsPerPage = ref(15);
@@ -31,7 +31,7 @@ onMounted ( () => {
   <v-data-table
     :headers="headers"
     :items="items"
-    item-value="basefile_name"
+    item-value="basename"
     :return-object="true"
     show-select
     v-model="selected"
@@ -40,11 +40,10 @@ onMounted ( () => {
     :hover="true"
     v-model:items-per-page="itemsPerPage"
   >
-    <!-- TODO change src to fetch image from url-->
-    <template #[`item.image`]="{ item }">
+    <template #[`item.url`]="{ item }">
       <v-img
-        :src="require('@/assets/' + item.image)"
-        :alt="item.basefile_name"
+        :src="item.url"
+        :alt="item.OBJECT"
         height="50"
         width="200"
         cover

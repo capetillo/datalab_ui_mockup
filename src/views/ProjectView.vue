@@ -1,12 +1,8 @@
 <script setup>
-// libraries
-import { ref, computed } from 'vue'
-// components
+import { ref, computed, onMounted } from 'vue'
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue';
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue';
 import ImageList from '@/components/ProjectView/ImageList.vue';
-// data
-import MockData from '../assets/MockData.JSON'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { fetchApiCall } from '../utils/api'
@@ -18,6 +14,7 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const archiveUrl = store.state.datalabArchiveApiUrl
 
 const authHeaders = {
     'Content-Type': 'application/json',
@@ -27,7 +24,13 @@ const authHeaders = {
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
+let userFrames = ref(null)
 
+// Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
+const loadUserImages = async (option) => {
+    const url = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
+    userFrames.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders})
+}
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
   return store.getters.selectedImages.length === 0
@@ -102,8 +105,8 @@ const createNewDataSession = async () => {
     }
     const selectedImages = store.state.selectedImages
     const inputData = selectedImages.map(image => ({
-        'source': image.image,
-        'basename': image.basefile_name
+        'source': image.url,
+        'basename': image.basename
     }))
     const requestBody = { 
         'name': newSessionName.value,
@@ -128,14 +131,19 @@ const sessionNameExists = (name) => {
     return uniqueDataSessions.value.some(session => session.name === name)
 }
 
+onMounted(() => {
+  loadUserImages('reduction_level=95')
+})
+
 </script>
 <template>
     <!-- only load if config is loaded -->
     <div class="container">
         <ProjectBar class="project-bar"/>
-        <div class="image-area">
-            <ImageCarousel v-if="imageDisplayToggle" :data="MockData"/>
-            <ImageList v-if="!imageDisplayToggle" :data="MockData"/>
+        <div class="image-area h-screen">
+            <ImageCarousel v-if="imageDisplayToggle && userFrames" :data="userFrames.results"/>
+            <ImageList v-if="!imageDisplayToggle && userFrames" :data="userFrames.results"/>
+            <v-skeleton-loader v-if="!userFrames" type="card"></v-skeleton-loader>
             <div class="control-buttons">
                 <v-switch class="d-flex mr-4" v-model="imageDisplayToggle" inset prepend-icon="mdi-view-list" append-icon="mdi-image"/>
                 <v-btn :disabled="noSelectedImages" @click="getDataSessions">Add to a Session</v-btn>

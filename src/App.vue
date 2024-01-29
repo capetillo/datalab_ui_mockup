@@ -17,6 +17,7 @@ onMounted(async () => {
       store.commit('setIsConfigLoaded', true)
       store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
       store.commit('setObservationPortalUrl', config.observationPortalUrl)
+      store.commit('setDatalabArchiveUrl', config.dataLabArchiveApiUrl)
     }  
   } catch (error) {
     console.error('Error loading configuration:', error)
