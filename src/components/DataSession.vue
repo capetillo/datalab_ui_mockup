@@ -1,58 +1,58 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import OperationPipeline from './OperationPipeline.vue';
+import OperationPipeline from './OperationPipeline.vue'
 
 const emit = defineEmits(['reloadSession'])
 let images = ref([])
 
 const props = defineProps({
-  data: {
-    type: Object,
-    required: true
-  }
+	data: {
+		type: Object,
+		required: true
+	}
 })
 
 function addOperation(operationDefinition) {
-  // Create data operation in this session with input parameters specified from wizard
-  fetch('http://127.0.0.1:8000/api/datasessions/' + props.data.id + '/operations/', {
-    'method': 'POST',
-    'body': JSON.stringify(operationDefinition),
-    'headers': {
-      'Authorization': 'Token 123456789abcdefg',
-      'Content-type': 'application/json; charset=UTF-8'
-    }
-  })
-    .then(response => response.json())
-    .then(function() {emit('reloadSession')})
-    .catch(error => console.error('Error:', error));
+	// Create data operation in this session with input parameters specified from wizard
+	fetch('http://127.0.0.1:8000/api/datasessions/' + props.data.id + '/operations/', {
+		'method': 'POST',
+		'body': JSON.stringify(operationDefinition),
+		'headers': {
+			'Authorization': 'Token 123456789abcdefg',
+			'Content-type': 'application/json; charset=UTF-8'
+		}
+	})
+		.then(response => response.json())
+		.then(function() {emit('reloadSession')})
+		.catch(error => console.error('Error:', error))
 }
 
 const getImages = async () => {
-  try {
-    const response = await fetch ('http://127.0.0.1:8000/api/datasessions/' + props.data.id, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Token 123456789abcdefg',
-        'Content-Type': 'application/json; charset=UTF-8'
-      }
-    })
+	try {
+		const response = await fetch ('http://127.0.0.1:8000/api/datasessions/' + props.data.id, {
+			method: 'GET',
+			headers: {
+				'Authorization': 'Token 123456789abcdefg',
+				'Content-Type': 'application/json; charset=UTF-8'
+			}
+		})
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Error Response Data:', errorData)
-      throw new Error('Bad request')
-    }
+		if (!response.ok) {
+			const errorData = await response.json()
+			console.error('Error Response Data:', errorData)
+			throw new Error('Bad request')
+		}
 
-    const data = await response.json()
-    images.value = data.input_data
-  } catch (error) {
-    console.log('Error getting images: ', error)
-  }
+		const data = await response.json()
+		images.value = data.input_data
+	} catch (error) {
+		console.log('Error getting images: ', error)
+	}
 
 }
 
 onMounted(() => {
-  getImages()
+	getImages()
 })
 
 </script>
@@ -68,14 +68,19 @@ onMounted(() => {
             :src="image.source"
             :alt="image.basename"
             cover
-          ></v-carousel-item>
+          />
         </v-carousel>
       </v-col>
-      <v-col cols="3" justify="center" align="center">
+      <v-col
+        cols="3"
+        justify="center"
+        align="center"
+      >
         <!-- The operations bar list goes here -->
-        <operation-pipeline :operations="data.operations" @add-operation="addOperation">
-
-        </operation-pipeline>
+        <operation-pipeline
+          :operations="data.operations"
+          @add-operation="addOperation"
+        />
       </v-col>
     </v-row>
   </v-container>
