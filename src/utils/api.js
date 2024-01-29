@@ -1,10 +1,10 @@
 // handles api requests for datasessions with configurable parameters and callback functions
-async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null }) {
+async function fetchApiCall({ url, method, body = null, successCallback = null, failCallback = null, token=null }) {
 
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Token 123456789abcdefg',
+    'Authorization': token ? token : 'Token 123456789abcdefg',
   }
   
   const config = {
@@ -38,6 +38,7 @@ async function fetchApiCall({ url, method, body = null, successCallback = null, 
   }
 }
 
+// this util function accepts a list of s3 bitbucket image links and returns the images reflecting that list
 async function fetchImagesfromLinks(imageLinks){
   // api endpoint to archive images
   const url = ""
