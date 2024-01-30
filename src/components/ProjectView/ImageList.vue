@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps } from 'vue'
 import { useStore } from 'vuex'
 
 const props = defineProps(['data'])

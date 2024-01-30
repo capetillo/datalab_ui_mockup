@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 import { fetchApiCall } from '@/utils/api'
 import { useStore } from 'vuex'
 
