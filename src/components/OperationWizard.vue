@@ -19,7 +19,7 @@ const selectedOperationInput = ref({})
 
 onMounted(async () => {
 	const url = dataSessionsUrl + 'available_operations/'
-	availableOperations.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders, failCallback: handleError})
+	await fetchApiCall({url: url, method: 'GET', headers: authHeaders, successCallback: (data) => {availableOperations.value = data}, failCallback: handleError})
 	if (Object.keys(availableOperations.value).length > 0){
 		selectedOperation.value = Object.keys(availableOperations.value)[0]
 	}
