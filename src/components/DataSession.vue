@@ -29,8 +29,7 @@ async function addOperation(operationDefinition) {
 
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
-	const data = await fetchApiCall({url: url, method: 'GET', headers: authHeaders, failCallback: handleError})
-	images.value = data.input_data
+	await fetchApiCall({url: url, method: 'GET', headers: authHeaders, successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
 onMounted(() => {

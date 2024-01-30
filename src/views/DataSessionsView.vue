@@ -28,8 +28,7 @@ function deleteSession(id) {
 }
 
 async function loadAllSessions() {
-	const data = await fetchApiCall({url: dataSessionsUrl, method: 'GET', headers: authHeaders, failCallback: handleError})
-	dataSessions.value = data.results
+	await fetchApiCall({url: dataSessionsUrl, method: 'GET', headers: authHeaders, successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
 }
 
 </script>
