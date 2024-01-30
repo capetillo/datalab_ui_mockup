@@ -1,12 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession.vue'
 import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
 
+const store = useStore()
 const dataSessions = ref([])
 const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
+const authHeaders = {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json',
+	'Authorization': `Token ${store.state.authToken}`,
+}
 
 onMounted(() => {
 	loadAllSessions()
@@ -17,13 +27,9 @@ function deleteSession(id) {
 	showDeleteDialog.value = true
 }
 
-function loadAllSessions() {
-	// Load in the session details from the API
-	fetch('http://127.0.0.1:8000/api/datasessions/', {
-		'headers': {'Authorization': 'Token 123456789abcdefg'}
-	})
-		.then(response => response.json())
-		.then(data => dataSessions.value = data.results)
+async function loadAllSessions() {
+  const data = await fetchApiCall({url: dataSessionsUrl, method: 'GET', headers: authHeaders, failCallback: handleError})
+	dataSessions.value = data.results
 }
 
 </script>

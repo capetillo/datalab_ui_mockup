@@ -1,25 +1,28 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { fetchApiCall, handleError } from '../utils/api'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const emit = defineEmits(['closeWizard', 'addOperation'])
+const dataSessionsUrl = store.state.datalabApiBaseUrl
+
+const authHeaders = {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json',
+	'Authorization': `Token ${store.state.authToken}`,
+}
 
 const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 
-onMounted(() => {
-	// Load in the session details from the API
-	// Long term, the available operations should be loaded into the store once on page load and retrieved from there
-	fetch('http://127.0.0.1:8000/api/available_operations/', {
-		'headers': {'Authorization': 'Token 123456789abcdefg'}
-	})
-		.then(response => response.json())
-		.then(data => {
-			availableOperations.value = data
-			if (Object.keys(availableOperations.value).length > 0){
-				selectedOperation.value = Object.keys(availableOperations.value)[0]
-			}
-		})
+onMounted(async () => {
+  const url = dataSessionsUrl + 'available_operations/'
+  availableOperations.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders, failCallback: handleError})
+  if (Object.keys(availableOperations.value).length > 0){
+    selectedOperation.value = Object.keys(availableOperations.value)[0]
+  }
 })
 
 const page = ref('select')
