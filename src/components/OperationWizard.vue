@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, defineEmits } from 'vue'
 import { fetchApiCall, handleError } from '../utils/api'
 import { useStore } from 'vuex'
 
@@ -18,11 +18,11 @@ const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 
 onMounted(async () => {
-  const url = dataSessionsUrl + 'available_operations/'
-  availableOperations.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders, failCallback: handleError})
-  if (Object.keys(availableOperations.value).length > 0){
-    selectedOperation.value = Object.keys(availableOperations.value)[0]
-  }
+	const url = dataSessionsUrl + 'available_operations/'
+	availableOperations.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders, failCallback: handleError})
+	if (Object.keys(availableOperations.value).length > 0){
+		selectedOperation.value = Object.keys(availableOperations.value)[0]
+	}
 })
 
 const page = ref('select')
