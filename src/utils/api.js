@@ -31,4 +31,9 @@ async function fetchApiCall({ url, method, body = null, headers, successCallback
 	}
 }
 
-export { fetchApiCall }
+// manages api call failures by logging errors
+const handleError = (error) => {
+	console.error('API call failed with error:', error)
+}
+
+export { fetchApiCall, handleError }
