@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../utils/api'
 import { useStore } from 'vuex'
