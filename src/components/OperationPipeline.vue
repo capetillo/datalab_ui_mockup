@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, defineEmits, defineProps} from 'vue'
 import OperationWizard from './OperationWizard.vue'
 
 const emit = defineEmits(['addOperation'])

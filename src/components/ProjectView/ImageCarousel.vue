@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
