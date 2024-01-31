@@ -16,8 +16,8 @@ let data = ref(props.data)
 // Checking if image isSelected to either add or remove yellow borderline
 const isSelected = (item) => store.getters.isSelected(item)
 
+// Getting large images by using the thumbnail's basename and finding the large image that matches it
 const getLargeImageSource = () => {
-	// loading first large image for user to see when they first navigate the page
 	const largeImages = store.state.largeImages
 	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
 	largeImageSrc.value = selectedLargeImage.url
@@ -31,6 +31,7 @@ const handleThumbnailClick = (item, index) => {
 		const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
 		const lastSelectedIndex = data.value.findIndex(img => img.basename === lastSelectedImage.basename)
 		currentSlide.value = lastSelectedIndex
+		// Used to get large images
 		smallImageBasename.value = lastSelectedImage.basename.replace('-small', '')
 	} else {
 		currentSlide.value = index
