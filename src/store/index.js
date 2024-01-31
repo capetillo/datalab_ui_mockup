@@ -11,7 +11,8 @@ export default createStore({
 			username: '',
 			authToken: '',
 			profile: [],
-			projects: []
+			projects: [],
+			largeImages: []
 		}
 	},
 
@@ -60,6 +61,12 @@ export default createStore({
 		setProjects(state, projects) {
 			for (const project of projects) {
 				state.projects.push(project)
+			}
+		},
+
+		setLargeImages(state, images) {
+			for (const image of images) {
+				state.largeImages.push(image)
 			}
 		}
 	},
