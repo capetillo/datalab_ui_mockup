@@ -108,6 +108,10 @@ const getImageSrc = (src) => {
 </template>
 
 <style scoped>
+
+.carousel__item {
+  padding-bottom: 2em;
+}
 .thumbnail__item {
   max-width: 200px;
   max-height: 160px;
