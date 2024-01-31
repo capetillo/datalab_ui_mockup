@@ -131,11 +131,14 @@ const sessionNameExists = (name) => {
 	return uniqueDataSessions.value.some(session => session.name === name)
 }
 
+const saveLargeImages = async (data) => {
+	const largeImages = await data.results
+	store.commit('setLargeImages', largeImages)
+}
+
 const loadLargeImages = async (option) => {
 	const loadLargeImageUrl = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
-	const response = await fetchApiCall({url: loadLargeImageUrl, method: 'GET', headers: authHeaders})
-	const largeImages = response.results
-	store.commit('setLargeImages', largeImages)
+	await fetchApiCall({url: loadLargeImageUrl, method: 'GET', headers: authHeaders, successCallback: saveLargeImages})
 }
 
 onMounted(() => {
