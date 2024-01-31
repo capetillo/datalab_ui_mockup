@@ -22,6 +22,7 @@ const getLargeImageSource = () => {
 	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
 	largeImageSrc.value = selectedLargeImage.url
 }
+
 // Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
 	store.dispatch('toggleImageSelection', item)
