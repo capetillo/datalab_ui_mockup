@@ -39,6 +39,9 @@ const handleThumbnailClick = (item, index) => {
 	getLargeImageSource()
 }
 
+const getImageSrc = (src) => {
+	return src || store.getters.firstLargeImage || ''
+}
 
 </script>
 
@@ -57,10 +60,17 @@ const handleThumbnailClick = (item, index) => {
     >
       <div class="carousel__item">
         <img
-          :src="largeImageSrc ? largeImageSrc : store.state.firstLargeImage"
+          v-if="getImageSrc(largeImageSrc)"
+          :src="getImageSrc(largeImageSrc)"
           class="div__item"
           :alt="item.OBJECT"
         >
+        <v-progress-circular
+          v-else
+          indeterminate
+          :size="51"
+          :width="10"
+        />
       </div>
     </Slide>
   </Carousel>
