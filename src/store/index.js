@@ -65,9 +65,7 @@ export default createStore({
 		},
 
 		setLargeImages(state, images) {
-			for (const image of images) {
-				state.largeImages.push(image)
-			}
+			state.largeImages = images
 		}
 	},
 
