@@ -1,9 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
+import { fetchApiCall, handleError } from '../utils/api'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const emit = defineEmits(['reloadSession'])
 let images = ref([])
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
+const authHeaders = {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json',
+	'Authorization': `Token ${store.state.authToken}`,
+}
 
 const props = defineProps({
 	data: {
@@ -12,43 +22,14 @@ const props = defineProps({
 	}
 })
 
-function addOperation(operationDefinition) {
-	// Create data operation in this session with input parameters specified from wizard
-	fetch('http://127.0.0.1:8000/api/datasessions/' + props.data.id + '/operations/', {
-		'method': 'POST',
-		'body': JSON.stringify(operationDefinition),
-		'headers': {
-			'Authorization': 'Token 123456789abcdefg',
-			'Content-type': 'application/json; charset=UTF-8'
-		}
-	})
-		.then(response => response.json())
-		.then(function() {emit('reloadSession')})
-		.catch(error => console.error('Error:', error))
+async function addOperation(operationDefinition) {
+	const url = dataSessionsUrl + props.data.id + '/operations/'
+	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, headers: authHeaders, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
 const getImages = async () => {
-	try {
-		const response = await fetch ('http://127.0.0.1:8000/api/datasessions/' + props.data.id, {
-			method: 'GET',
-			headers: {
-				'Authorization': 'Token 123456789abcdefg',
-				'Content-Type': 'application/json; charset=UTF-8'
-			}
-		})
-
-		if (!response.ok) {
-			const errorData = await response.json()
-			console.error('Error Response Data:', errorData)
-			throw new Error('Bad request')
-		}
-
-		const data = await response.json()
-		images.value = data.input_data
-	} catch (error) {
-		console.log('Error getting images: ', error)
-	}
-
+	const url = dataSessionsUrl + props.data.id
+	await fetchApiCall({url: url, method: 'GET', headers: authHeaders, successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
 onMounted(() => {
