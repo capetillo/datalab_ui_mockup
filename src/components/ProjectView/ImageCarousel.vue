@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
@@ -17,19 +17,10 @@ let data = ref(props.data)
 const isSelected = (item) => store.getters.isSelected(item)
 
 const getLargeImageSource = () => {
-	if (store.state.largeImages) {
-		const largeImages = store.state.largeImages
-		console.log('largeimages:', largeImages[0].url)
-		// loading first large image for user to see when they first navigate the page
-		if (!smallImageBasename.value) {
-			console.log('we are here')
-			largeImageSrc.value = largeImages[0].url
-		} else {
-			let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
-			largeImageSrc.value = selectedLargeImage.url
-		}	
-	}
-
+	// loading first large image for user to see when they first navigate the page
+	const largeImages = store.state.largeImages
+	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
+	largeImageSrc.value = selectedLargeImage.url
 }
 // Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
@@ -46,9 +37,6 @@ const handleThumbnailClick = (item, index) => {
 	getLargeImageSource()
 }
 
-onMounted(() => {
-	getLargeImageSource()
-})
 
 </script>
 
@@ -67,7 +55,7 @@ onMounted(() => {
     >
       <div class="carousel__item">
         <img
-          :src="largeImageSrc"
+          :src="largeImageSrc ? largeImageSrc : store.state.firstLargeImage"
           class="div__item"
           :alt="item.OBJECT"
         >
