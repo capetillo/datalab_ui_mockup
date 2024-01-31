@@ -72,7 +72,7 @@ export default createStore({
 		},
 
 		setFirstLargeImage(state, image) {
-			state.firstLargeImage = image
+			state.firstLargeImage =image
 		}
 	},
 
