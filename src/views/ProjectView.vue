@@ -138,7 +138,7 @@ const saveLargeImages = async (data) => {
 
 const loadLargeImages = async (option) => {
 	const loadLargeImageUrl = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
-	await fetchApiCall({url: loadLargeImageUrl, method: 'GET', headers: authHeaders, successCallback: saveLargeImages})
+	await fetchApiCall({url: loadLargeImageUrl, method: 'GET', headers: authHeaders, successCallback: saveLargeImages, failCallback: handleError})
 }
 
 onMounted(() => {
