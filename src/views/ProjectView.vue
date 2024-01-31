@@ -19,7 +19,7 @@ const archiveUrl = store.state.datalabArchiveApiUrl
 const authHeaders = {
 	'Content-Type': 'application/json',
 	'Accept': 'application/json',
-	'Authorization': `Token ${store.state.authToken}`,
+	'Authorization': `Token ${store.getters['userData/authToken']}`,
 }
 
 // toggle for optional data viewing, controlled by a v-switch

@@ -11,7 +11,7 @@ const store = useStore()
 const authHeaders = {
 	'Content-Type': 'application/json',
 	'Accept': 'application/json',
-	'Authorization': `Token ${store.state.authToken}`,
+	'Authorization': `Token ${store.getters['userData/authToken']}`,
 }
 
 let showSnackBar = ref(false)

@@ -12,7 +12,7 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 const authHeaders = {
 	'Content-Type': 'application/json',
 	'Accept': 'application/json',
-	'Authorization': `Token ${store.state.authToken}`,
+	'Authorization': `Token ${store.getters['userData/authToken']}`,
 }
 
 const props = defineProps({
