@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
@@ -8,25 +8,44 @@ import 'vue3-carousel/dist/carousel.css'
 const store = useStore()
 const currentSlide = ref(0)
 const props = defineProps(['data'])
+let smallImageBasename = ref('')
+let largeImageSrc = ref('')
 
 let data = ref(props.data)
 
 // Checking if image isSelected to either add or remove yellow borderline
 const isSelected = (item) => store.getters.isSelected(item)
 
+const getLargeImageBasename = () => {
+	const largeImages = store.state.largeImages
+	// loading first large image for user to see when they first navigate the page
+	if (!smallImageBasename.value) {
+		largeImageSrc.value = largeImages[0].url
+	} else {
+		let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
+		largeImageSrc.value = selectedLargeImage.url
+	}
+	
+}
 // Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
 	store.dispatch('toggleImageSelection', item)
-
 	// Checking if there are any selected images after the toggle action
 	if (store.state.selectedImages.length > 0) {
 		const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
 		const lastSelectedIndex = data.value.findIndex(img => img.basename === lastSelectedImage.basename)
 		currentSlide.value = lastSelectedIndex
+		smallImageBasename.value = lastSelectedImage.basename.replace('-small', '')
 	} else {
 		currentSlide.value = index
 	}
+	getLargeImageBasename()
 }
+
+onMounted(() => {
+	handleThumbnailClick()
+})
+
 </script>
 
 <template>
@@ -44,7 +63,7 @@ const handleThumbnailClick = (item, index) => {
     >
       <div class="carousel__item">
         <img
-          :src="item.url"
+          :src="largeImageSrc"
           class="div__item"
           :alt="item.OBJECT"
         >
