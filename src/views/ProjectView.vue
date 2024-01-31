@@ -31,6 +31,7 @@ const loadUserImages = async (option) => {
 	const url = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
 	userFrames.value = await fetchApiCall({url: url, method: 'GET', headers: authHeaders})
 }
+
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
 	return store.getters.selectedImages.length === 0
@@ -89,7 +90,6 @@ const addImagesToExistingSession = async (session) => {
 	}
 }
 
-
 // closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
 const selectDataSession = (session) => {
 	isPopupVisible.value = false
@@ -131,8 +131,16 @@ const sessionNameExists = (name) => {
 	return uniqueDataSessions.value.some(session => session.name === name)
 }
 
+const loadLargeImages = async (option) => {
+	const loadLargeImageUrl = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
+	const response = await fetchApiCall({url: loadLargeImageUrl, method: 'GET', headers: authHeaders})
+	const largeImages = response.results
+	store.commit('setLargeImages', largeImages)
+}
+
 onMounted(() => {
 	loadUserImages('reduction_level=95')
+	loadLargeImages('reduction_level=96')
 })
 
 </script>
