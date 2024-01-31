@@ -133,7 +133,6 @@ const sessionNameExists = (name) => {
 
 const saveLargeImages = async (data) => {
 	const largeImages = await data.results
-	console.log('largeimages:', largeImages[0].url)
 	store.commit('setLargeImages', largeImages)
 	store.commit('setFirstLargeImage', largeImages[0].url)
 }
