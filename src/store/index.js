@@ -12,8 +12,7 @@ export default createStore({
 			authToken: '',
 			profile: [],
 			projects: [],
-			largeImages: [],
-			firstLargeImage: ''
+			largeImages: []
 		}
 	},
 
@@ -69,10 +68,6 @@ export default createStore({
 			for (const image of images) {
 				state.largeImages.push(image)
 			}
-		},
-
-		setFirstLargeImage(state, image) {
-			state.firstLargeImage =image
 		}
 	},
 
@@ -80,6 +75,7 @@ export default createStore({
 		toggleImageSelection({ commit }, image) {
 			commit('toggleImageSelection', image)
 		},
+
 		// pass a new array of selected images
 		setSelectedImages({ commit }, images) {
 			commit('selectedImages', images)
@@ -89,6 +85,13 @@ export default createStore({
 		isSelected: (state) => (image) => {
 			return state.selectedImages.some(selectedImage => selectedImage.basename === image.basename)
 		},
-		selectedImages: (state) => state.selectedImages
+
+		selectedImages: (state) => state.selectedImages,
+
+		firstLargeImage: (state) => {
+			if (state.largeImages.length) {
+				return state.largeImages[0].url
+			}
+		}
 	}
 })
