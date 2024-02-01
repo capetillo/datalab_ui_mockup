@@ -1,4 +1,6 @@
+import { fetchApiCall } from '@/utils/api'
 import { createStore } from 'vuex'
+
 
 export default createStore({
 	state() {
@@ -12,7 +14,7 @@ export default createStore({
 			authToken: '',
 			profile: [],
 			projects: [],
-			largeImages: []
+			imageCache: []
 		}
 	},
 
@@ -64,9 +66,16 @@ export default createStore({
 			}
 		},
 
-		setLargeImages(state, images) {
-			state.largeImages = images
-		}
+		cacheImages(state, imageData) {
+			imageData.forEach(image => {
+				const existingImageIndex = state.imageCache.findIndex(img => img.basename === image.basename)
+				if (existingImageIndex === -1) {
+					state.imageCache.push(image)
+				} else {
+					state.imageCache[existingImageIndex] = image
+				}
+			})
+		},
 	},
 
 	actions: {
@@ -77,6 +86,21 @@ export default createStore({
 		// pass a new array of selected images
 		setSelectedImages({ commit }, images) {
 			commit('selectedImages', images)
+		},
+
+		async loadAndCacheImages({ state, commit }, { option }) {
+			const baseUrl = this.state.datalabArchiveApiUrl + 'frames/'
+			const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
+			const authHeaders = {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json',
+				'Authorization': `Token ${state.authToken}`,
+			}
+	
+			const responseData = await fetchApiCall({ url: imageUrl, method: 'GET', headers: authHeaders })
+			if (responseData && responseData.results) {
+				commit('cacheImages', responseData.results)
+			}
 		}
 	},
 	getters: {
@@ -87,8 +111,8 @@ export default createStore({
 		selectedImages: (state) => state.selectedImages,
 
 		firstLargeImage: (state) => {
-			if (state.largeImages.length) {
-				return state.largeImages[0].url
+			if (state.imageCache.length) {
+				return state.imageCache[0].url
 			}
 		}
 	}
