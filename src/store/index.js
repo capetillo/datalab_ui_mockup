@@ -1,6 +1,14 @@
 import { createStore } from 'vuex'
+import userData from './modules/userData'
+import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
+	modules: {
+		userData
+	},
+	plugins: [createPersistedState({
+		paths: ['userData'],
+	})],
 	state() {
 		return {
 			selectedImages: [],
@@ -8,9 +16,6 @@ export default createStore({
 			datalabApiBaseUrl: '',
 			datalabArchiveApiUrl: '',
 			observationPortalUrl: '',
-			username: '',
-			authToken: '',
-			profile: [],
 			projects: []
 		}
 	},
@@ -43,18 +48,6 @@ export default createStore({
     
 		setObservationPortalUrl(state, url) {
 			state.observationPortalUrl = url
-		},
-
-		setUsername(state, username) {
-			state.username = username
-		},
-
-		setAuthToken(state, token) {
-			state.authToken = token
-		},
-
-		setUserProfile(state, profile) {
-			state.profile.push(profile)
 		},
 
 		setProjects(state, projects) {
