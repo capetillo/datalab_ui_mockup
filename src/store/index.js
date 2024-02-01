@@ -18,7 +18,8 @@ export default createStore({
 			datalabArchiveApiUrl: '',
 			observationPortalUrl: '',
 			projects: [],
-			imageCache: []
+			largeImageCache: [],
+			smallImageCache: []
 		}
 	},
 
@@ -58,13 +59,19 @@ export default createStore({
 			}
 		},
 
-		cacheImages(state, imageData) {
+		setImageCache(state, imageData) {
 			imageData.forEach(image => {
-				const existingImageIndex = state.imageCache.findIndex(img => img.basename === image.basename)
-				if (existingImageIndex === -1) {
-					state.imageCache.push(image)
+				let imageArray
+				if (image.RLEVEL === 95) {
+					imageArray = state.smallImageCache
 				} else {
-					state.imageCache[existingImageIndex] = image
+					imageArray = state.largeImageCache
+				}
+				const existingImageIndex = imageArray.findIndex(img => img.basename === image.basename)
+				if (existingImageIndex === -1) {
+					imageArray.push(image)
+				} else {
+					imageArray[existingImageIndex] = image
 				}
 			})
 		},
@@ -91,7 +98,7 @@ export default createStore({
 	
 			const responseData = await fetchApiCall({ url: imageUrl, method: 'GET', headers: authHeaders })
 			if (responseData && responseData.results) {
-				commit('cacheImages', responseData.results)
+				commit('setImageCache', responseData.results)
 			}
 		}
 	},
@@ -103,8 +110,8 @@ export default createStore({
 		selectedImages: (state) => state.selectedImages,
 
 		firstLargeImage: (state) => {
-			if (state.imageCache.length) {
-				return state.imageCache[0].url
+			if (state.largeImageCache.length) {
+				return state.largeImageCache[0].url
 			}
 		}
 	}

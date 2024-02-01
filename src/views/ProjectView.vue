@@ -15,18 +15,16 @@ const newSessionName = ref('')
 const errorMessage = ref('')
 const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-const archiveUrl = store.state.datalabArchiveApiUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
-let userFrames = ref(null)
 
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
 	isLoading.value = true
-	const url = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
-	userFrames.value = await fetchApiCall({url: url, method: 'GET'})
+	await store.dispatch('loadAndCacheImages', { option })
 	isLoading.value = false
+  
 }
 
 // boolean computed property used to disable the add to session button
@@ -128,15 +126,9 @@ const sessionNameExists = (name) => {
 	return uniqueDataSessions.value.some(session => session.name === name)
 }
 
-const loadLargeImages = async (option) => {
-	isLoading.value = true
-	await store.dispatch('loadAndCacheImages', { option })
-	isLoading.value = false
-}
-
 onMounted(() => {
 	loadUserImages('reduction_level=95')
-	loadLargeImages('reduction_level=96')
+	loadUserImages('reduction_level=96')
 })
 
 </script>
@@ -159,16 +151,16 @@ onMounted(() => {
 
       <div v-else>
         <ImageCarousel
-          v-if="imageDisplayToggle && userFrames"
-          :data="userFrames.results"
+          v-if="imageDisplayToggle && store.state.smallImageCache"
+          :data="store.state.smallImageCache"
         />
         <ImageList
-          v-if="!imageDisplayToggle && userFrames"
-          :data="userFrames.results"
+          v-if="!imageDisplayToggle && store.state.smallImageCache"
+          :data="store.state.smallImageCache"
         />
       </div>
       <v-skeleton-loader
-        v-if="!userFrames"
+        v-if="!store.state.smallImageCache"
         type="card"
       />
       <div class="control-buttons">
