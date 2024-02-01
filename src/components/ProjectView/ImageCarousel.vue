@@ -18,7 +18,7 @@ const isSelected = (item) => store.getters.isSelected(item)
 
 // Getting large images by using the thumbnail's basename and finding the large image that matches it
 const getLargeImageSource = () => {
-	const largeImages = store.state.imageCache
+	const largeImages = store.state.largeImageCache
 	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
 	largeImageSrc.value = selectedLargeImage ? selectedLargeImage.url : ''
 }
