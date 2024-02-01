@@ -57,13 +57,8 @@ const storeUser = (user) => {
 
 const getUserProfile = async () => {
 	await authenticateUser ()
-	const authHeaders = {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-		'Authorization': `Token ${store.getters['userData/authToken']}`,
-	}
 	try {
-		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', headers: authHeaders, successCallback: storeUser, failCallback: handleError })
+		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
 	} catch (error) {
 		handleError(error)
 	}

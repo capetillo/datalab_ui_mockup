@@ -12,12 +12,6 @@ const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
-const authHeaders = {
-	'Content-Type': 'application/json',
-	'Accept': 'application/json',
-	'Authorization': `Token ${store.getters['userData/authToken']}`,
-}
-
 onMounted(() => {
 	loadAllSessions()
 })
@@ -28,7 +22,7 @@ function deleteSession(id) {
 }
 
 async function loadAllSessions() {
-	await fetchApiCall({url: dataSessionsUrl, method: 'GET', headers: authHeaders, successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
+	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
 }
 
 </script>

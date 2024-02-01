@@ -1,8 +1,19 @@
+import store from '../store/index'
+
 // handles api requests for datasessions with configurable parameters and callback functions
-async function fetchApiCall({ url, method, body = null, headers, successCallback = null, failCallback = null }) {
+async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = null }) {
+
+	const defaultHeader = {
+		'Content-Type': 'application/json',
+		'Accept': 'application/json',
+	}
+	if(store.getters['userData/authToken']){
+		defaultHeader['Authorization'] = `Token ${store.getters['userData/authToken']}`
+	}
+
 	const config = {
 		method: method,
-		headers: headers,
+		headers: header ? header : defaultHeader,
 		body: body ? JSON.stringify(body) : null
 	}
 
