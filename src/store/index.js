@@ -17,9 +17,6 @@ export default createStore({
 			datalabApiBaseUrl: '',
 			datalabArchiveApiUrl: '',
 			observationPortalUrl: '',
-			username: '',
-			authToken: '',
-			profile: [],
 			projects: [],
 			imageCache: []
 		}
