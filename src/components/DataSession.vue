@@ -9,12 +9,6 @@ const emit = defineEmits(['reloadSession'])
 let images = ref([])
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
-const authHeaders = {
-	'Content-Type': 'application/json',
-	'Accept': 'application/json',
-	'Authorization': `Token ${store.state.authToken}`,
-}
-
 const props = defineProps({
 	data: {
 		type: Object,
@@ -24,12 +18,12 @@ const props = defineProps({
 
 async function addOperation(operationDefinition) {
 	const url = dataSessionsUrl + props.data.id + '/operations/'
-	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, headers: authHeaders, successCallback: emit('reloadSession'), failCallback: handleError})
+	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', headers: authHeaders, successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
+	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
 onMounted(() => {
