@@ -62,11 +62,7 @@ export default createStore({
 		setImageCache(state, imageData) {
 			imageData.forEach(image => {
 				let imageArray
-				if (image.RLEVEL === 95) {
-					imageArray = state.smallImageCache
-				} else {
-					imageArray = state.largeImageCache
-				}
+				image.RLEVEL === 95 ? imageArray = state.smallImageCache : imageArray = state.largeImageCache
 				const existingImageIndex = imageArray.findIndex(img => img.basename === image.basename)
 				if (existingImageIndex === -1) {
 					imageArray.push(image)
@@ -87,16 +83,11 @@ export default createStore({
 			commit('selectedImages', images)
 		},
 
-		async loadAndCacheImages({ state, commit }, { option }) {
+		async loadAndCacheImages({ commit }, { option }) {
 			const baseUrl = this.state.datalabArchiveApiUrl + 'frames/'
 			const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
-			const authHeaders = {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json',
-				'Authorization': `Token ${state.authToken}`,
-			}
 	
-			const responseData = await fetchApiCall({ url: imageUrl, method: 'GET', headers: authHeaders })
+			const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
 			if (responseData && responseData.results) {
 				commit('setImageCache', responseData.results)
 			}

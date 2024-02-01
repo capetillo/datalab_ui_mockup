@@ -24,7 +24,6 @@ const loadUserImages = async (option) => {
 	isLoading.value = true
 	await store.dispatch('loadAndCacheImages', { option })
 	isLoading.value = false
-  
 }
 
 // boolean computed property used to disable the add to session button
