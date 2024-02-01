@@ -18,7 +18,6 @@ const actions = {
 	},
 
 	setAuthToken({ commit }, authToken) {
-		console.log('reached the userData store, setting auth token: ', authToken)
 		commit('authToken', authToken)
 	},
 
