@@ -60,17 +60,10 @@ const getImageSrc = (src) => {
     >
       <div class="carousel__item">
         <img
-          v-if="getImageSrc(largeImageSrc)"
           :src="getImageSrc(largeImageSrc)"
           class="div__item"
           :alt="item.OBJECT"
         >
-        <v-progress-circular
-          v-else
-          indeterminate
-          :size="51"
-          :width="10"
-        />
       </div>
     </Slide>
   </Carousel>
