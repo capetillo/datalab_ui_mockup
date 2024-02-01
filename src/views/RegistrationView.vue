@@ -20,7 +20,7 @@ const rules = {
 const storeToken = (data) => {
 	const authToken = data.token
 	if (authToken) {
-		store.commit('setAuthToken', authToken)
+		store.dispatch('userData/setAuthToken', authToken)
 		return authToken
 	}
 }
@@ -49,22 +49,16 @@ const authenticateUser = async () => {
 }
 
 const storeUser = (user) => {
-	store.commit('setUsername', username.value)
-	store.commit('setUserProfile', user)
+	store.dispatch('userData/setUsername', username.value)
+	store.dispatch('userData/setUserProfile', user)
 	store.commit('setProjects', user.proposals)
 	router.push({ name: 'ProjectView' })
 }
 
 const getUserProfile = async () => {
 	await authenticateUser ()
-	const token = store.state.authToken
-	const authHeaders = {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-		'Authorization': `Token ${token}`,
-	}
 	try {
-		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', headers: authHeaders, successCallback: storeUser, failCallback: handleError })
+		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
 	} catch (error) {
 		handleError(error)
 	}
