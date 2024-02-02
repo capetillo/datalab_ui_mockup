@@ -8,34 +8,41 @@ import 'vue3-carousel/dist/carousel.css'
 const store = useStore()
 const currentSlide = ref(0)
 const props = defineProps(['data'])
+let smallImageBasename = ref('')
+let largeImageSrc = ref('')
 
 let data = ref(props.data)
 
 // Checking if image isSelected to either add or remove yellow borderline
 const isSelected = (item) => store.getters.isSelected(item)
 
+// Getting large images by using the thumbnail's basename and finding the large image that matches it
+const getLargeImageSource = () => {
+	const largeImages = store.state.largeImageCache
+	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
+	largeImageSrc.value = selectedLargeImage ? selectedLargeImage.url : ''
+}
+
 // Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
-	// Dispatch an action to toggle the selection status of the clicked image
-	// This will add the image to the selectedImages array in the store if it's not there
-	// or remove it if it is already in the array
 	store.dispatch('toggleImageSelection', item)
-
 	// Checking if there are any selected images after the toggle action
 	if (store.state.selectedImages.length > 0) {
-		// If there are selected images, then we find the last selected image
 		const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
-		// Then we find the index of the last selected image in the data array
-		// This is used to set the current slide to the last selected image
 		const lastSelectedIndex = data.value.findIndex(img => img.basename === lastSelectedImage.basename)
-		// Set the current slide to the last selected image
 		currentSlide.value = lastSelectedIndex
+		// Used to get large images
+		smallImageBasename.value = lastSelectedImage.basename.replace('-small', '')
 	} else {
-		// If no images are selected, set the current slide to the index of the clicked image
-		// This ensures that the carousel shows the clicked image
 		currentSlide.value = index
 	}
+	getLargeImageSource()
 }
+
+const getImageSrc = (src) => {
+	return src || store.getters.firstLargeImage || ''
+}
+
 </script>
 
 <template>
@@ -53,7 +60,7 @@ const handleThumbnailClick = (item, index) => {
     >
       <div class="carousel__item">
         <img
-          :src="item.url"
+          :src="getImageSrc(largeImageSrc)"
           class="div__item"
           :alt="item.OBJECT"
         >
@@ -94,6 +101,10 @@ const handleThumbnailClick = (item, index) => {
 </template>
 
 <style scoped>
+
+.carousel__item {
+  padding-bottom: 2em;
+}
 .thumbnail__item {
   max-width: 200px;
   max-height: 160px;

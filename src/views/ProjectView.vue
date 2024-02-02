@@ -13,18 +13,19 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
+const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-const archiveUrl = store.state.datalabArchiveApiUrl
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
-let userFrames = ref(null)
 
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
-	const url = option ? archiveUrl + 'frames/?' + option : archiveUrl + 'frames/'
-	userFrames.value = await fetchApiCall({url: url, method: 'GET'})
+	isLoading.value = true
+	await store.dispatch('loadAndCacheImages', { option })
+	isLoading.value = false
 }
+
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
 	return store.getters.selectedImages.length === 0
@@ -83,7 +84,6 @@ const addImagesToExistingSession = async (session) => {
 	}
 }
 
-
 // closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
 const selectDataSession = (session) => {
 	isPopupVisible.value = false
@@ -127,6 +127,7 @@ const sessionNameExists = (name) => {
 
 onMounted(() => {
 	loadUserImages('reduction_level=95')
+	loadUserImages('reduction_level=96')
 })
 
 </script>
@@ -135,16 +136,30 @@ onMounted(() => {
   <div class="container">
     <ProjectBar class="project-bar" />
     <div class="image-area h-screen">
-      <ImageCarousel
-        v-if="imageDisplayToggle && userFrames"
-        :data="userFrames.results"
-      />
-      <ImageList
-        v-if="!imageDisplayToggle && userFrames"
-        :data="userFrames.results"
-      />
+      <div
+        v-if="isLoading"
+        class="loading-indicator-container"
+      >
+        <v-progress-circular
+          indeterminate
+          model-value="20"
+          :size="50"
+          :width="9"
+        />
+      </div>
+
+      <div v-else>
+        <ImageCarousel
+          v-if="imageDisplayToggle && store.state.smallImageCache"
+          :data="store.state.smallImageCache"
+        />
+        <ImageList
+          v-if="!imageDisplayToggle && store.state.smallImageCache"
+          :data="store.state.smallImageCache"
+        />
+      </div>
       <v-skeleton-loader
-        v-if="!userFrames"
+        v-if="!store.state.smallImageCache"
         type="card"
       />
       <div class="control-buttons">
@@ -213,28 +228,35 @@ onMounted(() => {
 </template>
 <style scoped>
 @media (min-width: 900px){
-    .container{
-        margin: 20px;
-        display: grid;
-        grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
-        grid-template-rows: [row-start] 100% [row-end];
-    }
-    .project-bar{
-        display: flex;
-        grid-column-start: col1-start;
-        grid-column-end: col1-end;
-        grid-row-start: row-start;
-        grid-row-end: row-end;
-    }
-    .image-area{
-        grid-column-start: col2-start;
-        grid-column-end: col2-end;
-    }
+.container{
+    margin: 20px;
+    display: grid;
+    grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
+    grid-template-rows: [row-start] 100% [row-end];
+}
+
+.loading-indicator-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.project-bar{
+    display: flex;
+    grid-column-start: col1-start;
+    grid-column-end: col1-end;
+    grid-row-start: row-start;
+    grid-row-end: row-end;
+}
+.image-area{
+    grid-column-start: col2-start;
+    grid-column-end: col2-end;
+}
 }
 .control-buttons{
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    float: right;
+margin-top: 10px;
+display: flex;
+align-items: center;
+float: right;
 }
 </style>
