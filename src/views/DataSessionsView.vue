@@ -4,7 +4,9 @@ import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession.vue'
 import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useStore()
 const dataSessions = ref([])
 const tab = ref()
@@ -51,6 +53,11 @@ async function loadAllSessions() {
             @click="deleteSession(ds.id)"
           />
         </v-tab>
+        <v-btn
+          variant="plain"
+          icon="mdi-plus-box"
+          @click="router.push({ name: 'ProjectView' })"
+        />
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item
