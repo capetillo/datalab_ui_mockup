@@ -61,7 +61,7 @@ const getImageSrc = (src) => {
       <div class="carousel__item">
         <img
           :src="getImageSrc(largeImageSrc)"
-          class="div__item"
+          class="selected_image"
           :alt="item.OBJECT"
         >
       </div>
@@ -101,6 +101,10 @@ const getImageSrc = (src) => {
 </template>
 
 <style scoped>
+
+.selected_image {
+  transform: scale(0.7)
+}
 
 .carousel__item {
   padding-bottom: 2em;
