@@ -192,9 +192,7 @@ onMounted(() => {
             :key="session.id"
             @click="selectDataSession(session)"
           >
-            <v-list-item-content>
-              {{ session.name }}
-            </v-list-item-content>
+            {{ session.name }}
           </v-list-item>
         </v-list>
         <!-- Input for new session name -->
