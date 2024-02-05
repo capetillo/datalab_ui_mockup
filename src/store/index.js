@@ -72,6 +72,12 @@ export default createStore({
 				}
 			})
 		},
+
+		setLoadedImages(state, basename) {
+			if (!state.loadedImages.includes(basename)) {
+				state.loadedImages.push(basename)
+			}
+		},
 	},
 
 	actions: {
