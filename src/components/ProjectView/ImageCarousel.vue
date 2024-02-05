@@ -1,9 +1,10 @@
-<!-- eslint-disable vue/require-prop-types -->
+
 <script setup>
 import { ref, defineProps } from 'vue'
 import { useStore } from 'vuex'
-import { Carousel, Slide, Navigation } from 'vue3-carousel'
+import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
+
 
 const store = useStore()
 const currentSlide = ref(0)
@@ -61,62 +62,90 @@ const getImageSrc = (src) => {
       <div class="carousel__item">
         <img
           :src="getImageSrc(largeImageSrc)"
-          class="selected_image"
+          class="selected__image"
           :alt="item.OBJECT"
         >
       </div>
     </Slide>
   </Carousel>
-
-  <!-- Thumbnails Carousel -->
-  <Carousel
+  <div
     id="thumbnails"
-    ref="carousel"
-    v-model="currentSlide"
-    :items-to-show="5"
-    :wrap-around="false"
-    :transition="0"
+    class="thumbnail__carousel__container"
   >
-    <Slide
+    <div
       v-for="(item, index) in data"
       :key="index"
+      class="thumbnail__container"
+      @click="handleThumbnailClick(item, index)"
     >
-      <div
+      <!-- Use lazy-src for lazy loading -->
+      <v-img
+        :src="item.url"
+        :lazy-src="item.url"
+        height="160"
+        width="200"
+        cover
         class="thumbnail__item"
-        @click="handleThumbnailClick(item, index)"
-      >
-        <!-- Thumbnail Image -->
-        <img
-          :src="item.url"
-          :class="{'selected-thumbnail': isSelected(item)}"
-          class="thumbnail__item"
-          :alt="item.OBJECT"
-        >
-      </div>
-    </Slide>
-    <template #addons>
-      <Navigation />
-    </template>
-  </Carousel>
+        :class="{'selected-thumbnail': isSelected(item)}"
+        :alt="item.OBJECT"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
 
-.selected_image {
-  transform: scale(0.7)
+#gallery {
+  height: auto;
 }
 
 .carousel__item {
-  padding-bottom: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.selected__image {
+  transform: scale(0.8);
+  object-fit: contain;
+}
+.thumbnail__carousel__container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.thumbnail__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: calc(20% - 20px)
+}
+
 .thumbnail__item {
-  max-width: 200px;
+  max-width: 100%;
   max-height: 160px;
   object-fit: cover;
-  margin: 0 auto;
 }
 
 .selected-thumbnail {
   border: 4px solid rgb(241, 183, 36);
+}
+.thumbnail__carousel__container::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbnail__carousel__container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+@media (max-width: 768px) {
+  .thumbnail__carousel__container {
+    overflow-x: auto;
+  }
 }
 </style>
