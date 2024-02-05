@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
@@ -44,6 +44,45 @@ const getImageSrc = (src) => {
 	return src || store.getters.firstLargeImage || ''
 }
 
+const loadImage = (index) => {
+	return index <= currentSlide.value + 6
+}
+
+const handleScroll = () => {
+	const carousel = document.getElementById('thumbnails')
+	if (!carousel) return
+
+	const containerWidth = carousel.offsetWidth
+	// Calculating thumbnail width, scrolling position, and finding the currentSlide based on the scrollPosition
+	const thumbnailWidth = containerWidth * 0.2 - 20 
+	const scrollPosition = carousel.scrollLeft
+	const visibleThumbnails = Math.floor(scrollPosition / thumbnailWidth)
+
+	// Updating the currentSlide reactive variable
+	currentSlide.value = visibleThumbnails
+}
+
+onMounted(() => {
+	const carousel = document.getElementById('thumbnails')
+	if (carousel) {
+		carousel.addEventListener('scroll', handleScroll, { passive: true })
+	}
+})
+
+onUnmounted(() => {
+	const carousel = document.getElementById('thumbnails')
+	if (carousel) {
+		carousel.removeEventListener('scroll', handleScroll)
+	}
+})
+
+watch(currentSlide, (newValue) => {
+	for (let i = newValue; i <= newValue + 3 && i < data.value.length; i++) {
+		const imageToLoad = data.value[i]
+		imageToLoad.loaded = true
+	}
+}, { immediate: true })
+
 </script>
 
 <template>
@@ -80,9 +119,8 @@ const getImageSrc = (src) => {
     >
       <!-- Use lazy-src for lazy loading -->
       <v-img
-        :src="item.url"
-        :lazy-src="item.url"
-        height="160"
+        :src="loadImage(index) ? item.url : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'"
+        height="200"
         width="200"
         cover
         class="thumbnail__item"
@@ -128,7 +166,7 @@ const getImageSrc = (src) => {
 
 .thumbnail__item {
   max-width: 100%;
-  max-height: 160px;
+  max-height: 100%;
   object-fit: cover;
 }
 
