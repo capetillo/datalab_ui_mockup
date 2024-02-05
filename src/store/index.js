@@ -19,8 +19,7 @@ export default createStore({
 			observationPortalUrl: '',
 			projects: [],
 			largeImageCache: [],
-			smallImageCache: [],
-			loadedImages: []
+			smallImageCache: []
 		}
 	},
 
@@ -71,13 +70,7 @@ export default createStore({
 					imageArray[existingImageIndex] = image
 				}
 			})
-		},
-
-		setLoadedImages(state, basename) {
-			if (!state.loadedImages.includes(basename)) {
-				state.loadedImages.push(basename)
-			}
-		},
+		}
 	},
 
 	actions: {
@@ -85,7 +78,6 @@ export default createStore({
 			commit('toggleImageSelection', image)
 		},
 
-		// pass a new array of selected images
 		setSelectedImages({ commit }, images) {
 			commit('selectedImages', images)
 		},
