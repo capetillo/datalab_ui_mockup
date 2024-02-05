@@ -19,7 +19,8 @@ export default createStore({
 			observationPortalUrl: '',
 			projects: [],
 			largeImageCache: [],
-			smallImageCache: []
+			smallImageCache: [],
+			loadedImages: []
 		}
 	},
 
