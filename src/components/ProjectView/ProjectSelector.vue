@@ -6,16 +6,29 @@ defineProps(['project'])
 </script>
 
 <template>
-  <v-expansion-panel
-    :title="project.projectTitle"
-    :text="project.projectDescription"
-    class="custom-description"
-  />
+  <v-expansion-panel>
+    <v-expansion-panel-title
+      expand-icon="mdi-menu-down"
+      class="projects_title"
+    >
+      {{ project.projectTitle }}
+    </v-expansion-panel-title>
+    <v-expansion-panel-text class="project_description">
+      {{ project.projectDescription }}
+    </v-expansion-panel-text>
+  </v-expansion-panel>
 </template>
 
 <style scoped>
-.custom-description {
-  padding: 2rem;
+.projects_title {
+  letter-spacing: 0.1rem;
   font-size: 1.5rem;
+  color: rgb(233,205,156);
+  font-weight: 500;
+}
+.project_description {
+  font-size: 1.2rem;
+  text-align: left;
+  color: rgb(233,205,156);
 }
 </style>
