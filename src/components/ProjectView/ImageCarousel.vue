@@ -100,7 +100,7 @@ const getImageSrc = (src) => {
       v-for="(item, index) in data"
       :key="index"
     >
-      <div class="carousel__item">
+      <div class="selected__item">
         <img
           :src="getImageSrc(largeImageSrc)"
           class="selected__image"
@@ -123,8 +123,6 @@ const getImageSrc = (src) => {
       <v-img
         :src="item.url"
         loading="lazy"
-        height="200"
-        width="200"
         cover
         class="thumbnail__item"
         :class="{'selected-thumbnail': isSelected(item)}"
@@ -135,15 +133,16 @@ const getImageSrc = (src) => {
 </template>
 
 <style scoped>
-
 #gallery {
   height: auto;
 }
 
-.carousel__item {
+.selected__item {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 70vh;
+  margin-top: -3rem;
 }
 
 .selected__image {
@@ -156,7 +155,7 @@ const getImageSrc = (src) => {
   overflow-x: auto;
   overflow-y: hidden;
   align-items: center;
-  padding: 10px 0;
+  padding: 0.3rem 0;
 }
 
 .thumbnail__container {
@@ -168,13 +167,12 @@ const getImageSrc = (src) => {
 }
 
 .thumbnail__item {
-  max-width: 100%;
-  max-height: 100%;
+  transform: scale(0.7);
   object-fit: cover;
 }
 
 .selected-thumbnail {
-  border: 4px solid rgb(241, 183, 36);
+  border: 0.4rem solid rgb(235, 160, 30);
 }
 .thumbnail__carousel__container::-webkit-scrollbar {
   display: none;
@@ -184,7 +182,43 @@ const getImageSrc = (src) => {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-@media (max-width: 768px) {
+@media (max-width: 2000px) {
+  .selected__image {
+    max-height: 70vh; 
+    object-fit: contain; 
+    transform: scale(0.95); 
+  }
+.thumbnail__carousel__container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding: 0;
+}
+
+.thumbnail__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: calc(25% - 20px)
+}
+
+.thumbnail__item {
+  transform: scale(0.75);
+  object-fit: cover;
+}
+
+.selected-thumbnail {
+  border: 0.3rem solid rgb(235, 160, 30);
+}
+.thumbnail__carousel__container::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbnail__carousel__container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
   .thumbnail__carousel__container {
     overflow-x: auto;
   }
