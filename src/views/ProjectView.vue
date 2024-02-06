@@ -225,7 +225,6 @@ onMounted(() => {
   </v-dialog>
 </template>
 <style scoped>
-@media (min-width: 900px){
 .container{
     margin: 20px;
     display: grid;
@@ -250,11 +249,15 @@ onMounted(() => {
     grid-column-start: col2-start;
     grid-column-end: col2-end;
 }
-}
+
 .control-buttons{
 margin-top: 10px;
 display: flex;
 align-items: center;
 float: right;
+}
+
+@media (max-width: 2000px) {
+
 }
 </style>
