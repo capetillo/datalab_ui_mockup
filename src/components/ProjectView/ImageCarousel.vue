@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue'
+import { ref, defineProps } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
@@ -44,44 +44,46 @@ const getImageSrc = (src) => {
 	return src || store.getters.firstLargeImage || ''
 }
 
-const loadImage = (index) => {
-	return index <= currentSlide.value + 6
-}
+// SAVING THIS CODE FOR WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
 
-const handleScroll = () => {
-	const carousel = document.getElementById('thumbnails')
-	if (!carousel) return
+// const loadImage = (index) => {
+// 	return index <= currentSlide.value + 6
+// }
 
-	const containerWidth = carousel.offsetWidth
-	// Calculating thumbnail width, scrolling position, and finding the currentSlide based on the scrollPosition
-	const thumbnailWidth = containerWidth * 0.2 - 20 
-	const scrollPosition = carousel.scrollLeft
-	const visibleThumbnails = Math.floor(scrollPosition / thumbnailWidth)
+// const handleScroll = () => {
+// 	const carousel = document.getElementById('thumbnails')
+// 	if (!carousel) return
 
-	// Updating the currentSlide reactive variable
-	currentSlide.value = visibleThumbnails
-}
+// 	const containerWidth = carousel.offsetWidth
+// 	// Calculating thumbnail width, scrolling position, and finding the currentSlide based on the scrollPosition
+// 	const thumbnailWidth = containerWidth * 0.2 - 20 
+// 	const scrollPosition = carousel.scrollLeft
+// 	const visibleThumbnails = Math.floor(scrollPosition / thumbnailWidth)
 
-onMounted(() => {
-	const carousel = document.getElementById('thumbnails')
-	if (carousel) {
-		carousel.addEventListener('scroll', handleScroll, { passive: true })
-	}
-})
+// 	// Updating the currentSlide reactive variable
+// 	currentSlide.value = visibleThumbnails
+// }
 
-onUnmounted(() => {
-	const carousel = document.getElementById('thumbnails')
-	if (carousel) {
-		carousel.removeEventListener('scroll', handleScroll)
-	}
-})
+// onMounted(() => {
+// 	const carousel = document.getElementById('thumbnails')
+// 	if (carousel) {
+// 		carousel.addEventListener('scroll', handleScroll, { passive: true })
+// 	}
+// })
 
-watch(currentSlide, (newValue) => {
-	for (let i = newValue; i <= newValue + 3 && i < data.value.length; i++) {
-		const imageToLoad = data.value[i]
-		imageToLoad.loaded = true
-	}
-}, { immediate: true })
+// onUnmounted(() => {
+// 	const carousel = document.getElementById('thumbnails')
+// 	if (carousel) {
+// 		carousel.removeEventListener('scroll', handleScroll)
+// 	}
+// })
+
+// watch(currentSlide, (newValue) => {
+// 	for (let i = newValue; i <= newValue + 3 && i < data.value.length; i++) {
+// 		const imageToLoad = data.value[i]
+// 		imageToLoad.loaded = true
+// 	}
+// }, { immediate: true })
 
 </script>
 
@@ -119,7 +121,8 @@ watch(currentSlide, (newValue) => {
     >
       <!-- Use lazy-src for lazy loading -->
       <v-img
-        :src="loadImage(index) ? item.url : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'"
+        :src="item.url"
+        loading="lazy"
         height="200"
         width="200"
         cover
