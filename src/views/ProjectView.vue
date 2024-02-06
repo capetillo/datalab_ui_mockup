@@ -244,6 +244,7 @@ onMounted(() => {
     grid-column-end: col1-end;
     grid-row-start: row-start;
     grid-row-end: row-end;
+    height: 50%;
 }
 .image-area{
     grid-column-start: col2-start;
@@ -258,6 +259,8 @@ float: right;
 }
 
 @media (max-width: 2000px) {
-
+  .project-bar {
+    height: 60%;
+  }
 }
 </style>
