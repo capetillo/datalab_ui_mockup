@@ -20,10 +20,10 @@ const selectProject = (projectTitle) => {
 
 <template>
   <div class="project_bar">
-    <v-card
-      class="projects_title h-auto w-20 ma-1"
-      title="PROJECTS"
-    >
+    <v-card class="h-auto w-20 ma-1">
+      <p class="project_header">
+        PROJECTS
+      </p>
       <v-expansion-panels variant="accordion">
         <ProjectSelector
           v-for="(project, index) in projects"
@@ -38,6 +38,15 @@ const selectProject = (projectTitle) => {
 
 <style scoped>
 .project_bar {
-  padding-top: 2em;
+  padding: 2em 0;
+  height: 70%;
+}
+.project_header { 
+  letter-spacing: 0.1rem;
+  font-size: 1.7rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 2rem;
+  color: rgb(233,205,156)
 }
 </style>
