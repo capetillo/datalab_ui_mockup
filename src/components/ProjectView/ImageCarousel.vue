@@ -188,37 +188,37 @@ const getImageSrc = (src) => {
     object-fit: contain; 
     transform: scale(0.95); 
   }
-.thumbnail__carousel__container {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  padding: 0;
-}
+  .thumbnail__carousel__container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    padding: 0;
+  }
 
-.thumbnail__container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: calc(25% - 20px)
-}
+  .thumbnail__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: calc(25% - 20px)
+  }
 
-.thumbnail__item {
-  transform: scale(0.75);
-  object-fit: cover;
-}
+  .thumbnail__item {
+    transform: scale(0.75);
+    object-fit: cover;
+  }
 
-.selected-thumbnail {
-  border: 0.3rem solid rgb(235, 160, 30);
-}
-.thumbnail__carousel__container::-webkit-scrollbar {
-  display: none;
-}
+  .selected-thumbnail {
+    border: 0.3rem solid rgb(235, 160, 30);
+  }
+  .thumbnail__carousel__container::-webkit-scrollbar {
+    display: none;
+  }
 
-.thumbnail__carousel__container {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+  .thumbnail__carousel__container {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
   .thumbnail__carousel__container {
     overflow-x: auto;
   }
