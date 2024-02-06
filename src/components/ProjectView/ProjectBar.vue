@@ -19,9 +19,9 @@ const selectProject = (projectTitle) => {
 </script>
 
 <template>
-  <div class="project-bar">
+  <div class="project_bar">
     <v-card
-      class="h-auto w-20 pa-4 ma-1"
+      class="projects_title h-auto w-20 ma-1"
       title="PROJECTS"
     >
       <v-expansion-panels variant="accordion">
@@ -29,10 +29,15 @@ const selectProject = (projectTitle) => {
           v-for="(project, index) in projects"
           :key="index"
           :project="project"
-          class="project-selector"
           @click="selectProject(project.projectTitle)"
         />
       </v-expansion-panels>
     </v-card>
   </div>
 </template>
+
+<style scoped>
+.project_bar {
+  padding-top: 2em;
+}
+</style>
