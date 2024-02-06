@@ -29,7 +29,7 @@ defineProps(['project'])
 .project_description {
   font-size: 1.2rem;
   text-align: left;
-  color: rgb(233,205,156);
+  color: rgb(204, 208, 211);
 }
 
 @media (max-width: 2000px) {
@@ -41,8 +41,6 @@ defineProps(['project'])
   }
   .project_description {
     font-size: 0.9rem;
-    text-align: left;
-    color: rgb(233,205,156);
   }
 }
 </style>
