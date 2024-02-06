@@ -33,7 +33,7 @@ defineProps(['project'])
 }
 
 @media (max-width: 2000px) {
-    .projects_title {
+  .projects_title {
     letter-spacing: 0.1rem;
     font-size: 1.1rem;
     color: rgb(233,205,156);
