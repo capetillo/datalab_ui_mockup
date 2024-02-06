@@ -24,7 +24,7 @@ defineProps(['project'])
   letter-spacing: 0.1rem;
   font-size: 1.5rem;
   color: rgb(233,205,156);
-  font-weight: 500;
+  font-weight: 500; 
 }
 .project_description {
   font-size: 1.2rem;
