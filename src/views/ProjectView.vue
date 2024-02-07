@@ -232,7 +232,7 @@ onMounted(() => {
 </template>
 <style scoped>
 .card{
-  height: 30vh;
+  height: 35vh;
   width: 20vw;
   align-self: center;
 }
@@ -271,8 +271,9 @@ onMounted(() => {
   font-size: 1.3rem;
   align-content: center;
   margin-right: 3rem;
-  color: rgb(204,208,211);
-  font-weight: 600;
+  background-color: rgb(91, 147, 225);
+  opacity: calc(1);
+  color: rgb(204, 208, 211);  
 }
 .button {
   font-family: 'Open Sans', sans-serif;
