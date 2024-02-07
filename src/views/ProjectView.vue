@@ -17,7 +17,7 @@ const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(()=>{
-	if(!store.getters['userData/authToken']) router.push({ name: 'Registration' })
+	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
 // toggle for optional data viewing, controlled by a v-switch

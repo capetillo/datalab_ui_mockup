@@ -13,7 +13,7 @@ const errorMessage = ref('')
 const showPassword = ref(false)
 
 onBeforeMount(()=>{
-	if(store.getters['userData/authToken']) router.push({ name: 'ProjectView' })
+	if(store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
 })
 
 // validation rule for vuetify components
