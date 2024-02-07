@@ -22,11 +22,11 @@ const rules = {
 	required: value => !!value || 'Required.'
 }
 
-const storeToken = (data) => {
+const storeToken = async (data) => {
 	const authToken = data.token
 	if (authToken) {
 		store.dispatch('userData/setAuthToken', authToken)
-		return authToken
+		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
 	}
 }
 
@@ -49,8 +49,6 @@ const Login = async () => {
 	}
 	// store an auth token from login credentials
 	await fetchApiCall({ url: store.state.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
-	// store user profile using auth token
-	await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
 }
 
 </script>
