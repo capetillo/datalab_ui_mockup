@@ -33,6 +33,9 @@ onMounted(async () => {
 </template>
 
 <style>
+body {
+	background-color: rgb(44,54,63);
+}
 #app {
 	font-family: 'Open Sans', sans-serif;
 }
