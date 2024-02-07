@@ -136,7 +136,6 @@ const getImageSrc = (src) => {
 #gallery {
   height: auto;
 }
-
 .selected__item {
   display: flex;
   justify-content: center;
@@ -144,7 +143,6 @@ const getImageSrc = (src) => {
   height: 70vh;
   margin-top: -3rem;
 }
-
 .selected__image {
   transform: scale(0.8);
   object-fit: contain;
@@ -157,7 +155,6 @@ const getImageSrc = (src) => {
   align-items: center;
   padding: 0.3rem 0;
 }
-
 .thumbnail__container {
   display: flex;
   align-items: center;
@@ -165,19 +162,16 @@ const getImageSrc = (src) => {
   flex: 0 0 auto;
   width: calc(20% - 20px)
 }
-
 .thumbnail__item {
   transform: scale(0.7);
   object-fit: cover;
 }
-
 .selected-thumbnail {
   border: 0.4rem solid rgb(235, 160, 30);
 }
 .thumbnail__carousel__container::-webkit-scrollbar {
   display: none;
 }
-
 .thumbnail__carousel__container {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -194,7 +188,6 @@ const getImageSrc = (src) => {
     overflow: hidden;
     padding: 0;
   }
-
   .thumbnail__container {
     display: flex;
     align-items: center;
@@ -214,7 +207,6 @@ const getImageSrc = (src) => {
   .thumbnail__carousel__container::-webkit-scrollbar {
     display: none;
   }
-
   .thumbnail__carousel__container {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -222,5 +214,12 @@ const getImageSrc = (src) => {
   .thumbnail__carousel__container {
     overflow-x: auto;
   }
+}
+@media (max-width: 900px) {
+  .selected__image {
+    transform: scale(0.6);
+    object-fit: contain;
+    align-self: center;
+}
 }
 </style>
