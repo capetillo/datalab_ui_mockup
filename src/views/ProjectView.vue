@@ -285,7 +285,6 @@ onMounted(() => {
   grid-column-start: col2-start;
   grid-column-end: col2-end;
 }
-
 .control-buttons {
   margin-top: 10px;
   display: flex;
@@ -297,7 +296,6 @@ onMounted(() => {
   color: rgb(233,205,156);
   font-size: 1.5rem;
 }
-
 @media (max-width: 1200px) {
   .card {
     height: 55vh;
@@ -328,9 +326,8 @@ onMounted(() => {
     font-family: 'Open Sans', sans-serif;
     color: rgb(233,205,156);
     font-size: 0.85rem;
+  }
 }
-}
-
 @media (max-width: 900px) {
   .card {
     width: 40vw;
