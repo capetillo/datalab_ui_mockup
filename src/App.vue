@@ -27,9 +27,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="loadedConfig">
+  <template v-if="loadedConfig">
     <router-view />
-  </div>
+  </template>
 </template>
 
 <style>
