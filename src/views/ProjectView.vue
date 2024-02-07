@@ -342,5 +342,10 @@ onMounted(() => {
     font-size: 1rem;
     color: rgb(204,208,211);
   } 
+  .project-bar {
+    height: 40vh;
+    width: 32vw;
+    margin-right: 1.5rem;
+  }
 }
 </style>
