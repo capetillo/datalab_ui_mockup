@@ -311,21 +311,18 @@ onMounted(() => {
     width: 12rem;
     height: 3rem;
     font-size: 1rem;
-    color: rgb(204,208,211);
   }
   .project-bar {
     height: 60%;
   }
   .button {
     font-family: 'Open Sans', sans-serif;
-    color: rgb(91, 147, 225);
     font-size: 1rem;
     padding: 0 1rem;
     margin-bottom: 1rem;
   }
   .sessions {
     font-family: 'Open Sans', sans-serif;
-    color: rgb(233,205,156);
     font-size: 0.85rem;
   }
 }
