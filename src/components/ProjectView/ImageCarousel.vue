@@ -44,7 +44,7 @@ const getImageSrc = (src) => {
 	return src || store.getters.firstLargeImage || ''
 }
 
-// SAVING THIS CODE FOR WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
+// SAVING THIS CODE WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
 
 // const loadImage = (index) => {
 // 	return index <= currentSlide.value + 6
