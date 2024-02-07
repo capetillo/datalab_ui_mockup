@@ -167,7 +167,8 @@ const getImageSrc = (src) => {
   object-fit: cover;
 }
 .selected-thumbnail {
-  border: 0.4rem solid rgb(235, 160, 30);
+  /* border: 0.4rem solid rgb(254, 74, 73); */
+  border: 0.5rem solid rgb(255,74,28);
 }
 .thumbnail__carousel__container::-webkit-scrollbar {
   display: none;
@@ -217,9 +218,11 @@ const getImageSrc = (src) => {
 }
 @media (max-width: 900px) {
   .selected__image {
-    transform: scale(0.6);
-    object-fit: contain;
-    align-self: center;
-}
+    transform: scale(0.7);
+    margin: -8rem 5rem 0 0;
+  }
+  .thumbnail__container {
+    margin: 0;
+  }
 }
 </style>
