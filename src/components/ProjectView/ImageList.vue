@@ -26,6 +26,7 @@ function select(selectedImageNames) {
 onMounted ( () => {
 	selected.value = store.getters.selectedImages
 })
+
 </script>
 
 <template>
@@ -46,9 +47,10 @@ onMounted ( () => {
       <v-img
         :src="item.url"
         :alt="item.OBJECT"
-        height="50"
-        width="200"
+        height="150"
+        width="150"
         cover
+        loading="lazy"
       />
     </template>
   </v-data-table>
@@ -61,6 +63,7 @@ onMounted ( () => {
   color: rgb(233,205,155);
   font-size: 1.4rem;
   background-color: rgb(36, 44, 51);
+  /* background-color: rgb(44,54,63) */
 }
 
 </style>
