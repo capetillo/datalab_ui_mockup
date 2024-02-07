@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { fetchApiCall } from '@/utils/api'
@@ -11,6 +11,10 @@ const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const showPassword = ref(false)
+
+onBeforeMount(()=>{
+	if(store.getters['userData/authToken']) router.push({ name: 'ProjectView' })
+})
 
 // validation rule for vuetify components
 // we can add rules here in the future for passwords
