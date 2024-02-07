@@ -183,13 +183,16 @@ onMounted(() => {
     v-model="isPopupVisible"
     width="300"
   >
-    <v-card>
-      <v-card-title>Data Sessions</v-card-title>
+    <v-card class="card">
+      <v-card-title class="sessions_header">
+        DATA SESSIONS
+      </v-card-title>
       <v-card-text>
         <v-list>
           <v-list-item
             v-for="session in uniqueDataSessions"
             :key="session.id"
+            class="sessions"
             @click="selectDataSession(session)"
           >
             {{ session.name }}
@@ -199,6 +202,7 @@ onMounted(() => {
         <v-text-field
           v-model="newSessionName"
           label="New Session Name"
+          class="sessions"
         />
         <!-- Error message -->
         <div v-if="errorMessage">
@@ -207,15 +211,16 @@ onMounted(() => {
       </v-card-text>
       <v-card-actions>
         <v-btn
-          color="primary"
           text
+          class="button"
           @click="createNewDataSession"
         >
           Create New Session
         </v-btn>
         <v-btn
-          color="primary"
+          color="red"
           text
+          class="button"
           @click="isPopupVisible = false"
         >
           Close
@@ -225,13 +230,21 @@ onMounted(() => {
   </v-dialog>
 </template>
 <style scoped>
+.card{
+  height: 30vh;
+  width: 20vw;
+  align-self: center;
+}
 .container{
   margin: 20px;
   display: grid;
   grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
   grid-template-rows: [row-start] 100% [row-end];
 }
-
+.sessions_header {
+  font-family: 'Open Sans', sans-serif;
+  color: rgb(233,205,156);
+}
 .loading-indicator-container {
   display: flex;
   justify-content: center;
@@ -246,6 +259,10 @@ onMounted(() => {
   grid-row-end: row-end;
   height: 50%;
 }
+.button {
+  font-family: 'Open Sans', sans-serif;
+  color: rgb(91, 147, 225)
+}
 .image-area{
   grid-column-start: col2-start;
   grid-column-end: col2-end;
@@ -257,8 +274,17 @@ onMounted(() => {
   align-items: center;
   float: right;
 }
+.sessions{
+  font-family: 'Open Sans', sans-serif;
+  color: rgb(233,205,156);
+}
 
 @media (max-width: 2000px) {
+  .card{
+  height: 45vh;
+  width: 30vw;
+  align-self: center;
+}
   .project-bar {
     height: 60%;
   }
