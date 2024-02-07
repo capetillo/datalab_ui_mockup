@@ -271,9 +271,15 @@ onMounted(() => {
   font-size: 1.3rem;
   align-content: center;
   margin-right: 3rem;
-  background-color: rgb(91, 147, 225);
+  background-color: rgb(83,162,190);
   opacity: calc(1);
+  font-weight: 700;
+  color: rgb(233,205,156);
+}
+.add_button:disabled {
+  background-color: rgb(83,162,190);
   color: rgb(204, 208, 211);  
+  opacity: calc(0.7);
 }
 .button {
   font-family: 'Open Sans', sans-serif;
