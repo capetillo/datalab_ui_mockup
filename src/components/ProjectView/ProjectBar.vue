@@ -63,4 +63,10 @@ const selectProject = (projectTitle) => {
     color: rgb(233,205,156)
   }
 }
+@media (max-width: 900px) {
+  .project_header {
+    font-size: 1.1rem;
+    padding: 0.3rem 0;
+  }
+}
 </style>
