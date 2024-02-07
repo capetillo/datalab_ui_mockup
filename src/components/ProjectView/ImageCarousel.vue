@@ -203,7 +203,7 @@ const getImageSrc = (src) => {
   }
 
   .selected-thumbnail {
-    border: 0.3rem solid rgb(235, 160, 30);
+    border: 0.3rem solid rgb(244,44,4);
   }
   .thumbnail__carousel__container::-webkit-scrollbar {
     display: none;
