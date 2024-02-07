@@ -8,10 +8,10 @@ const store = useStore()
 
 // v-data-table setup variables
 let headers = ref([
-	{ title: 'Image Name', align: 'start', sortable: true, key: 'basename' },
-	{ title: 'Time', align: 'start', sortable: true, key: 'observation_date' },
-	{ title: 'Object', align: 'start', sortable: true, key: 'OBJECT' },
-	{ title: 'Image', align: 'start', sortable: false, key: 'url' },
+	{ title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
+	{ title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
+	{ title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
+	{ title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
 ])
 let items = ref(props.data)
 let itemsPerPage = ref(15)
@@ -39,6 +39,7 @@ onMounted ( () => {
     show-select
     density="compact"
     :hover="true"
+    class="data_table"
     @update:model-value="select($event)"
   >
     <template #[`item.url`]="{ item }">
@@ -52,3 +53,14 @@ onMounted ( () => {
     </template>
   </v-data-table>
 </template>
+
+<style scoped>
+.data_table {
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: 0.05rem;
+  color: rgb(233,205,155);
+  font-size: 1.4rem;
+  background-color: rgb(36, 44, 51);
+}
+
+</style>
