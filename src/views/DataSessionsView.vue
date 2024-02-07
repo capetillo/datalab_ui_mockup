@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession.vue'
@@ -13,6 +13,10 @@ const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
+onBeforeMount(()=>{
+	if(!store.getters['userData/authToken']) router.push({ name: 'Registration' })
+})
 
 onMounted(() => {
 	loadAllSessions()
