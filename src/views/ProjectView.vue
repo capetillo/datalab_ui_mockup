@@ -343,8 +343,8 @@ onMounted(() => {
     color: rgb(204,208,211);
   } 
   .project-bar {
-    height: 40vh;
-    width: 32vw;
+    height: 35vh;
+    width: 25vw;
     margin-right: 1.5rem;
   }
 }
