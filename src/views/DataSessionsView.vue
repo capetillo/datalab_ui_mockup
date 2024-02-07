@@ -15,7 +15,7 @@ const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(()=>{
-	if(!store.getters['userData/authToken']) router.push({ name: 'Registration' })
+	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
 onMounted(() => {
