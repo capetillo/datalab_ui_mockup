@@ -25,6 +25,7 @@ defineProps(['project'])
   font-size: 1.5rem;
   color: rgb(233,205,156);
   font-weight: 500; 
+  background-color: rgb(36, 44, 51);
 }
 .project_description {
   font-size: 1.2rem;
@@ -34,10 +35,7 @@ defineProps(['project'])
 
 @media (max-width: 1200px) {
   .projects_title {
-    letter-spacing: 0.1rem;
     font-size: 1.1rem;
-    color: rgb(233,205,156);
-    font-weight: 500;
   }
   .project_description {
     font-size: 0.9rem;
