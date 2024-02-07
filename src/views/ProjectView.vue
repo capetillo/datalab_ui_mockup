@@ -266,8 +266,8 @@ onMounted(() => {
   height: 50%;
 }
 .add_button {
-  width: 11vw;
-  height: 4.8vh;
+  width: 16rem;
+  height: 4rem;
   font-size: 1.3rem;
   align-content: center;
   margin-right: 3rem;
@@ -279,6 +279,7 @@ onMounted(() => {
   color: rgb(91, 147, 225);
   font-size: 1.4rem;
   padding: 0 1rem;
+  margin-bottom: 1rem;
 }
 .image-area {
   grid-column-start: col2-start;
@@ -297,27 +298,49 @@ onMounted(() => {
   font-size: 1.5rem;
 }
 
-@media (max-width: 2000px) {
+@media (max-width: 1200px) {
   .card {
-  height: 45vh;
-  width: 30vw;
-  align-self: center;
-}
-.add_button {
-  width: 18vw;
-  height: 4.8vh;
-  font-size: 1rem;
-  color: rgb(204,208,211);
-}
+    height: 55vh;
+    width: 30vw;
+    align-self: center;
+  }
+  .sessions_header {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+  }
+  .add_button {
+    width: 12rem;
+    height: 3rem;
+    font-size: 1rem;
+    color: rgb(204,208,211);
+  }
   .project-bar {
     height: 60%;
   }
+  .button {
+    font-family: 'Open Sans', sans-serif;
+    color: rgb(91, 147, 225);
+    font-size: 1rem;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+  }
+  .sessions {
+    font-family: 'Open Sans', sans-serif;
+    color: rgb(233,205,156);
+    font-size: 0.85rem;
+}
 }
 
-@media (max-width: 1700px) {
+@media (max-width: 900px) {
   .card {
     width: 40vw;
     height: 35vh;
-  }
+  } 
+  .add_button {
+    width: 22vw;
+    height: 4.8vh;
+    font-size: 1rem;
+    color: rgb(204,208,211);
+  } 
 }
 </style>
