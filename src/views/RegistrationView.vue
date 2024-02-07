@@ -35,7 +35,7 @@ const storeUser = (user) => {
 	store.dispatch('userData/setUsername', username.value)
 	store.dispatch('userData/setUserProfile', user)
 	store.commit('setProjects', user.proposals)
-	router.push({ name: 'DataSessions' })
+	router.push({ name: 'ProjectView' })
 }
 
 const Login = async () => {
