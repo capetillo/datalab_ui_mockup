@@ -43,4 +43,11 @@ defineProps(['project'])
     font-size: 0.9rem;
   }
 }
+@media (max-width: 900px) {
+  .projects_title {
+    letter-spacing: 0.1rem;
+    font-size: 1rem;
+    font-weight: 500; 
+  }
+}
 </style>
