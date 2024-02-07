@@ -172,6 +172,7 @@ onMounted(() => {
         />
         <v-btn
           :disabled="noSelectedImages"
+          class="add_button"
           @click="getDataSessions"
         >
           Add to a Session
@@ -243,7 +244,12 @@ onMounted(() => {
 }
 .sessions_header {
   font-family: 'Open Sans', sans-serif;
+  font-size: 1.6rem;
+  padding: 1.5rem;
+  text-align: center;
   color: rgb(233,205,156);
+  font-weight: 600;
+  letter-spacing: 0.05rem;
 }
 .loading-indicator-container {
   display: flex;
@@ -259,34 +265,59 @@ onMounted(() => {
   grid-row-end: row-end;
   height: 50%;
 }
+.add_button {
+  width: 11vw;
+  height: 4.8vh;
+  font-size: 1.3rem;
+  align-content: center;
+  margin-right: 3rem;
+  color: rgb(204,208,211);
+  font-weight: 600;
+}
 .button {
   font-family: 'Open Sans', sans-serif;
-  color: rgb(91, 147, 225)
+  color: rgb(91, 147, 225);
+  font-size: 1.4rem;
+  padding: 0 1rem;
 }
-.image-area{
+.image-area {
   grid-column-start: col2-start;
   grid-column-end: col2-end;
 }
 
-.control-buttons{
+.control-buttons {
   margin-top: 10px;
   display: flex;
   align-items: center;
   float: right;
 }
-.sessions{
+.sessions {
   font-family: 'Open Sans', sans-serif;
   color: rgb(233,205,156);
+  font-size: 1.5rem;
 }
 
 @media (max-width: 2000px) {
-  .card{
+  .card {
   height: 45vh;
   width: 30vw;
   align-self: center;
 }
+.add_button {
+  width: 18vw;
+  height: 4.8vh;
+  font-size: 1rem;
+  color: rgb(204,208,211);
+}
   .project-bar {
     height: 60%;
+  }
+}
+
+@media (max-width: 1700px) {
+  .card {
+    width: 40vw;
+    height: 35vh;
   }
 }
 </style>
