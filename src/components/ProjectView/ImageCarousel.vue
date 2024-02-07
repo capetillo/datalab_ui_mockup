@@ -182,7 +182,7 @@ const getImageSrc = (src) => {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-@media (max-width: 2000px) {
+@media (max-width: 1200px) {
   .selected__image {
     max-height: 70vh; 
     object-fit: contain; 

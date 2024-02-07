@@ -49,7 +49,7 @@ const selectProject = (projectTitle) => {
   padding: 2rem;
   color: rgb(233,205,156)
 }
-@media (max-width: 2000px) {
+@media (max-width: 1200px) {
   .project_bar {
     padding: 0.5rem 0;
     height: 70%;
