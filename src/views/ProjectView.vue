@@ -297,6 +297,7 @@ onMounted(() => {
 .cancel_button {
   color: rgb(254,101,79);
   font-weight: 700;
+  padding-left: 38%;
 }
 .image-area {
   grid-column-start: col2-start;
