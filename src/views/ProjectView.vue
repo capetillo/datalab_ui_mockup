@@ -176,6 +176,7 @@ onMounted(() => {
         />
         <v-btn
           :disabled="noSelectedImages"
+          class="add_button"
           @click="getDataSessions"
         >
           Add to a Session
@@ -187,13 +188,16 @@ onMounted(() => {
     v-model="isPopupVisible"
     width="300"
   >
-    <v-card>
-      <v-card-title>Data Sessions</v-card-title>
+    <v-card class="card">
+      <v-card-title class="sessions_header">
+        DATA SESSIONS
+      </v-card-title>
       <v-card-text>
         <v-list>
           <v-list-item
             v-for="session in uniqueDataSessions"
             :key="session.id"
+            class="sessions"
             @click="selectDataSession(session)"
           >
             {{ session.name }}
@@ -203,6 +207,7 @@ onMounted(() => {
         <v-text-field
           v-model="newSessionName"
           label="New Session Name"
+          class="sessions"
         />
         <!-- Error message -->
         <div v-if="errorMessage">
@@ -211,15 +216,15 @@ onMounted(() => {
       </v-card-text>
       <v-card-actions>
         <v-btn
-          color="primary"
           text
+          class="button create_button"
           @click="createNewDataSession"
         >
           Create New Session
         </v-btn>
         <v-btn
-          color="primary"
           text
+          class="button cancel_button"
           @click="isPopupVisible = false"
         >
           Close
@@ -228,15 +233,27 @@ onMounted(() => {
     </v-card>
   </v-dialog>
 </template>
-<style scoped>
-@media (min-width: 900px){
-.container{
-    margin: 20px;
-    display: grid;
-    grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
-    grid-template-rows: [row-start] 100% [row-end];
+<style scoped lang="scss">
+.card{
+  height: 450px;
+  width: 700px;
+  align-self: center;
 }
-
+.container{
+  margin: 20px;
+  display: grid;
+  grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
+  grid-template-rows: [row-start] 100% [row-end];
+}
+.sessions_header {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.6rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: $tan;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+}
 .loading-indicator-container {
   display: flex;
   justify-content: center;
@@ -244,21 +261,102 @@ onMounted(() => {
   height: 100%;
 }
 .project-bar{
-    display: flex;
-    grid-column-start: col1-start;
-    grid-column-end: col1-end;
-    grid-row-start: row-start;
-    grid-row-end: row-end;
+  display: flex;
+  grid-column-start: col1-start;
+  grid-column-end: col1-end;
+  grid-row-start: row-start;
+  grid-row-end: row-end;
+  height: 50%;
 }
-.image-area{
-    grid-column-start: col2-start;
-    grid-column-end: col2-end;
+.add_button {
+  width: 16rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  margin-right: 3rem;
+  background-color: $light-blue;
+  opacity: calc(1);
+  font-weight: 700;
+  color: white;
 }
+.add_button:disabled {
+  background-color:$light-blue;
+  color: white;  
+  opacity: calc(0.7);
 }
-.control-buttons{
-margin-top: 10px;
-display: flex;
-align-items: center;
-float: right;
+.button {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.4rem;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+.create_button {
+  color: $light-blue;
+  font-weight: 700;
+}
+.cancel_button {
+  color: $cancel;
+  font-weight: 700;
+  padding-left: 38%;
+}
+.image-area {
+  grid-column-start: col2-start;
+  grid-column-end: col2-end;
+}
+.control-buttons {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  float: right;
+}
+.sessions {
+  font-family: 'Open Sans', sans-serif;
+  color: $tan;
+  font-size: 1.5rem;
+}
+@media (max-width: 1200px) {
+  .card {
+    height: 55vh;
+    width: 30vw;
+    align-self: center;
+  }
+  .sessions_header {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+  }
+  .add_button {
+    width: 12rem;
+    height: 3rem;
+    font-size: 1rem;
+  }
+  .project-bar {
+    height: 60%;
+  }
+  .button {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+  }
+  .sessions {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.85rem;
+  }
+}
+@media (max-width: 900px) {
+  .card {
+    width: 40vw;
+    height: 35vh;
+  } 
+  .add_button {
+    width: 22vw;
+    height: 4.8vh;
+    font-size: 1rem;
+  } 
+  .project-bar {
+    height: 35vh;
+    width: 25vw;
+    margin-right: 1.5rem;
+  }
 }
 </style>
