@@ -55,15 +55,15 @@ onMounted ( () => {
   </v-data-table>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .data_table {
   margin-top: 2rem;
   padding-top: 0.5rem;
   font-family: 'Open Sans', sans-serif;
   letter-spacing: 0.05rem;
-  color: rgb(233,205,155);
+  color: $tan;
   font-size: 1.4rem;
-  background-color: rgb(36, 44, 51);
+  background-color: $metal;
 }
 .list_image{
   height: 8vh;
