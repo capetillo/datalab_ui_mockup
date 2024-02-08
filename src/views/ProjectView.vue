@@ -213,15 +213,14 @@ onMounted(() => {
       <v-card-actions>
         <v-btn
           text
-          class="button"
+          class="button create_button"
           @click="createNewDataSession"
         >
           Create New Session
         </v-btn>
         <v-btn
-          color="red"
           text
-          class="button"
+          class="button cancel_button"
           @click="isPopupVisible = false"
         >
           Close
@@ -271,22 +270,29 @@ onMounted(() => {
   font-size: 1.3rem;
   align-content: center;
   margin-right: 3rem;
-  background-color: rgb(83,162,190);
+  background-color: rgb(126,155,196);
   opacity: calc(1);
   font-weight: 700;
   color: rgb(233,205,156);
 }
 .add_button:disabled {
-  background-color: rgb(83,162,190);
+  background-color:rgb(126,155,196);
   color: rgb(204, 208, 211);  
   opacity: calc(0.7);
 }
 .button {
   font-family: 'Open Sans', sans-serif;
-  color: rgb(91, 147, 225);
   font-size: 1.4rem;
   padding: 0 1rem;
   margin-bottom: 1rem;
+}
+.create_button {
+  color: rgb(126,155,196);
+  font-weight: 700;
+}
+.cancel_button {
+  color: rgb(254,101,79);
+  font-weight: 700;
 }
 .image-area {
   grid-column-start: col2-start;
@@ -341,7 +347,6 @@ onMounted(() => {
     width: 22vw;
     height: 4.8vh;
     font-size: 1rem;
-    color: rgb(204,208,211);
   } 
   .project-bar {
     height: 35vh;
