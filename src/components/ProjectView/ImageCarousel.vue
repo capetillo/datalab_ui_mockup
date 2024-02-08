@@ -132,7 +132,7 @@ const getImageSrc = (src) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 #gallery {
   height: auto;
 }
@@ -167,13 +167,7 @@ const getImageSrc = (src) => {
   object-fit: cover;
 }
 .selected-thumbnail {
-  /* border: 0.4rem solid rgb(254, 74, 73); */
-  border: 0.5rem solid rgb(75,127,82);
-  /* border: 0.5rem solid rgb(64, 201, 162); */
-  /* border: 0.5rem solid rgb(160,155,231) */
-  /* border: 0.5rem solid rgb(91,104,44) */
-  /* border: 0.5rem solid rgb(115,210,222) */
-  /* border: 0.5rem solid rgb(255,90,95); */
+  border: 0.5rem solid $dark-green;
 }
 .thumbnail__carousel__container::-webkit-scrollbar {
   display: none;
@@ -208,7 +202,7 @@ const getImageSrc = (src) => {
   }
 
   .selected-thumbnail {
-    border: 0.3rem solid rgb(75,127,82);
+    border: 0.3rem solid $dark-green;
   }
   .thumbnail__carousel__container::-webkit-scrollbar {
     display: none;
