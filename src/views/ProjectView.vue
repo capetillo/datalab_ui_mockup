@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeMount } from 'vue'
 import ProjectBar from '@/components/ProjectView/ProjectBar.vue'
 import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue'
 import ImageList from '@/components/ProjectView/ImageList.vue'
@@ -15,6 +15,10 @@ const newSessionName = ref('')
 const errorMessage = ref('')
 const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
+onBeforeMount(()=>{
+	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
+})
 
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
