@@ -32,9 +32,9 @@ onMounted(async () => {
   </template>
 </template>
 
-<style>
+<style lang="scss">
 body {
-	background-color: rgb(44,54,63);
+	background-color: $dark-blue;
 }
 #app {
 	font-family: 'Open Sans', sans-serif;
