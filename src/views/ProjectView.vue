@@ -235,8 +235,8 @@ onMounted(() => {
 </template>
 <style scoped>
 .card{
-  height: 35vh;
-  width: 20vw;
+  height: 450px;
+  width: 700px;
   align-self: center;
 }
 .container{
