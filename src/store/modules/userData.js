@@ -8,7 +8,11 @@ const state = {
 const getters = {
 	username: state => state.username,
 	authToken: state => state.authToken,
-	profile: state => state.profile
+	profile: state => state.profile,
+	userIsAuthenticated: (state) => {
+		if(state.authToken) return true
+		else return false
+	}
 }
 
 // actions
