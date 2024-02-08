@@ -18,6 +18,12 @@ const routes = [
 		path: '/datasessions/',
 		name: 'DataSessions',
 		component: DataSessions,
+	},
+	{
+		path: '/datasessions/:sessionId',
+		name: 'DataSessionDetails',
+		component: DataSessions,
+		props: true
 	}
 ]
 
