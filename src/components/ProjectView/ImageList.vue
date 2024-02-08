@@ -47,8 +47,7 @@ onMounted ( () => {
       <v-img
         :src="item.url"
         :alt="item.OBJECT"
-        height="150"
-        width="150"
+        class="list_image"
         cover
         loading="lazy"
       />
@@ -58,12 +57,28 @@ onMounted ( () => {
 
 <style scoped>
 .data_table {
+  margin-top: 2rem;
+  padding-top: 0.5rem;
   font-family: 'Open Sans', sans-serif;
   letter-spacing: 0.05rem;
   color: rgb(233,205,155);
   font-size: 1.4rem;
   background-color: rgb(36, 44, 51);
-  /* background-color: rgb(44,54,63) */
 }
-
+.list_image{
+  height: 8vh;
+  width: 8vw;
+}
+@media (max-width: 1200px) {
+  .data_table {
+    font-size: 0.9rem;
+    margin-top: 0.9rem;
+    margin-left: 0.5rem;
+  }
+}
+@media (max-width: 900px) {
+  .list_image{
+    width: 12vw;
+  }
+}
 </style>
