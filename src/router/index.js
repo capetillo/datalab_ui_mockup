@@ -15,13 +15,7 @@ const routes = [
 		component: ProjectView
 	},
 	{
-		path: '/datasessions/',
-		name: 'DataSessions',
-		component: DataSessions,
-		props:true
-	},
-	{
-		path: '/datasessions/:sessionId',
+		path: '/datasessions/:sessionId?',
 		name: 'DataSessionDetails',
 		component: DataSessions,
 		props: true
