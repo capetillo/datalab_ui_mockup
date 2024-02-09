@@ -18,13 +18,14 @@ const routes = [
 		path: '/datasessions/',
 		name: 'DataSessions',
 		component: DataSessions,
+		props:true
 	},
 	{
 		path: '/datasessions/:sessionId',
 		name: 'DataSessionDetails',
 		component: DataSessions,
 		props: true
-	}
+	},
 ]
 
 const router = createRouter({
