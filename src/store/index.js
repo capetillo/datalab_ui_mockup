@@ -70,7 +70,7 @@ export default createStore({
 					imageArray[existingImageIndex] = image
 				}
 			})
-		},
+		}
 	},
 
 	actions: {
@@ -78,7 +78,6 @@ export default createStore({
 			commit('toggleImageSelection', image)
 		},
 
-		// pass a new array of selected images
 		setSelectedImages({ commit }, images) {
 			commit('selectedImages', images)
 		},
