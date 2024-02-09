@@ -4,9 +4,10 @@ import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession.vue'
 import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const dataSessions = ref([])
 const tab = ref()
@@ -18,8 +19,13 @@ onBeforeMount(()=>{
 	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
-onMounted(() => {
-	loadAllSessions()
+onMounted(async () => {
+	await loadSessions()
+	if (route.params.sessionId) {
+		tab.value = Number(route.params.sessionId)
+	} else {
+		tab.value = dataSessions.value[0].id
+	}
 })
 
 function deleteSession(id) {
@@ -27,7 +33,7 @@ function deleteSession(id) {
 	showDeleteDialog.value = true
 }
 
-async function loadAllSessions() {
+async function loadSessions() {
 	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
 }
 
@@ -71,7 +77,7 @@ async function loadAllSessions() {
         >
           <data-session
             :data="ds"
-            @reload-session="loadAllSessions()"
+            @reload-session="loadSessions()"
           />
         </v-window-item>
       </v-window>
@@ -79,7 +85,7 @@ async function loadAllSessions() {
     <delete-session-dialog
       v-model="showDeleteDialog"
       :delete-id="deleteSessionId"
-      @reload-session="loadAllSessions()"
+      @reload-session="loadSessions()"
     />
   </v-container>
 </template>
