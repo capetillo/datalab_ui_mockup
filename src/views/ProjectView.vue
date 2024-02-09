@@ -51,19 +51,15 @@ const handleError = (error) => {
 
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
-	try {
-		await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
-	} catch (error) {
-		handleError(error)
-	}
+	await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
 }
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
 	const sessionIdUrl = dataSessionsUrl + session.id + '/'
-	try {
-		// fetches existing session data
-		const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
+	// fetches existing session data
+	const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
+	if (currentSessionResponse) {
 		const currentSessionData = currentSessionResponse.input_data
 
 		// merging existing and new image data
@@ -82,9 +78,8 @@ const addImagesToExistingSession = async (session) => {
 
 		// sending the PATCH request with the merged data
 		await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody })
-	} catch (error) {
-		console.error('Error importing images:', error)
-		handleError(error)
+	} else {
+		handleError()
 	}
 }
 
@@ -92,7 +87,7 @@ const addImagesToExistingSession = async (session) => {
 const selectDataSession = (session) => {
 	isPopupVisible.value = false
 	addImagesToExistingSession(session)
-	router.push({ name: 'DataSessions' })
+	router.push({ name: 'DataSessionDetails', params: { sessionId: session.id } })
 }
 
 // handles creation of a new session 
@@ -110,17 +105,15 @@ const createNewDataSession = async () => {
 		'name': newSessionName.value,
 		'input_data': inputData 
 	}
-	try {
-		// attempting a POST request for new session
-		await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
 
-		// resetting state an rerouting to DataSessions view upon successful creation of new session
+	// attempting a POST request for new session
+	const response = await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
+	if (response) {
 		isPopupVisible.value = false
 		newSessionName.value = ''
 		errorMessage.value = ''
-		router.push({ name: 'DataSessions' })
-	} catch (error) {
-		console.error('Error creating new data session:', error)
+		router.push({ name: 'DataSessionDetails', params: { sessionId: response.id } })
+	} else {
 		errorMessage.value = 'Error creating new data session'
 	}
 }
