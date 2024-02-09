@@ -24,9 +24,16 @@ onMounted(async () => {
 	// if user created or selected a specific datasession, load that tab
 	if (route.params.sessionId) {
 		tab.value = Number(route.params.sessionId)
-		// if user is navigating to just /datasessions then their first datasession loads
+		// if user is navigating to just /datasessions then their first datasession loads and adds /[first id] as params
 	} else {
-		tab.value = dataSessions.value[0].id
+		if (dataSessions.value.length > 0) {
+			const firstSessionId = dataSessions.value[0].id
+			tab.value = firstSessionId
+			router.replace({ name: 'DataSessionDetails', params: { sessionId: firstSessionId }})
+		} else {
+			console.log('no data sessions available to display')
+		}
+		
 	}
 })
 
