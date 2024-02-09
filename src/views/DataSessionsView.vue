@@ -21,8 +21,10 @@ onBeforeMount(()=>{
 
 onMounted(async () => {
 	await loadSessions()
+	// if user created or selected a specific datasession, load that tab
 	if (route.params.sessionId) {
 		tab.value = Number(route.params.sessionId)
+		// if user is navigating to just /datasessions then their first datasession loads
 	} else {
 		tab.value = dataSessions.value[0].id
 	}
