@@ -42,7 +42,7 @@ function onTabChange(newSessionId) {
 }
 
 
-function deleteSession(id) {
+async function deleteSession(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
