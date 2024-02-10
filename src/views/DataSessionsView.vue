@@ -4,9 +4,10 @@ import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession.vue'
 import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const dataSessions = ref([])
 const tab = ref()
@@ -18,16 +19,35 @@ onBeforeMount(()=>{
 	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
-onMounted(() => {
-	loadAllSessions()
+onMounted(async () => {
+	await loadSessions()
+	// if user created or selected a specific datasession, load that tab
+	if (route.params.sessionId) {
+		tab.value = Number(route.params.sessionId)
+		// if user is navigating to just /datasessions then their first datasession loads and adds /[first id] as params
+	} else {
+		if (dataSessions.value.length > 0) {
+			const firstSessionId = dataSessions.value[0].id
+			tab.value = firstSessionId
+			router.replace({ name: 'DataSessionDetails', params: { sessionId: firstSessionId }})
+		} else {
+			console.log('no data sessions available to display')
+		}
+		
+	}
 })
 
-function deleteSession(id) {
+function onTabChange(newSessionId) {
+	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
+}
+
+
+async function deleteSession(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
 
-async function loadAllSessions() {
+async function loadSessions() {
 	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
 }
 
@@ -42,6 +62,7 @@ async function loadAllSessions() {
         next-icon="mdi-arrow-right-bold-box-outline"
         prev-icon="mdi-arrow-left-bold-box-outline"
         show-arrows
+        @update:model-value="onTabChange"
       >
         <v-tab
           v-for="ds in dataSessions"
@@ -71,7 +92,7 @@ async function loadAllSessions() {
         >
           <data-session
             :data="ds"
-            @reload-session="loadAllSessions()"
+            @reload-session="loadSessions()"
           />
         </v-window-item>
       </v-window>
@@ -79,7 +100,7 @@ async function loadAllSessions() {
     <delete-session-dialog
       v-model="showDeleteDialog"
       :delete-id="deleteSessionId"
-      @reload-session="loadAllSessions()"
+      @reload-session="loadSessions()"
     />
   </v-container>
 </template>
