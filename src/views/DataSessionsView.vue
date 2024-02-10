@@ -37,6 +37,11 @@ onMounted(async () => {
 	}
 })
 
+function onTabChange(newSessionId) {
+	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
+}
+
+
 function deleteSession(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
@@ -57,6 +62,7 @@ async function loadSessions() {
         next-icon="mdi-arrow-right-bold-box-outline"
         prev-icon="mdi-arrow-left-bold-box-outline"
         show-arrows
+        @update:model-value="onTabChange"
       >
         <v-tab
           v-for="ds in dataSessions"
