@@ -25,10 +25,10 @@ function selectOperation(index) {
 
 function operationBtnColor(index) {
 	if(index == selectedOperation.value){
-		return 'indigo-lighten-1'
+		return 'selected'
 	}
 	else {
-		return 'light-grey-darken-1'
+		return 'not-selected'
 	}
 }
 
@@ -46,8 +46,9 @@ function operationBtnColor(index) {
     class="mb-2"
   >
     <v-btn
-      :color="operationBtnColor(index)"
+      :class="operationBtnColor(index)"
       variant="outlined"
+      class="operation_button"
       @click="selectOperation(index)"
     >
       {{ index }}: {{ operation.name }}
@@ -85,8 +86,21 @@ function operationBtnColor(index) {
   font-size: 1.3rem;
   align-content: center;
   background-color: $light-blue;
-  opacity: calc(1);
   font-weight: 700;
   color: white;
+}
+.operation_button {
+  width: 12rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-style: none;
+}
+.selected {
+  background-color:$light-blue
+}
+.not-selected{
+  background-color: $light-gray;
+  color: $metal;
 }
 </style>
