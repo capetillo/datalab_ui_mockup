@@ -28,14 +28,9 @@ async function addOperation(operationDefinition) {
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
-const displayImages = (data) => {
-	images.value = data.input_data
-	console.log('images.value', images.value)
-}
-
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', successCallback: displayImages, failCallback: handleError})
+	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => { images.value = data.input_data }, failCallback: handleError})
 }
 
 const calculateColumnSpan = (imageCount) => {
@@ -65,7 +60,7 @@ onMounted(() => {
           cover
           aspect-ratio="1"
         >
-          <!-- <template #placeholder>
+          <template #placeholder>
             <v-row
               class="fill-height ma-0"
               align="center"
@@ -76,7 +71,7 @@ onMounted(() => {
                 color="grey-lighten-5"
               />
             </v-row>
-          </template> -->
+          </template>
         </v-img>
       </v-col>
     </v-row>
