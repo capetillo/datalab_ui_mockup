@@ -28,7 +28,6 @@ async function addOperation(operationDefinition) {
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
-
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
 	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
@@ -60,20 +59,7 @@ onMounted(() => {
           :alt="image.basename"
           cover
           aspect-ratio="1"
-        >
-          <!-- <template #placeholder>
-            <v-row
-              class="fill-height ma-0"
-              align="center"
-              justify="center"
-            >
-              <v-progress-circular
-                indeterminate
-                color="grey-lighten-5"
-              />
-            </v-row>
-          </template> -->
-        </v-img>
+        />
       </v-col>
     </v-row>
     <v-col

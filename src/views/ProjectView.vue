@@ -61,16 +61,14 @@ const addImagesToExistingSession = async (session) => {
 	const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
 	if (currentSessionResponse) {
 		const currentSessionData = currentSessionResponse.input_data
-
 		// merging existing and new image data
 		// this is temporary since the backend has to be updated to handle this
 		// remove this when backend gets updated
 		const selectedImages = store.state.selectedImages
 		const inputData = [...currentSessionData, ...selectedImages.map(image => ({
-			'source': image.image,
-			'basename': image.basefile_name
+			'source': image.url,
+			'basename': image.basename
 		}))]
-
 		const requestBody = {
 			'name': session.name,
 			'input_data': inputData
