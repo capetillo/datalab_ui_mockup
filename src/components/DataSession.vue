@@ -39,7 +39,7 @@ const getImages = async () => {
 }
 
 const calculateColumnSpan = (imageCount) => {
-	const imagesPerRow = 5
+	const imagesPerRow = 4
 	const columnsPerImage = Math.floor(12 / Math.min(imagesPerRow, imageCount))
 	return columnsPerImage
 }
