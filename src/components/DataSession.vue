@@ -28,13 +28,10 @@ async function addOperation(operationDefinition) {
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
-const displayImages = (data) => {
-	images.value = data.input_data
-}
 
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', successCallback: displayImages, failCallback: handleError})
+	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
 const calculateColumnSpan = (imageCount) => {
