@@ -30,7 +30,7 @@ async function addOperation(operationDefinition) {
 
 const getImages = async () => {
 	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => { images.value = data.input_data }, failCallback: handleError})
+	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
 const calculateColumnSpan = (imageCount) => {
