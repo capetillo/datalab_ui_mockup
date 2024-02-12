@@ -47,7 +47,7 @@ onMounted(() => {
 
 
 <template>
-  <v-container class="d-lg-flex">
+  <v-container class="d-lg-flex ds-container">
     <v-row v-if="images.length">
       <v-col
         v-for="image in images"
@@ -75,3 +75,9 @@ onMounted(() => {
     </v-col>
   </v-container>
 </template>
+
+<style scoped lang="scss">
+.ds-container {
+  background-color: $metal;
+}
+</style>
