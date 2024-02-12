@@ -34,7 +34,9 @@ function operationBtnColor(index) {
 
 </script>
 <template>
-  <h3>Operations</h3>
+  <h3 class="operations">
+    OPERATIONS
+  </h3>
   <v-divider class="mb-6" />
   <v-row
     v-for="(operation, index) in operations"
@@ -54,7 +56,7 @@ function operationBtnColor(index) {
   <v-divider class="mb-4 mt-4" />
   <v-btn
     variant="flat"
-    color="indigo-darken-2"
+    class="addop_button"
   >
     Add Operation
     <v-dialog
@@ -70,3 +72,21 @@ function operationBtnColor(index) {
     </v-dialog>
   </v-btn>
 </template>
+
+<style scoped lang="scss">
+.operations {
+  color: $tan;
+  letter-spacing: 0.05rem;
+  font-size: 2rem;
+}
+.addop_button {
+  width: 16rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  background-color: $light-blue;
+  opacity: calc(1);
+  font-weight: 700;
+  color: white;
+}
+</style>
