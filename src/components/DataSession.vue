@@ -30,7 +30,6 @@ async function addOperation(operationDefinition) {
 
 const displayImages = (data) => {
 	images.value = data.input_data
-	console.log('images.value', images.value)
 }
 
 const getImages = async () => {
