@@ -96,6 +96,7 @@ function tabColor(index) {
             variant="text"
             icon="mdi-close"
             class="tab_button"
+            :class="tabColor(index)"
             @click="deleteSession(ds.id)"
           />
         </v-tab>
