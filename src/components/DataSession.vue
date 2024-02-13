@@ -33,37 +33,45 @@ const getImages = async () => {
 	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
 }
 
+const calculateColumnSpan = (imageCount) => {
+	const imagesPerRow = 4
+	const columnsPerImage = Math.floor(12 / Math.min(imagesPerRow, imageCount))
+	return columnsPerImage
+}
+
 onMounted(() => {
 	getImages()
 })
 
 </script>
 
+
 <template>
   <v-container class="d-lg-flex">
-    <v-row>
-      <v-col cols="9">
-        <v-carousel v-if="images.length">
-          <v-carousel-item
-            v-for="(image) in images"
-            :key="image.basename"
-            :src="image.source"
-            :alt="image.basename"
-            cover
-          />
-        </v-carousel>
-      </v-col>
+    <v-row v-if="images.length">
       <v-col
-        cols="3"
-        justify="center"
-        align="center"
+        v-for="image in images"
+        :key="image.basename"
+        :cols="calculateColumnSpan(images.length)"
       >
-        <!-- The operations bar list goes here -->
-        <operation-pipeline
-          :operations="data.operations"
-          @add-operation="addOperation"
+        <v-img
+          :src="image.source"
+          :alt="image.basename"
+          cover
+          aspect-ratio="1"
         />
       </v-col>
     </v-row>
+    <v-col
+      cols="3"
+      justify="center"
+      align="center"
+    >
+      <!-- The operations bar list goes here -->
+      <operation-pipeline
+        :operations="data.operations"
+        @add-operation="addOperation"
+      />
+    </v-col>
   </v-container>
 </template>
