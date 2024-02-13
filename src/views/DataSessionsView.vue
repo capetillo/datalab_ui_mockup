@@ -14,6 +14,7 @@ const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const selectedTab = ref(-1)
 
 onBeforeMount(()=>{
 	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
@@ -51,6 +52,24 @@ async function loadSessions() {
 	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
 }
 
+function selectTab(index) {
+	if (index == selectedTab.value) {
+		selectedTab.value = -1
+	}
+	else {
+		selectedTab.value = index
+	}
+}
+
+function tabColor(index) {
+	if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
+		return 'selected'
+	} else {
+		return 'not-selected'
+	}
+}
+
+
 </script>
 
 <template>
@@ -58,29 +77,32 @@ async function loadSessions() {
     <v-card>
       <v-tabs 
         v-model="tab"
-        bg-color="indigo"
+        class="tabs"
         next-icon="mdi-arrow-right-bold-box-outline"
         prev-icon="mdi-arrow-left-bold-box-outline"
         show-arrows
         @update:model-value="onTabChange"
       >
         <v-tab
-          v-for="ds in dataSessions"
+          v-for="(ds, index) in dataSessions"
           :key="ds.id"
           :value="ds.id"
-          class="pr-0"
+          :class="tabColor(index)"
+          class="pr-0 tab"
+          @click="selectTab(index)"
         >
           {{ ds.name }}
           <v-btn
             variant="text"
             icon="mdi-close"
-            color="grey-darken-1"
+            class="tab_button"
             @click="deleteSession(ds.id)"
           />
         </v-tab>
         <v-btn
           variant="plain"
           icon="mdi-plus-box"
+          class="tab_button"
           @click="router.push({ name: 'ProjectView' })"
         />
       </v-tabs>
@@ -104,3 +126,29 @@ async function loadSessions() {
     />
   </v-container>
 </template>
+
+<style scoped lang="scss">
+.tabs {
+  background-color: $metal;
+  border-bottom: 0.1rem solid $tan;
+}
+.tab {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: $tan;
+  font-weight: 600;
+  background-color: $metal;
+}
+.tab_button {
+  color: $tan;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+.selected { 
+  background-color: $light-blue;
+  color: white;
+}
+.not-selected {
+  background-color: $metal;
+}
+</style>
