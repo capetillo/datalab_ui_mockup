@@ -15,10 +15,11 @@ const routes = [
 		component: ProjectView
 	},
 	{
-		path: '/datasessions/',
-		name: 'DataSessions',
+		path: '/datasessions/:sessionId?',
+		name: 'DataSessionDetails',
 		component: DataSessions,
-	}
+		props: true
+	},
 ]
 
 const router = createRouter({
