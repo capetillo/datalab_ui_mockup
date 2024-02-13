@@ -103,4 +103,32 @@ function operationBtnColor(index) {
   background-color: $light-gray;
   color: $metal;
 }
+@media (max-width: 1200px) {
+  .operations {
+    font-size: 1.3rem;
+  }
+  .addop_button {
+    font-size: 1rem;
+    height: 5vh;
+  }
+  .operation_button {
+    width: 13vw;
+    height: 4.5vh;
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 900px) {
+  .operations {
+    font-size: 1.2rem;
+  }
+  .addop_button {
+    font-size: 0.9rem;
+    height: 4vh;
+  }
+  .operation_button {
+    width: 15vw;
+    height: 3vh;
+    font-size: 0.7rem;
+  }
+}
 </style>
