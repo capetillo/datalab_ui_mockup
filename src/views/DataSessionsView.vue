@@ -151,4 +151,12 @@ function tabColor(index) {
 .not-selected {
   background-color: $metal;
 }
+@media (max-width: 1200px) {
+  .tab {
+    font-size: 0.85rem;
+  }
+  .tab_button {
+    margin: 0;
+  }
+}
 </style>
