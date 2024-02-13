@@ -5,8 +5,8 @@ const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
 
 function closeDialog() { 
-	console.log('image prop:', props.image)
 	emit('update:modelValue', false)
+	console.log(props.image)
 }
 
 </script>
@@ -15,18 +15,33 @@ function closeDialog() {
     :model-value="modelValue"
     fullscreen
   >
-    <v-card>
-      <v-img
-        :src="hello"
-        cover
-      />
-      <v-btn
-        color="green-darken-1"
-        variant="text"
-        @click="closeDialog()"
+    <v-card class="pa-6">
+      <v-toolbar>
+        <v-spacer />
+        <a
+          :href="image.url"
+          :download="image.basename"
+          target="_blank"
+          style="text-decoration:none"
+        >
+          <v-btn
+            icon="mdi-download"
+          />
+        </a>
+        <v-btn
+          icon="mdi-close"
+          @click="closeDialog()"
+        />
+      </v-toolbar>
+      <img
+        class="image"
+        :src="image.url"
       >
-        Close
-      </v-btn>
     </v-card>
   </v-dialog>
 </template>
+<style scoped>
+.image{
+	object-fit: contain
+}
+</style>

@@ -1,9 +1,8 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref, onMounted, defineProps } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 
-const props = defineProps(['data'])
 const store = useStore()
 
 // v-data-table setup variables
@@ -13,7 +12,6 @@ let headers = ref([
 	{ title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
 	{ title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
 ])
-let items = ref(props.data)
 let itemsPerPage = ref(15)
 
 // --- Selection Logic ---
@@ -34,7 +32,7 @@ onMounted ( () => {
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
-    :items="items"
+    :items="store.state.smallImageCache"
     item-value="basename"
     :return-object="true"
     show-select
