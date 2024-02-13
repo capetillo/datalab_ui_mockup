@@ -58,18 +58,11 @@ export default createStore({
 				state.projects.push(project)
 			}
 		},
-
-		setImageCache(state, imageData) {
-			imageData.forEach(image => {
-				let imageArray
-				image.RLEVEL === 95 ? imageArray = state.smallImageCache : imageArray = state.largeImageCache
-				const existingImageIndex = imageArray.findIndex(img => img.basename === image.basename)
-				if (existingImageIndex === -1) {
-					imageArray.push(image)
-				} else {
-					imageArray[existingImageIndex] = image
-				}
-			})
+		setSmallImageCache(state, imageData){
+			state.smallImageCache = imageData
+		},
+		setLargeImageCache(state, imageData) {
+			state.largeImageCache = imageData
 		}
 	},
 
@@ -88,7 +81,8 @@ export default createStore({
 	
 			const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
 			if (responseData && responseData.results) {
-				commit('setImageCache', responseData.results)
+				if (option === 'reduction_level=95') commit('setSmallImageCache', responseData.results)
+				if (option === 'reduction_level=96') commit('setLargeImageCache', responseData.results)
 			}
 		}
 	},
@@ -99,9 +93,16 @@ export default createStore({
 
 		selectedImages: (state) => state.selectedImages,
 
-		firstLargeImage: (state) => {
-			if (state.largeImageCache.length) {
-				return state.largeImageCache[0].url
+		// given an image basename, fetches the large res of that image
+		largeImage: (state) => (imageBasename) => {
+			imageBasename = imageBasename.replace('-small', '')
+			const largeImage = state.largeImageCache.find(obj => obj.basename.replace('-large', '') == imageBasename)
+			if(largeImage){
+				return largeImage
+			}
+			else{
+				console.warn('warn: no large image found with basename:', imageBasename)
+				return null
 			}
 		}
 	}

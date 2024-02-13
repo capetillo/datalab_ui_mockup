@@ -1,47 +1,28 @@
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-
+import ImageAnalyzer from '../ImageAnalyzer.vue'
 
 const store = useStore()
 const currentSlide = ref(0)
-const props = defineProps(['data'])
-let smallImageBasename = ref('')
-let largeImageSrc = ref('')
-
-let data = ref(props.data)
-
-// Checking if image isSelected to either add or remove yellow borderline
-const isSelected = (item) => store.getters.isSelected(item)
-
-// Getting large images by using the thumbnail's basename and finding the large image that matches it
-const getLargeImageSource = () => {
-	const largeImages = store.state.largeImageCache
-	let selectedLargeImage = largeImages.find(obj => obj.basename.replace('-large', '') === smallImageBasename.value)
-	largeImageSrc.value = selectedLargeImage ? selectedLargeImage.url : ''
-}
+const currSmallImage = ref(store.state.smallImageCache[currentSlide.value])
+const currLargeImage = ref(store.getters.largeImage(currSmallImage.value.basename))
+const showAnalysisDialog = ref(false)
 
 // Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
 	store.dispatch('toggleImageSelection', item)
 	// Checking if there are any selected images after the toggle action
 	if (store.state.selectedImages.length > 0) {
-		const lastSelectedImage = store.state.selectedImages[store.state.selectedImages.length - 1]
-		const lastSelectedIndex = data.value.findIndex(img => img.basename === lastSelectedImage.basename)
-		currentSlide.value = lastSelectedIndex
-		// Used to get large images
-		smallImageBasename.value = lastSelectedImage.basename.replace('-small', '')
+		currSmallImage.value = store.state.selectedImages[store.state.selectedImages.length - 1]
+		currentSlide.value = store.state.smallImageCache.findIndex(img => img.basename === currSmallImage.value.basename)
 	} else {
 		currentSlide.value = index
 	}
-	getLargeImageSource()
-}
-
-const getImageSrc = (src) => {
-	return src || store.getters.firstLargeImage || ''
+	currLargeImage.value = store.getters.largeImage(currSmallImage.value.basename)
 }
 
 // SAVING THIS CODE WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
@@ -97,14 +78,15 @@ const getImageSrc = (src) => {
     :transition="0"
   >
     <Slide
-      v-for="(item, index) in data"
+      v-for="(item, index) in store.state.smallImageCache"
       :key="index"
     >
       <div class="selected__item">
         <img
-          :src="getImageSrc(largeImageSrc)"
+          :src="currLargeImage?.url"
           class="selected__image"
           :alt="item.OBJECT"
+          @click="showAnalysisDialog = true"
         >
       </div>
     </Slide>
@@ -114,7 +96,7 @@ const getImageSrc = (src) => {
     class="thumbnail__carousel__container"
   >
     <div
-      v-for="(item, index) in data"
+      v-for="(item, index) in store.state.smallImageCache"
       :key="index"
       class="thumbnail__container"
       @click="handleThumbnailClick(item, index)"
@@ -125,11 +107,15 @@ const getImageSrc = (src) => {
         loading="lazy"
         cover
         class="thumbnail__item"
-        :class="{'selected-thumbnail': isSelected(item)}"
+        :class="{'selected-thumbnail': store.getters.isSelected(item)}"
         :alt="item.OBJECT"
       />
     </div>
   </div>
+  <image-analyzer
+    v-model="showAnalysisDialog"
+    :image="currLargeImage"
+  />
 </template>
 
 <style scoped lang="scss">
