@@ -40,7 +40,7 @@ const getImages = async () => {
 	for (const data of inputData) {
 		const basename = data.basename
 		const url =  `https://datalab-archive.photonranch.org/frames/?basename_exact=${basename}-small`
-		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages , failCallback: handleError})
+		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
 	}
 }
 
