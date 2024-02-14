@@ -1,12 +1,13 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import ZoomableImage from './ZoomableImage.vue'
 
+// eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
 
 function closeDialog() { 
 	emit('update:modelValue', false)
-	console.log(props.image)
 }
 
 </script>
@@ -18,6 +19,7 @@ function closeDialog() {
     <v-card class="pa-6">
       <v-toolbar>
         <v-spacer />
+        <h3>{{ image.target_name }}</h3>
         <a
           :href="image.url"
           :download="image.basename"
@@ -33,10 +35,7 @@ function closeDialog() {
           @click="closeDialog()"
         />
       </v-toolbar>
-      <img
-        class="image"
-        :src="image.url"
-      >
+      <zoomable-image :image-src="image.url" />
     </v-card>
   </v-dialog>
 </template>
