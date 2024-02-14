@@ -4,18 +4,17 @@ import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../utils/api'
 import { useStore } from 'vuex'
 
+const store = useStore()
+const emit = defineEmits(['reloadSession'])
+let images = ref([])
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+
 const props = defineProps({
 	data: {
 		type: Object,
 		required: true
 	}
 })
-
-const store = useStore()
-const emit = defineEmits(['reloadSession'])
-let images = ref([])
-const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-
 
 async function addOperation(operationDefinition) {
 	const url = dataSessionsUrl + props.data.id + '/operations/'
@@ -50,7 +49,6 @@ onMounted(() => {
 })
 
 </script>
-
 
 <template>
   <v-container class="d-lg-flex">
