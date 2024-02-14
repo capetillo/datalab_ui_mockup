@@ -29,18 +29,13 @@ async function addOperation(operationDefinition) {
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
-const saveImages = (data) => {
-	const results = data.results
-	images.value = [...images.value, ...results]
-}
-
 const getImages = async () => {
 	const responseData = props.data
 	const inputData = responseData.input_data
 	for (const data of inputData) {
 		const basename = data.basename
 		const url =  `https://datalab-archive.photonranch.org/frames/?basename_exact=${basename}-small`
-		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
+		await fetchApiCall({url: url, method: 'GET', successCallback: (data) => { images.value.push(data.results) }, failCallback: handleError})
 	}
 }
 
@@ -62,12 +57,12 @@ onMounted(() => {
     <v-row v-if="images.length">
       <v-col
         v-for="image of images"
-        :key="image.basename"
+        :key="image[0].basename"
         :cols="calculateColumnSpan(images.length)"
       >
         <v-img
-          :src="image.url"
-          :alt="image.basename"
+          :src="image[0].url"
+          :alt="image[0].basename"
           cover
           aspect-ratio="1"
         />
