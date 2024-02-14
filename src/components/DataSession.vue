@@ -29,8 +29,13 @@ async function addOperation(operationDefinition) {
 }
 
 const getImages = async () => {
-	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
+	const responseData = props.data
+	const inputData = responseData.input_data
+	for (const data of inputData) {
+		const basename = data.basename
+		const url =  `https://datalab-archive.photonranch.org/frames/?basename_exact=${basename}-small`
+		await fetchApiCall({url: url, method: 'GET', successCallback: (data) => { images.value.push(data.results) }, failCallback: handleError})
+	}
 }
 
 const calculateColumnSpan = (imageCount) => {
@@ -45,18 +50,17 @@ onMounted(() => {
 
 </script>
 
-
 <template>
   <v-container class="d-lg-flex ds-container">
     <v-row v-if="images.length">
       <v-col
-        v-for="image in images"
-        :key="image.basename"
+        v-for="image of images"
+        :key="image[0].basename"
         :cols="calculateColumnSpan(images.length)"
       >
         <v-img
-          :src="image.source"
-          :alt="image.basename"
+          :src="image[0].url"
+          :alt="image[0].basename"
           cover
           aspect-ratio="1"
         />
