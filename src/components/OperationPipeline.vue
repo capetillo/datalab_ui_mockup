@@ -25,16 +25,18 @@ function selectOperation(index) {
 
 function operationBtnColor(index) {
 	if(index == selectedOperation.value){
-		return 'indigo-lighten-1'
+		return 'selected'
 	}
 	else {
-		return 'light-grey-darken-1'
+		return 'not-selected'
 	}
 }
 
 </script>
 <template>
-  <h3>Operations</h3>
+  <h3 class="operations">
+    OPERATIONS
+  </h3>
   <v-divider class="mb-6" />
   <v-row
     v-for="(operation, index) in operations"
@@ -44,8 +46,9 @@ function operationBtnColor(index) {
     class="mb-2"
   >
     <v-btn
-      :color="operationBtnColor(index)"
+      :class="operationBtnColor(index)"
       variant="outlined"
+      class="operation_button"
       @click="selectOperation(index)"
     >
       {{ index }}: {{ operation.name }}
@@ -54,7 +57,7 @@ function operationBtnColor(index) {
   <v-divider class="mb-4 mt-4" />
   <v-btn
     variant="flat"
-    color="indigo-darken-2"
+    class="addop_button"
   >
     Add Operation
     <v-dialog
@@ -70,3 +73,62 @@ function operationBtnColor(index) {
     </v-dialog>
   </v-btn>
 </template>
+
+<style scoped lang="scss">
+.operations {
+  color: $tan;
+  letter-spacing: 0.05rem;
+  font-size: 2rem;
+}
+.addop_button {
+  width: 16rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  background-color: $light-blue;
+  font-weight: 700;
+  color: white;
+}
+.operation_button {
+  width: 12rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-style: none;
+}
+.selected {
+  background-color:$light-blue
+}
+.not-selected{
+  background-color: $light-gray;
+  color: $metal;
+}
+@media (max-width: 1200px) {
+  .operations {
+    font-size: 1.3rem;
+  }
+  .addop_button {
+    font-size: 1rem;
+    height: 5vh;
+  }
+  .operation_button {
+    width: 13vw;
+    height: 4.5vh;
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 900px) {
+  .operations {
+    font-size: 1.2rem;
+  }
+  .addop_button {
+    font-size: 0.9rem;
+    height: 4vh;
+  }
+  .operation_button {
+    width: 15vw;
+    height: 3vh;
+    font-size: 0.7rem;
+  }
+}
+</style>
