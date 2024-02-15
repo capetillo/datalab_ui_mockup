@@ -42,7 +42,6 @@ function onTabChange(newSessionId) {
 	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
 }
 
-
 async function deleteSession(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
@@ -68,7 +67,6 @@ function tabColor(index) {
 		return 'not-selected'
 	}
 }
-
 
 </script>
 
