@@ -35,12 +35,15 @@ function closeDialog() {
           @click="closeDialog()"
         />
       </v-toolbar>
-      <zoomable-image :image-src="image.url" />
+      <div class="image_area">
+        <zoomable-image :image-src="image.url" />
+      </div>
     </v-card>
   </v-dialog>
 </template>
 <style scoped>
-.image{
-	object-fit: contain
+.image_area{
+	display: flex;
+	justify-content: center;
 }
 </style>
