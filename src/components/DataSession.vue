@@ -81,6 +81,7 @@ onMounted(() => {
       <!-- The operations bar list goes here -->
       <operation-pipeline
         :operations="data.operations"
+        :images="images"
         @add-operation="addOperation"
       />
     </v-col>
