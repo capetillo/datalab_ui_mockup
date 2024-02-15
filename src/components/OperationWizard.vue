@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, defineEmits } from 'vue'
+import { ref, onMounted, computed, defineEmits, defineProps } from 'vue'
 import { fetchApiCall, handleError } from '../utils/api'
 import { useStore } from 'vuex'
 
@@ -10,6 +10,15 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl
 const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
+
+let displayImages = ref(false)
+
+defineProps({
+	images: {
+		type: Array,
+		required: true
+	}
+})
 
 onMounted(async () => {
 	const url = dataSessionsUrl + 'available_operations/'
@@ -78,14 +87,23 @@ const wizardTitle = computed(() => {
 function goForward() {
 	if (page.value == 'select') {
 		page.value = 'configure'
+		displayImages.value = true
 	}
 	else {
+		displayImages.value = false
 		let operationDefinition = {
 			'name': selectedOperation.value,
 			'input_data': selectedOperationInput.value
 		}
 		emit('addOperation', operationDefinition)
 	}
+}
+
+
+const calculateColumnSpan = (imageCount) => {
+	const imagesPerRow = 6
+	const columnsPerImage = Math.floor(12 / Math.min(imagesPerRow, imageCount))
+	return columnsPerImage
 }
 
 </script>
@@ -145,6 +163,20 @@ function goForward() {
         </v-row>
       </v-card-text>
     </v-slide-y-reverse-transition>
+    <v-row v-if="images.length && displayImages == true">
+      <v-col
+        v-for="image of images"
+        :key="image.basename"
+        :cols="calculateColumnSpan(images.length)"
+      >
+        <v-img
+          :src="image.url"
+          :alt="image.basename"
+          cover
+          aspect-ratio="1"
+        />
+      </v-col>
+    </v-row>
     <v-card-actions>
       <v-spacer />
       <v-btn
