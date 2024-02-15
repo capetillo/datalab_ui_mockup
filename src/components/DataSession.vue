@@ -90,5 +90,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .ds-container {
   background-color: $metal;
+  display:flex;
 }
 </style>
