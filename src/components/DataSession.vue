@@ -28,9 +28,21 @@ async function addOperation(operationDefinition) {
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
 
+const saveImages = (data) => {
+	const results = data.results
+	if (results.length) {
+		images.value.push(data.results[0])
+	}
+}
+
 const getImages = async () => {
-	const url = dataSessionsUrl + props.data.id
-	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {images.value = data.input_data}, failCallback: handleError})
+	const responseData = props.data
+	const inputData = responseData.input_data
+	for (const data of inputData) {
+		const basename = data.basename
+		const url =  `https://datalab-archive.photonranch.org/frames/?basename_exact=${basename}-small`
+		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
+	}
 }
 
 const calculateColumnSpan = (imageCount) => {
@@ -45,17 +57,16 @@ onMounted(() => {
 
 </script>
 
-
 <template>
   <v-container class="d-lg-flex">
     <v-row v-if="images.length">
       <v-col
-        v-for="image in images"
+        v-for="image of images"
         :key="image.basename"
         :cols="calculateColumnSpan(images.length)"
       >
         <v-img
-          :src="image.source"
+          :src="image.url"
           :alt="image.basename"
           cover
           aspect-ratio="1"
