@@ -144,7 +144,10 @@ const calculateColumnSpan = (imageCount) => {
       </v-row>
     </v-card-text>
     <v-slide-y-reverse-transition hide-on-leave>
-      <v-card-text v-show="page == 'configure'">
+      <v-card-text
+        v-show="page == 'configure'"
+        class="wizard-card"
+      >
         <v-row
           v-for="(inputDescription, inputKey) in selectedOperationInputs"
           :key="inputKey"
@@ -166,12 +169,13 @@ const calculateColumnSpan = (imageCount) => {
     </v-slide-y-reverse-transition>
     <v-row
       v-if="images.length && displayImages == true"
-      class="wizard-images"
+      class="images-container"
     >
       <v-col
         v-for="image of images"
         :key="image.basename"
         :cols="calculateColumnSpan(images.length)"
+        class="wizard-images"
       >
         <v-img
           :src="image.url"
@@ -202,7 +206,12 @@ const calculateColumnSpan = (imageCount) => {
 </template>
 
 <style scoped lang="scss">
-.wizard-images {
-  margin: -1rem 1rem;
+.wizard-card {
+  height: 5vh;
+  width: 20%;
+}
+.images-container {
+  margin: -1rem 2rem;
+  display: flex;
 }
 </style>
