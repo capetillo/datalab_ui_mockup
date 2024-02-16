@@ -10,7 +10,7 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl
 const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
-const selectedDSImages = ref([])
+const selectedDataSessionImages = ref([])
 
 let displayImages = ref(false)
 
@@ -108,11 +108,11 @@ const calculateColumnSpan = (imageCount) => {
 }
 
 const handleThumbnailClick = (item) => {
-	const index = selectedDSImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
+	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
 	if (index === -1) {
-		selectedDSImages.value.push(item)
+		selectedDataSessionImages.value.push(item)
 	} else {
-		selectedDSImages.value.splice(index, 1)
+		selectedDataSessionImages.value.splice(index, 1)
 	}
 }
 
@@ -189,7 +189,7 @@ const handleThumbnailClick = (item) => {
         <v-img
           :src="image.url"
           :alt="image.basename"
-          :class="{ 'selected-image': selectedDSImages.some(selectedImage => selectedImage.basename === image.basename) }"
+          :class="{ 'selected-image': selectedDataSessionImages.some(selectedImage => selectedImage.basename === image.basename) }"
           cover
           aspect-ratio="1"
           @click="handleThumbnailClick(image)"
