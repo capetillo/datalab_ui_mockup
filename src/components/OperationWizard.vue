@@ -10,6 +10,7 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl
 const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
+const selectedDSImages = ref([])
 
 let displayImages = ref(false)
 
@@ -100,11 +101,19 @@ function goForward() {
 	}
 }
 
-
 const calculateColumnSpan = (imageCount) => {
 	const imagesPerRow = 6
 	const columnsPerImage = Math.floor(12 / Math.min(imagesPerRow, imageCount))
 	return columnsPerImage
+}
+
+const handleClick = (item) => {
+	const index = selectedDSImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
+	if (index === -1) {
+		selectedDSImages.value.push(item)
+	} else {
+		selectedDSImages.value.splice(index, 1)
+	}
 }
 
 </script>
@@ -180,8 +189,10 @@ const calculateColumnSpan = (imageCount) => {
         <v-img
           :src="image.url"
           :alt="image.basename"
+          :class="{ 'selected-image': selectedDSImages.some(selectedImage => selectedImage.basename === image.basename) }"
           cover
           aspect-ratio="1"
+          @click="handleClick(image)"
         />
       </v-col>
     </v-row>
@@ -213,5 +224,8 @@ const calculateColumnSpan = (imageCount) => {
 .images-container {
   margin: -1rem 2rem;
   display: flex;
+}
+.selected-image {
+  border: 0.3rem solid $dark-green;
 }
 </style>
