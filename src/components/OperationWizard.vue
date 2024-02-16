@@ -44,6 +44,7 @@ function selectOperation(name) {
 }
 
 function goBack() {
+	displayImages.value = false
 	if (page.value == 'select') {
 		emit('closeWizard')
 	}
@@ -163,7 +164,10 @@ const calculateColumnSpan = (imageCount) => {
         </v-row>
       </v-card-text>
     </v-slide-y-reverse-transition>
-    <v-row v-if="images.length && displayImages == true">
+    <v-row
+      v-if="images.length && displayImages == true"
+      class="wizard-images"
+    >
       <v-col
         v-for="image of images"
         :key="image.basename"
@@ -196,3 +200,9 @@ const calculateColumnSpan = (imageCount) => {
     </v-card-actions>
   </v-card>
 </template>
+
+<style scoped lang="scss">
+.wizard-images {
+  margin: -1rem 1rem;
+}
+</style>
