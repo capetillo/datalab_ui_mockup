@@ -107,7 +107,7 @@ const calculateColumnSpan = (imageCount) => {
 	return columnsPerImage
 }
 
-const handleClick = (item) => {
+const handleThumbnailClick = (item) => {
 	const index = selectedDSImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
 	if (index === -1) {
 		selectedDSImages.value.push(item)
@@ -192,7 +192,7 @@ const handleClick = (item) => {
           :class="{ 'selected-image': selectedDSImages.some(selectedImage => selectedImage.basename === image.basename) }"
           cover
           aspect-ratio="1"
-          @click="handleClick(image)"
+          @click="handleThumbnailClick(image)"
         />
       </v-col>
     </v-row>
