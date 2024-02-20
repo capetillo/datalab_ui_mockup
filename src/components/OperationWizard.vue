@@ -73,7 +73,7 @@ const goForwardText = computed(() => {
 		return 'Configure Operation'
 	}
 	else {
-		return 'Add Operation'
+		return 'Add Operationzzz'
 	}
 })
 
@@ -95,7 +95,10 @@ function goForward() {
 		displayImages.value = false
 		let operationDefinition = {
 			'name': selectedOperation.value,
-			'input_data': selectedOperationInput.value
+			'input_data': {
+				...selectedOperationInput.value,
+				'input_files': selectedDataSessionImages.value
+			}
 		}
 		emit('addOperation', operationDefinition)
 	}
