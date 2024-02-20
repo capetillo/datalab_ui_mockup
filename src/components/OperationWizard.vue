@@ -73,7 +73,7 @@ const goForwardText = computed(() => {
 		return 'Configure Operation'
 	}
 	else {
-		return 'Add Operationzzz'
+		return 'Add Operation'
 	}
 })
 
