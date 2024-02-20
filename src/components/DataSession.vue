@@ -18,10 +18,8 @@ const props = defineProps({
 
 async function addOperation(operationDefinition) {
 	const url = dataSessionsUrl + props.data.id + '/operations/'
-	//TODO: Remove this once we have the ability to select images in the wizard
 	if ('input_files' in operationDefinition.input_data){
-		operationDefinition.input_data.input_files = structuredClone(images.value)
-		for (const image of operationDefinition.input_data.input_files){
+		for (const image of operationDefinition.input_data.input_files) {
 			image.source = 'archive'
 		}
 	}
