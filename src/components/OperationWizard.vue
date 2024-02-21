@@ -235,6 +235,7 @@ const handleThumbnailClick = (item) => {
   max-width: 20%; 
   height: auto; 
   box-sizing: border-box; 
+  cursor: pointer;
 }
 .selected-image {
   border: 0.3rem solid $dark-green;
