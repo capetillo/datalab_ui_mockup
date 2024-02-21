@@ -36,7 +36,10 @@ function closeDialog() {
         />
       </v-toolbar>
       <div class="image_area">
-        <zoomable-image :image-src="image.url" />
+        <zoomable-image
+          v-if="image"
+          :image-src="image.url"
+        />
       </div>
     </v-card>
   </v-dialog>
