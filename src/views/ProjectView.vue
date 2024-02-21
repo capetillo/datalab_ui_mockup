@@ -66,8 +66,8 @@ const addImagesToExistingSession = async (session) => {
 		// remove this when backend gets updated
 		const selectedImages = store.state.selectedImages
 		const inputData = [...currentSessionData, ...selectedImages.map(image => ({
-			'source': image.url,
-			'basename': image.basename
+			'source': 'archive',
+			'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
 		}))]
 		const requestBody = {
 			'name': session.name,
@@ -82,10 +82,11 @@ const addImagesToExistingSession = async (session) => {
 }
 
 // closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
-const selectDataSession = (session) => {
+const selectDataSession = async (session) => {
 	isPopupVisible.value = false
-	addImagesToExistingSession(session)
+	await addImagesToExistingSession(session)
 	router.push({ name: 'DataSessionDetails', params: { sessionId: session.id } })
+
 }
 
 // handles creation of a new session 
@@ -96,8 +97,8 @@ const createNewDataSession = async () => {
 	}
 	const selectedImages = store.state.selectedImages
 	const inputData = selectedImages.map(image => ({
-		'source': image.url,
-		'basename': image.basename
+		'source': 'archive',
+		'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
 	}))
 	const requestBody = { 
 		'name': newSessionName.value,
