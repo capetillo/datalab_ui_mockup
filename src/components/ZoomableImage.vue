@@ -28,13 +28,13 @@ const pointerDown = (e) => {
 
 // use mouse movement delta to set position, limit so image stays on screen
 const pointerMove = (e) => {
-	let x 						= imageLeftPos.value+e.pageX-mouseX
-	let y 						= imageTopPos.value+e.pageY-mouseY
+	let x = imageLeftPos.value+e.pageX-mouseX
+	let y = imageTopPos.value+e.pageY-mouseY
 	// TODO change this to be bounded by the condition of whether overflow will happen for a more natural use
 	if( x > -800 && x < 800) imageLeftPos.value   = x
 	if( y > -800 && y < 800) imageTopPos.value    = y
-	mouseX 						= e.pageX
-	mouseY 						= e.pageY
+	mouseX = e.pageX
+	mouseY = e.pageY
 }
 
 </script>
