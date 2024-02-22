@@ -2,7 +2,6 @@
 import { defineProps, ref} from 'vue'
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['imageSrc'])
-const image_container = ref(null)
 const image = ref(null)
 const imageLeftPos = ref(0)
 const imageTopPos = ref(0)
@@ -38,11 +37,9 @@ const pointerMove = (e) => {
 	mouseY 						= e.pageY
 }
 
-//TODO instead of hardcoding width and height set it equal to the size of the image
 </script>
 <template>
   <div
-    ref="image_container"
     class="image_container"
     :style="{height: image?.naturalHeight, width: image?.naturalWidth}"
   >
