@@ -16,15 +16,16 @@ function closeDialog() {
     :model-value="modelValue"
     fullscreen
   >
-    <v-card class="pa-6">
-      <v-toolbar>
-        <v-spacer />
-        <h3>{{ image.target_name }}</h3>
+    <v-card>
+      <v-toolbar
+        density="comfortable"
+        :elevation="8"
+        :title="image.target_name"
+      >
         <a
           :href="image.url"
           :download="image.basename"
           target="_blank"
-          style="text-decoration:none"
         >
           <v-btn
             icon="mdi-download"
@@ -35,18 +36,26 @@ function closeDialog() {
           @click="closeDialog()"
         />
       </v-toolbar>
-      <div class="image_area">
+      <div class="anaylzer_content">
         <zoomable-image
-          v-if="image"
           :image-src="image.url"
         />
+        <v-sheet
+          class="pa-6"
+        >
+          <h1>Details</h1>
+          <p>Basename: {{ image.basename }}</p>
+          <p>Date & Time: {{ image.observation_date }}</p>
+          <p>Site: {{ image.site_id }}</p>
+          <p>Telescope: {{ image.telescope_id }}</p>
+          <p>Instrument: {{ image.instrument_id }}</p>
+        </v-sheet>
       </div>
     </v-card>
   </v-dialog>
 </template>
 <style scoped>
-.image_area{
+.anaylzer_content{
 	display: flex;
-	justify-content: center;
 }
 </style>
