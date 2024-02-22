@@ -31,10 +31,9 @@ const pointerDown = (e) => {
 const pointerMove = (e) => {
 	let x 						= imageLeftPos.value+e.pageX-mouseX
 	let y 						= imageTopPos.value+e.pageY-mouseY
-	if( x > -800 && x < 800)
-		imageLeftPos.value   = x
-	if( y > -800 && y < 800)
-		imageTopPos.value    = y
+	// TODO change this to be bounded by the condition of whether overflow will happen for a more natural use
+	if( x > -800 && x < 800) imageLeftPos.value   = x
+	if( y > -800 && y < 800) imageTopPos.value    = y
 	mouseX 						= e.pageX
 	mouseY 						= e.pageY
 }
@@ -45,6 +44,7 @@ const pointerMove = (e) => {
   <div
     ref="image_container"
     class="image_container"
+    :style="{height: image?.naturalHeight, width: image?.naturalWidth}"
   >
     <img
       ref="image"
@@ -84,8 +84,6 @@ const pointerMove = (e) => {
 	background-color: black;
 	position: relative;
 	overflow: hidden;
-	height: 1000px;
-	width: 1000px;
 }
 .zoom_buttons{
 	position: absolute;

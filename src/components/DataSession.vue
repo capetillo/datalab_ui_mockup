@@ -1,15 +1,12 @@
 <script setup>
 import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
-import ImageAnalyzer from './ImageAnalyzer.vue'
 import { fetchApiCall, handleError } from '../utils/api'
 import { useStore } from 'vuex'
 
 const store = useStore()
 const emit = defineEmits(['reloadSession'])
 let images = ref([])
-const showAnalysisDialog = ref(false)
-const analysisImage = ref()
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 const props = defineProps({
@@ -29,11 +26,6 @@ async function addOperation(operationDefinition) {
 		}
 	}
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
-}
-
-const analyze = (imageBasename) => {
-	analysisImage.value = store.getters.largeImage(imageBasename)
-	showAnalysisDialog.value = true
 }
 
 const saveImages = (data) => {
@@ -78,7 +70,6 @@ onMounted(() => {
           :alt="image.basename"
           cover
           aspect-ratio="1"
-          @click="analyze(image.basename)"
         />
       </v-col>
     </v-row>
@@ -94,10 +85,6 @@ onMounted(() => {
       />
     </v-col>
   </v-container>
-  <image-analyzer
-    v-model="showAnalysisDialog"
-    :image="analysisImage"
-  />
 </template>
 
 <style scoped lang="scss">
