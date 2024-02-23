@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
-import { fetchApiCall, handleError } from '../utils/api'
-import { calculateColumnSpan } from '../utils/common'
+import { fetchApiCall, handleError } from '../../utils/api'
+import { calculateColumnSpan } from '../../utils/common'
 import { useStore } from 'vuex'
 
 const store = useStore()
