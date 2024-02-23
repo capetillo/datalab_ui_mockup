@@ -1,15 +1,16 @@
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from '../ImageAnalyzer.vue'
 
 const store = useStore()
+const props = defineProps(['data'])
 const currentSlide = ref(0)
-const currSmallImage = ref(store.state.smallImageCache[currentSlide.value])
-const currLargeImage = ref(store.getters.largeImage(currSmallImage.value.basename))
+const currSmallImage = ref(props.data[currentSlide.value])
+const currLargeImage = ref(store.getters.getLargeImageFromBasename(currSmallImage.value.basename))
 const showAnalysisDialog = ref(false)
 
 // Invoked any time an image is clicked
@@ -18,11 +19,11 @@ const handleThumbnailClick = (item, index) => {
 	// Checking if there are any selected images after the toggle action
 	if (store.state.selectedImages.length > 0) {
 		currSmallImage.value = store.state.selectedImages[store.state.selectedImages.length - 1]
-		currentSlide.value = store.state.smallImageCache.findIndex(img => img.basename === currSmallImage.value.basename)
+		currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
 	} else {
 		currentSlide.value = index
 	}
-	currLargeImage.value = store.getters.largeImage(currSmallImage.value.basename)
+	currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
 }
 
 // SAVING THIS CODE WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
@@ -78,7 +79,7 @@ const handleThumbnailClick = (item, index) => {
     :transition="0"
   >
     <Slide
-      v-for="(item, index) in store.state.smallImageCache"
+      v-for="(item, index) in data"
       :key="index"
     >
       <div class="selected__item">
@@ -96,7 +97,7 @@ const handleThumbnailClick = (item, index) => {
     class="thumbnail__carousel__container"
   >
     <div
-      v-for="(item, index) in store.state.smallImageCache"
+      v-for="(item, index) in data"
       :key="index"
       class="thumbnail__container"
       @click="handleThumbnailClick(item, index)"

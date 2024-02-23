@@ -147,9 +147,11 @@ onMounted(() => {
       <div v-else>
         <ImageCarousel
           v-if="imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
+          :data="store.state.smallImageCache"
         />
         <ImageList
           v-if="!imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
+          :data="store.state.smallImageCache"
         />
       </div>
       <v-skeleton-loader
