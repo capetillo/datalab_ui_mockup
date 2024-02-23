@@ -1,9 +1,11 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
+// eslint-disable-next-line no-unused-vars
+const props = defineProps(['data'])
 
 // v-data-table setup variables
 let headers = ref([
@@ -32,7 +34,7 @@ onMounted ( () => {
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
-    :items="store.state.smallImageCache"
+    :items="data"
     item-value="basename"
     :return-object="true"
     show-select
