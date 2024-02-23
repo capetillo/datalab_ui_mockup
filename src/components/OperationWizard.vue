@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, defineEmits, defineProps } from 'vue'
 import { fetchApiCall, handleError } from '../utils/api'
+import { calculateColumnSpan } from '../utils/common'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -104,12 +105,6 @@ function goForward() {
 	}
 }
 
-const calculateColumnSpan = (imageCount) => {
-	const imagesPerRow = 5
-	const totalColumns = Math.floor(12 / Math.min(imagesPerRow, imageCount))
-	return totalColumns
-}
-
 const handleThumbnailClick = (item) => {
 	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
 	if (index === -1) {
@@ -179,7 +174,7 @@ const handleThumbnailClick = (item) => {
             <v-col
               v-for="image in images"
               :key="image.basename"
-              :cols="calculateColumnSpan(images.length)"
+              :cols="calculateColumnSpan(images.length, 5)"
               class="wizard-images"
             >
               <v-img
