@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, defineEmits, defineProps } from 'vue'
-import { fetchApiCall, handleError } from '../utils/api'
-import { calculateColumnSpan } from '../utils/common'
+import { fetchApiCall, handleError } from '../../utils/api'
+import { calculateColumnSpan } from '../../utils/common'
 import { useStore } from 'vuex'
 
 const store = useStore()
