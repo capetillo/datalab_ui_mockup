@@ -3,8 +3,9 @@
 import { ref, onMounted, defineProps } from 'vue'
 import { useStore } from 'vuex'
 
-const props = defineProps(['data'])
 const store = useStore()
+// eslint-disable-next-line no-unused-vars
+const props = defineProps(['data'])
 
 // v-data-table setup variables
 let headers = ref([
@@ -13,7 +14,6 @@ let headers = ref([
 	{ title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
 	{ title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
 ])
-let items = ref(props.data)
 let itemsPerPage = ref(15)
 
 // --- Selection Logic ---
@@ -34,7 +34,7 @@ onMounted ( () => {
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
-    :items="items"
+    :items="data"
     item-value="basename"
     :return-object="true"
     show-select
