@@ -19,14 +19,11 @@ async function fetchApiCall({ url, method, body = null, header, successCallback 
 
 	try {
 		const response = await fetch(url, config)
-
-		// Check for empty or non-JSON response
-		if (response.ok && response.headers.get('Content-Length') === '0') {
-			// No content return a success with null
+		// ok response but empty content
+		if (response.ok && !response.headers.has('content-length')) {
 			successCallback ? successCallback(null) : null
 		} else {
 			const responseData = await response.json()
-
 			if (!response.ok) {
 				console.error('Response not OK', responseData)
 				failCallback ? failCallback(responseData, response.status) : null
