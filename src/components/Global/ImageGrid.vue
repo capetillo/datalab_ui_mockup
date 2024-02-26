@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, defineEmits, defineExpose } from 'vue'
+import { defineProps, ref, defineEmits, onMounted } from 'vue'
 import { fetchApiCall, handleError } from '../../utils/api'
 
 const props = defineProps({
@@ -12,6 +12,8 @@ const props = defineProps({
 		required: true
 	}
 })
+
+console.log('props data:', props.data)
 
 const emit = defineEmits(['imageClicked'])
 
@@ -38,7 +40,14 @@ const onImageClick = (image) => {
 	emit('imageClicked', image)
 }
 
-defineExpose({ getImages })
+// console.log('images:', images.value)
+
+// defineExpose({ getImages })
+
+onMounted(() => {
+	getImages()
+})
+
 </script>
 
 <template>
@@ -51,6 +60,7 @@ defineExpose({ getImages })
       <v-img
         :src="image.url"
         :alt="image.basename"
+        :images="images"
         cover
         aspect-ratio="1"
         @click="onImageClick(image)" 
