@@ -6,17 +6,18 @@ import { calculateColumnSpan } from '../../utils/common'
 import { useStore } from 'vuex'
 import ImageGrid from '../Global/ImageGrid'
 
-const store = useStore()
-const emit = defineEmits(['reloadSession'])
-
-const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-
 const props = defineProps({
 	data: {
 		type: Object,
 		required: true
 	}
 })
+
+const store = useStore()
+const emit = defineEmits(['reloadSession'])
+
+// const imageGridRef = ref(null)
+const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 async function addOperation(operationDefinition) {
 	const url = dataSessionsUrl + props.data.id + '/operations/'
@@ -27,13 +28,22 @@ async function addOperation(operationDefinition) {
 	}
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
+
+// onMounted(() => {
+// 	if (imageGridRef.value) {
+// 		imageGridRef.value.getImages()
+// 	}
+// })
+
+// ref="imageGridRef"
+
 </script>
 
 <template>
   <v-container class="d-lg-flex ds-container">
     <image-grid
       :data="data"
-      :column-span="calculateColumnSpan(props.data.input_data.length, 4)"
+      :column-span="calculateColumnSpan(data.input_data.length, 4)"
     />
     <v-col
       cols="3"
@@ -42,6 +52,7 @@ async function addOperation(operationDefinition) {
     >
       <!-- The operations bar list goes here -->
       <operation-pipeline
+        :data="data"
         :operations="data.operations"
         @add-operation="addOperation"
       />
