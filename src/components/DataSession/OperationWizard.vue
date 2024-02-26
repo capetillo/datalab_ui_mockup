@@ -2,7 +2,15 @@
 import { ref, onMounted, computed, defineEmits, defineProps } from 'vue'
 import { fetchApiCall, handleError } from '../../utils/api'
 import { calculateColumnSpan } from '../../utils/common'
+import ImageGrid from '../Global/ImageGrid'
 import { useStore } from 'vuex'
+
+defineProps({
+	data: {
+		type: Array,
+		required: true
+	}
+})
 
 const store = useStore()
 const emit = defineEmits(['closeWizard', 'addOperation'])
@@ -14,13 +22,6 @@ const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
 
 let displayImages = ref(false)
-
-defineProps({
-	images: {
-		type: Array,
-		required: true
-	}
-})
 
 onMounted(async () => {
 	const url = dataSessionsUrl + 'available_operations/'
@@ -105,14 +106,14 @@ function goForward() {
 	}
 }
 
-const handleThumbnailClick = (item) => {
-	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
-	if (index === -1) {
-		selectedDataSessionImages.value.push(item)
-	} else {
-		selectedDataSessionImages.value.splice(index, 1)
-	}
-}
+// const handleThumbnailClick = (item) => {
+// 	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
+// 	if (index === -1) {
+// 		selectedDataSessionImages.value.push(item)
+// 	} else {
+// 		selectedDataSessionImages.value.splice(index, 1)
+// 	}
+// }
 
 </script>
 
@@ -171,21 +172,11 @@ const handleThumbnailClick = (item) => {
             v-else-if="inputDescription.type == 'file'"
             class="images-container"
           >
-            <v-col
-              v-for="image in images"
-              :key="image.basename"
-              :cols="calculateColumnSpan(images.length, 5)"
+            <image-grid 
+              :data="data"
+              :column-span="calculateColumnSpan(10, 5)"
               class="wizard-images"
-            >
-              <v-img
-                :src="image.url"
-                :alt="image.basename"
-                cover
-                aspect-ratio="1"
-                :class="{ 'selected-image': selectedDataSessionImages.some(selectedImage => selectedImage.basename === image.basename) }"
-                @click="handleThumbnailClick(image)"
-              />
-            </v-col>
+            />
           </div>
         </div>
       </v-card-text>
