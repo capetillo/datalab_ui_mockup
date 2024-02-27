@@ -20,6 +20,7 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
+const imagesPerRow = 5
 
 let displayImages = ref(false)
 
@@ -174,7 +175,7 @@ const handleThumbnailClick = (item) => {
           >
             <image-grid 
               :data="data"
-              :column-span="calculateColumnSpan(data.input_data.length, 5)"
+              :column-span="calculateColumnSpan(data.input_data.length, imagesPerRow)"
               :selected-images="selectedDataSessionImages"
               class="wizard-images"
               @image-clicked="handleThumbnailClick"
