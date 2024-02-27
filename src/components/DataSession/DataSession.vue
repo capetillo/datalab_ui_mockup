@@ -16,7 +16,6 @@ const props = defineProps({
 const store = useStore()
 const emit = defineEmits(['reloadSession'])
 
-// const imageGridRef = ref(null)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 async function addOperation(operationDefinition) {
@@ -28,14 +27,6 @@ async function addOperation(operationDefinition) {
 	}
 	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
 }
-
-// onMounted(() => {
-// 	if (imageGridRef.value) {
-// 		imageGridRef.value.getImages()
-// 	}
-// })
-
-// ref="imageGridRef"
 
 </script>
 
