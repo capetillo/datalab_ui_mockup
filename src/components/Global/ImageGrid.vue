@@ -10,10 +10,10 @@ const props = defineProps({
 	columnSpan: {
 		type: Number,
 		required: true
-	}
+	},
+	// eslint-disable-next-line vue/require-default-prop
+	selectedImages: Array
 })
-
-console.log('props data:', props.data)
 
 const emit = defineEmits(['imageClicked'])
 
@@ -36,13 +36,13 @@ const getImages = async () => {
 	}
 }
 
+const isSelected = (image) => {
+	return props.selectedImages?.some(selectedImage => selectedImage.basename === image.basename)
+}
+
 const onImageClick = (image) => {
 	emit('imageClicked', image)
 }
-
-// console.log('images:', images.value)
-
-// defineExpose({ getImages })
 
 onMounted(() => {
 	getImages()
@@ -62,9 +62,16 @@ onMounted(() => {
         :alt="image.basename"
         :images="images"
         cover
+        :class="{ 'selected-image': isSelected(image) }"
         aspect-ratio="1"
-        @click="onImageClick(image)" 
+        @click="onImageClick(image)"
       />
     </v-col>
   </v-row>
 </template>
+
+<style scoped lang="scss">
+.selected-image {
+  border: 0.3rem solid $dark-green;
+}
+</style>
