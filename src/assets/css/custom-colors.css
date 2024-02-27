@@ -11,12 +11,10 @@
 
 
 [colorblind="true"] {
-	--dark-blue: rgb(254, 74, 73);
-	--dark-green: yellow;
+	--dark-green: rgb(245, 118, 0);
 	--tangerine: rgb(255,90,95);
-	--tan: rgb(115,210,222);
-	--metal: lime;
+	--tan: white;
 	--light-gray: white;
-	--light-blue: rgb(126,155,196);
-	--cancel: rgb(254,101,79);
+	--light-blue: rgb(20, 182, 246);
+	--cancel: rgb(255, 0, 0);
 }
