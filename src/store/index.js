@@ -58,7 +58,7 @@ export default createStore({
 				state.projects.push(project)
 			}
 		},
-		setSmallImageCache(state, imageData){
+		setSmallImageCache(state, imageData) {
 			state.smallImageCache = imageData
 		},
 		setLargeImageCache(state, imageData) {
