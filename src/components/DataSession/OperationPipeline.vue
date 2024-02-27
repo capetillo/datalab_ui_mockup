@@ -9,8 +9,8 @@ defineProps({
 		type: Array,
 		required: true
 	},
-	images: {
-		type: Array,
+	data: {
+		type: Object,
 		required: true
 	}
 })
@@ -71,7 +71,7 @@ function operationBtnColor(index) {
       transition="dialog-bottom-transition"
     >
       <operation-wizard
-        :images="images"
+        :data="data"
         @close-wizard="showWizardDialog = false"
         @add-operation="emit('addOperation', $event); showWizardDialog = false;"
       />

@@ -2,8 +2,8 @@
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../utils/api'
-import DataSession from '@/components/DataSession.vue'
-import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
+import DataSession from '@/components/DataSession/DataSession.vue'
+import DeleteSessionDialog from '@/components/DataSession/DeleteSessionDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
