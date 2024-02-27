@@ -51,9 +51,9 @@ async function addOperation(operationDefinition) {
   </v-container>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .ds-container {
-  background-color: $metal;
+  background-color: var(--metal);
   display:flex;
 }
 </style>

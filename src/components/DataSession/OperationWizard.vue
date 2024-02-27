@@ -204,7 +204,7 @@ const handleThumbnailClick = (item) => {
   </v-card>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .wizard-card {
   width: 100%; 
   display: flex;
@@ -226,7 +226,7 @@ const handleThumbnailClick = (item) => {
   cursor: pointer;
 }
 .selected-image {
-  border: 0.3rem solid $dark-green;
+  border: 0.3rem solid var(--dark-green);
 }
 .operation-input {
   width: 10vw;

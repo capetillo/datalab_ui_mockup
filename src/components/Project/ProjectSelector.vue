@@ -19,18 +19,18 @@ defineProps(['project'])
   </v-expansion-panel>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .projects_title {
   letter-spacing: 0.1rem;
   font-size: 1.5rem;
-  color: $tan;
+  color: var(--tan);
   font-weight: 500; 
-  background-color: $metal;
+  background-color: var(--metal);
 }
 .project_description {
   font-size: 1.2rem;
   text-align: left;
-  color: $light-gray;
+  color: var(--light-gray);
 }
 
 @media (max-width: 1200px) {

@@ -39,12 +39,12 @@ const selectProject = (projectTitle) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .project_bar {
   padding: 2em 1em;
 }
 .project_card {
-  background-color: $metal;
+  background-color: var(--metal);
 }
 .project_header { 
   letter-spacing: 0.1rem;
@@ -52,7 +52,7 @@ const selectProject = (projectTitle) => {
   font-weight: 600;
   text-align: center;
   padding: 2rem;
-  color: $tan;
+  color: var(--tan);
 }
 @media (max-width: 1200px) {
   .project_bar {
