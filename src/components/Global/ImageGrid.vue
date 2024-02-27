@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps, ref, defineEmits, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../../utils/api'
 
 const props = defineProps({
@@ -18,6 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['imageClicked'])
 
 let images = ref([])
+const store = useStore()
 
 const saveImages = (data) => {
 	const results = data.results
@@ -31,7 +33,7 @@ const getImages = async () => {
 	const inputData = responseData.input_data
 	for (const data of inputData) {
 		const basename = data.basename
-		const url =  `https://datalab-archive.photonranch.org/frames/?basename_exact=${basename}-small`
+		const url =  store.state.datalabArchiveApiUrl + 'frames/?basename_exact=' + basename + '-small'
 		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
 	}
 }
