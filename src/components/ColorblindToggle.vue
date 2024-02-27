@@ -13,17 +13,9 @@ function toggleColorblindMode() {
 </script>
 
 <template>
-  <div :class="{ 'colorblind-mode': isColorblindMode }">
-    <v-switch
-      v-model="isColorblindMode"
-      :label="`Colorblind Mode: ${isColorblindMode ? 'On' : 'Off'}`"
-      @click="toggleColorblindMode"
-    />
-  </div>
+  <v-switch
+    v-model="isColorblindMode"
+    :label="`Colorblind Mode: ${isColorblindMode ? 'On' : 'Off'}`"
+    @click="toggleColorblindMode"
+  />
 </template>
-
-<style>
-.colorblind-mode {
-	filter: invert(1)
-}
-</style>
