@@ -126,29 +126,29 @@ function tabColor(index) {
   </v-container>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .tabs {
-  background-color: $metal;
-  border-bottom: 0.1rem solid $tan;
+  background-color: var(--metal);
+  border-bottom: 0.1rem solid var(--tan);
 }
 .tab {
   font-size: 1.2rem;
   text-decoration: none;
-  color: $tan;
+  color: var(--tan);
   font-weight: 600;
-  background-color: $metal;
+  background-color: var(--metal);
 }
 .tab_button {
-  color: $tan;
+  color: var(--tan);
   text-decoration: none;
   margin: 0 0.5rem;
 }
 .selected { 
-  background-color: $light-blue;
+  background-color: var(--light-blue);
   color: white;
 }
 .not-selected {
-  background-color: $metal;
+  background-color: var(--metal);
 }
 @media (max-width: 1200px) {
   .tab {

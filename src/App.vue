@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import ColorblindToggle from './components/ColorblindToggle.vue'
 
@@ -22,9 +22,19 @@ onMounted(async () => {
 		}  
 	} catch (error) {
 		console.error('Error loading configuration:', error)
-	}
-  
+	} 
 })
+
+watch(() => store.state.isColorblindMode, (newVal) => {
+	if (newVal) {
+		console.log('true')
+		document.documentElement.setAttribute('colorblind', 'true')
+	} else {
+		console.log('false')
+		document.documentElement.removeAttribute('colorblind')
+	}
+}, { immediate: true })
+
 </script>
 
 <template>
@@ -34,9 +44,9 @@ onMounted(async () => {
   </template>
 </template>
 
-<style lang="scss">
+<style>
 body {
-	background-color: $dark-blue;
+	background-color: var(--dark-blue);
 }
 #app {
 	font-family: 'Open Sans', sans-serif;
