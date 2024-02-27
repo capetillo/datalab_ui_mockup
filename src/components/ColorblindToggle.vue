@@ -12,9 +12,11 @@ function toggleColorblindMode() {
 
 <template>
   <div :class="{ 'colorblind-mode': isColorblindMode }">
-    <button @click="toggleColorblindMode">
-      {{ isColorblindMode ? 'Disable' : 'Enable' }} Colorblind Mode
-    </button>
+    <v-switch
+      v-model="isColorblindMode"
+      :label="`Colorblind Mode: ${isColorblindMode ? 'On' : 'Off'}`"
+      @click="toggleColorblindMode"
+    />
   </div>
 </template>
 
