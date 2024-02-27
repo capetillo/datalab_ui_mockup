@@ -1,11 +1,13 @@
 <script setup>
-
 import { ref } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const isColorblindMode = ref(false)
 
 function toggleColorblindMode() {
-	isColorblindMode.value = !isColorblindMode.value
+	store.dispatch('toggleColorblindMode')
 }
 
 </script>
