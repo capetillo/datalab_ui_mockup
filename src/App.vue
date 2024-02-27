@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
+import ColorblindToggle from './components/ColorblindToggle.vue'
 
 const store = useStore()
 const loadedConfig = computed(() => store.state.isConfigLoaded)
@@ -27,6 +28,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <colorblind-toggle />
   <template v-if="loadedConfig">
     <router-view />
   </template>
