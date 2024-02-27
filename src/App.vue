@@ -27,10 +27,8 @@ onMounted(async () => {
 
 watch(() => store.state.isColorblindMode, (newVal) => {
 	if (newVal) {
-		console.log('true')
 		document.documentElement.setAttribute('colorblind', 'true')
 	} else {
-		console.log('false')
 		document.documentElement.removeAttribute('colorblind')
 	}
 }, { immediate: true })
