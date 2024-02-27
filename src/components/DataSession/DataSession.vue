@@ -17,6 +17,7 @@ const store = useStore()
 const emit = defineEmits(['reloadSession'])
 
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const imagesPerRow = 4
 
 async function addOperation(operationDefinition) {
 	const url = dataSessionsUrl + props.data.id + '/operations/'
@@ -34,7 +35,7 @@ async function addOperation(operationDefinition) {
   <v-container class="d-lg-flex ds-container">
     <image-grid
       :data="data"
-      :column-span="calculateColumnSpan(data.input_data.length, 4)"
+      :column-span="calculateColumnSpan(data.input_data.length, imagesPerRow)"
     />
     <v-col
       cols="3"
