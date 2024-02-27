@@ -2,6 +2,7 @@
 import { ref, onMounted, defineEmits, defineProps } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../utils/api'
+import { calculateColumnSpan } from '../utils/common'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -43,12 +44,6 @@ const getImages = async () => {
 	}
 }
 
-const calculateColumnSpan = (imageCount) => {
-	const imagesPerRow = 4
-	const columnsPerImage = Math.floor(12 / Math.min(imagesPerRow, imageCount))
-	return columnsPerImage
-}
-
 onMounted(() => {
 	getImages()
 })
@@ -61,7 +56,7 @@ onMounted(() => {
       <v-col
         v-for="image of images"
         :key="image.basename"
-        :cols="calculateColumnSpan(images.length)"
+        :cols="calculateColumnSpan(images.length, 4)"
       >
         <v-img
           :src="image.url"
