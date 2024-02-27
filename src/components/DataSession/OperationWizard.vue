@@ -7,7 +7,7 @@ import { useStore } from 'vuex'
 
 defineProps({
 	data: {
-		type: Array,
+		type: Object,
 		required: true
 	}
 })
@@ -106,14 +106,14 @@ function goForward() {
 	}
 }
 
-// const handleThumbnailClick = (item) => {
-// 	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
-// 	if (index === -1) {
-// 		selectedDataSessionImages.value.push(item)
-// 	} else {
-// 		selectedDataSessionImages.value.splice(index, 1)
-// 	}
-// }
+const handleThumbnailClick = (item) => {
+	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
+	if (index === -1) {
+		selectedDataSessionImages.value.push(item)
+	} else {
+		selectedDataSessionImages.value.splice(index, 1)
+	}
+}
 
 </script>
 
@@ -174,8 +174,10 @@ function goForward() {
           >
             <image-grid 
               :data="data"
-              :column-span="calculateColumnSpan(10, 5)"
+              :column-span="calculateColumnSpan(data.input_data.length, 5)"
+              :selected-images="selectedDataSessionImages"
               class="wizard-images"
+              @image-clicked="handleThumbnailClick"
             />
           </div>
         </div>
@@ -218,7 +220,7 @@ function goForward() {
   padding-right: 2rem; 
 }
 .wizard-images {
-  max-width: 20%; 
+  max-width: 100%; 
   height: auto; 
   box-sizing: border-box; 
   cursor: pointer;
