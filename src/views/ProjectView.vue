@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeMount } from 'vue'
-import ProjectBar from '@/components/ProjectView/ProjectBar.vue'
-import ImageCarousel from '@/components/ProjectView/ImageCarousel.vue'
-import ImageList from '@/components/ProjectView/ImageList.vue'
+import ProjectBar from '@/components/Project/ProjectBar.vue'
+import ImageCarousel from '@/components/Project/ImageCarousel.vue'
+import ImageList from '@/components/Project/ImageList.vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { fetchApiCall } from '../utils/api'

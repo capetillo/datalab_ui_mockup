@@ -1,8 +1,16 @@
 <script setup>
 import { ref, onMounted, computed, defineEmits, defineProps } from 'vue'
-import { fetchApiCall, handleError } from '../utils/api'
-import { calculateColumnSpan } from '../utils/common'
+import { fetchApiCall, handleError } from '../../utils/api'
+import { calculateColumnSpan } from '../../utils/common'
+import ImageGrid from '../Global/ImageGrid'
 import { useStore } from 'vuex'
+
+defineProps({
+	data: {
+		type: Object,
+		required: true
+	}
+})
 
 const store = useStore()
 const emit = defineEmits(['closeWizard', 'addOperation'])
@@ -12,15 +20,9 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
+const imagesPerRow = 5
 
 let displayImages = ref(false)
-
-defineProps({
-	images: {
-		type: Array,
-		required: true
-	}
-})
 
 onMounted(async () => {
 	const url = dataSessionsUrl + 'available_operations/'
@@ -171,21 +173,13 @@ const handleThumbnailClick = (item) => {
             v-else-if="inputDescription.type == 'file'"
             class="images-container"
           >
-            <v-col
-              v-for="image in images"
-              :key="image.basename"
-              :cols="calculateColumnSpan(images.length, 5)"
+            <image-grid 
+              :data="data"
+              :column-span="calculateColumnSpan(data.input_data.length, imagesPerRow)"
+              :selected-images="selectedDataSessionImages"
               class="wizard-images"
-            >
-              <v-img
-                :src="image.url"
-                :alt="image.basename"
-                cover
-                aspect-ratio="1"
-                :class="{ 'selected-image': selectedDataSessionImages.some(selectedImage => selectedImage.basename === image.basename) }"
-                @click="handleThumbnailClick(image)"
-              />
-            </v-col>
+              @image-clicked="handleThumbnailClick"
+            />
           </div>
         </div>
       </v-card-text>
@@ -227,7 +221,7 @@ const handleThumbnailClick = (item) => {
   padding-right: 2rem; 
 }
 .wizard-images {
-  max-width: 20%; 
+  max-width: 100%; 
   height: auto; 
   box-sizing: border-box; 
   cursor: pointer;
