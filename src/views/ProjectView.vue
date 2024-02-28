@@ -225,7 +225,7 @@ onMounted(() => {
     </v-card>
   </v-dialog>
 </template>
-<style scoped lang="scss">
+<style scoped>
 .card{
   height: 450px;
   width: 700px;
@@ -242,7 +242,7 @@ onMounted(() => {
   font-size: 1.6rem;
   padding: 1.5rem;
   text-align: center;
-  color: $tan;
+  color: var(--tan);
   font-weight: 600;
   letter-spacing: 0.05rem;
 }
@@ -266,13 +266,13 @@ onMounted(() => {
   font-size: 1.3rem;
   align-content: center;
   margin-right: 3rem;
-  background-color: $light-blue;
+  background-color: var(--light-blue);
   opacity: calc(1);
   font-weight: 700;
   color: white;
 }
 .add_button:disabled {
-  background-color:$light-blue;
+  background-color:var(--light-blue);
   color: white;  
   opacity: calc(0.7);
 }
@@ -283,11 +283,11 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 .create_button {
-  color: $light-blue;
+  color: var(--light-blue);
   font-weight: 700;
 }
 .cancel_button {
-  color: $cancel;
+  color: var(--cancel);
   font-weight: 700;
   padding-left: 38%;
 }
@@ -303,7 +303,7 @@ onMounted(() => {
 }
 .sessions {
   font-family: 'Open Sans', sans-serif;
-  color: $tan;
+  color: var(--tan);
   font-size: 1.5rem;
 }
 @media (max-width: 1200px) {

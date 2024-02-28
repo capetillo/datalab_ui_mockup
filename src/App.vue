@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import ColorblindToggle from './components/ColorblindToggle.vue'
 
 const store = useStore()
 const loadedConfig = computed(() => store.state.isConfigLoaded)
@@ -21,20 +22,29 @@ onMounted(async () => {
 		}  
 	} catch (error) {
 		console.error('Error loading configuration:', error)
-	}
-  
+	} 
 })
+
+watch(() => store.state.isColorblindMode, (newVal) => {
+	if (newVal) {
+		document.documentElement.setAttribute('colorblind', 'true')
+	} else {
+		document.documentElement.removeAttribute('colorblind')
+	}
+}, { immediate: true })
+
 </script>
 
 <template>
+  <colorblind-toggle />
   <template v-if="loadedConfig">
     <router-view />
   </template>
 </template>
 
-<style lang="scss">
+<style>
 body {
-	background-color: $dark-blue;
+	background-color: var(--dark-blue);
 }
 #app {
 	font-family: 'Open Sans', sans-serif;

@@ -119,7 +119,7 @@ const handleThumbnailClick = (item, index) => {
   />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 #gallery {
   height: auto;
 }
@@ -154,7 +154,7 @@ const handleThumbnailClick = (item, index) => {
   object-fit: cover;
 }
 .selected-thumbnail {
-  border: 0.5rem solid $dark-green;
+  border: 0.5rem solid var(--dark-green);
 }
 .thumbnail__carousel__container::-webkit-scrollbar {
   display: none;
@@ -189,7 +189,7 @@ const handleThumbnailClick = (item, index) => {
   }
 
   .selected-thumbnail {
-    border: 0.3rem solid $dark-green;
+    border: 0.3rem solid var(--dark-green);
   }
   .thumbnail__carousel__container::-webkit-scrollbar {
     display: none;

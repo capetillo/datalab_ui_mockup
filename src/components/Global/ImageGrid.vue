@@ -72,8 +72,8 @@ onMounted(() => {
   </v-row>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .selected-image {
-  border: 0.3rem solid $dark-green;
+  border: 0.3rem solid var(--dark-green);
 }
 </style>
