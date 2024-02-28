@@ -23,11 +23,32 @@ onBeforeMount(()=>{
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
 
+let smallImageCache = ref([])
+const projects = ref({})
+
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
 	isLoading.value = true
 	await store.dispatch('loadAndCacheImages', { option })
 	isLoading.value = false
+	smallImageCache.value = store.state.smallImageCache
+	updateGroupedProjects()
+}
+
+function groupByProposalId() {
+	if (smallImageCache.value) {
+		return smallImageCache.value.reduce((acc, project) => {
+			if (!acc[project.proposal_id]) {
+				acc[project.proposal_id] = []
+			}
+			acc[project.proposal_id].push(project)
+			return acc
+		}, {})
+	}
+}
+
+function updateGroupedProjects() {
+	projects.value = groupByProposalId(smallImageCache.value)
 }
 
 // boolean computed property used to disable the add to session button
@@ -130,7 +151,10 @@ onMounted(() => {
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
-    <ProjectBar class="project-bar" />
+    <ProjectBar
+      class="project-bar"
+      :projects="projects"
+    />
     <div class="image-area h-screen">
       <div
         v-if="isLoading"
