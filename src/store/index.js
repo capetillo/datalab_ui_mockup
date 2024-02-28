@@ -12,6 +12,7 @@ export default createStore({
 	})],
 	state() {
 		return {
+			isColorblindMode: false,
 			selectedImages: [],
 			isConfigLoaded: false,
 			datalabApiBaseUrl: '',
@@ -24,7 +25,10 @@ export default createStore({
 	},
 
 	mutations: {
-		// toggle image selection
+		toggleColorblindMode(state) {
+			state.isColorblindMode = !state.isColorblindMode
+		},
+
 		toggleImageSelection(state, image) {
 			const index = state.selectedImages.findIndex(img => img.basename === image.basename)
 			if (index >= 0) {
@@ -33,6 +37,7 @@ export default createStore({
 				state.selectedImages.push(image)
 			}
 		},
+
 		selectedImages(state, value) { 
 			state.selectedImages = value
 		},
@@ -58,15 +63,20 @@ export default createStore({
 				state.projects.push(project)
 			}
 		},
+
 		setSmallImageCache(state, imageData) {
 			state.smallImageCache = imageData
 		},
+
 		setLargeImageCache(state, imageData) {
 			state.largeImageCache = imageData
 		}
 	},
 
 	actions: {
+		toggleColorblindMode({ commit }) {
+			commit('toggleColorblindMode')
+		},
 		toggleImageSelection({ commit }, image) {
 			commit('toggleImageSelection', image)
 		},

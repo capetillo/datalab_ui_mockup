@@ -79,9 +79,9 @@ function operationBtnColor(index) {
   </v-btn>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .operations {
-  color: $tan;
+  color: var(--tan);
   letter-spacing: 0.05rem;
   font-size: 2rem;
 }
@@ -90,7 +90,7 @@ function operationBtnColor(index) {
   height: 4rem;
   font-size: 1.3rem;
   align-content: center;
-  background-color: $light-blue;
+  background-color: var(--light-blue);
   font-weight: 700;
   color: white;
 }
@@ -102,11 +102,11 @@ function operationBtnColor(index) {
   border-style: none;
 }
 .selected {
-  background-color:$light-blue
+  background-color:var(--light-blu)e
 }
 .not-selected{
-  background-color: $light-gray;
-  color: $metal;
+  background-color: var(--light-gray);
+  color: var(--metal);
 }
 @media (max-width: 1200px) {
   .operations {
