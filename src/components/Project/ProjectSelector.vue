@@ -12,11 +12,16 @@ console.log('props:', props.project)
 <template>
   <v-expansion-panel>
     <v-expansion-panel-title
-      expand-icon="mdi-menu-down"
+      icon="chevron-down"
       class="projects_title"
     >
       {{ project[0].proposal_id }}
     </v-expansion-panel-title>
+    <v-expansion-panel-text>
+      <p class="project_description">
+        Project ID: {{ project[0].id }}
+      </p>
+    </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
 
@@ -29,9 +34,10 @@ console.log('props:', props.project)
   background-color: var(--metal);
 }
 .project_description {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 500;
   text-align: left;
-  color: var(--light-gray);
+  color: var(--tan);
 }
 
 @media (max-width: 1200px) {
