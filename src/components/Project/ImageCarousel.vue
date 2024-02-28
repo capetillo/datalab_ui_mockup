@@ -26,47 +26,6 @@ const handleThumbnailClick = (item, index) => {
 	currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
 }
 
-// SAVING THIS CODE WHEN WE HAVE TO SAVE LAZY LOADED IMAGES IN STORE
-
-// const loadImage = (index) => {
-// 	return index <= currentSlide.value + 6
-// }
-
-// const handleScroll = () => {
-// 	const carousel = document.getElementById('thumbnails')
-// 	if (!carousel) return
-
-// 	const containerWidth = carousel.offsetWidth
-// 	// Calculating thumbnail width, scrolling position, and finding the currentSlide based on the scrollPosition
-// 	const thumbnailWidth = containerWidth * 0.2 - 20 
-// 	const scrollPosition = carousel.scrollLeft
-// 	const visibleThumbnails = Math.floor(scrollPosition / thumbnailWidth)
-
-// 	// Updating the currentSlide reactive variable
-// 	currentSlide.value = visibleThumbnails
-// }
-
-// onMounted(() => {
-// 	const carousel = document.getElementById('thumbnails')
-// 	if (carousel) {
-// 		carousel.addEventListener('scroll', handleScroll, { passive: true })
-// 	}
-// })
-
-// onUnmounted(() => {
-// 	const carousel = document.getElementById('thumbnails')
-// 	if (carousel) {
-// 		carousel.removeEventListener('scroll', handleScroll)
-// 	}
-// })
-
-// watch(currentSlide, (newValue) => {
-// 	for (let i = newValue; i <= newValue + 3 && i < data.value.length; i++) {
-// 		const imageToLoad = data.value[i]
-// 		imageToLoad.loaded = true
-// 	}
-// }, { immediate: true })
-
 </script>
 
 <template>
