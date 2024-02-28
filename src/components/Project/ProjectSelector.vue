@@ -1,12 +1,13 @@
 <script setup>
 import { defineProps } from 'vue'
-const props = defineProps({
+
+defineProps({
 	project: {
 		type: Object,
 		required: true
 	}
 })
-console.log('props:', props.project)
+
 </script>
 
 <template>
