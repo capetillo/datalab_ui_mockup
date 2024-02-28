@@ -10,12 +10,12 @@ const smallImageCache = computed(() => store.state.smallImageCache)
 
 const groupedItems = computed(() => groupByProposalId(smallImageCache.value))
 
-function groupByProposalId(items) {
-	return items.reduce((acc, item) => {
-		if (!acc[item.proposal_id]) {
-			acc[item.proposal_id] = []
+function groupByProposalId(projects) {
+	return projects.reduce((acc, project) => {
+		if (!acc[project.proposal_id]) {
+			acc[project.proposal_id] = []
 		}
-		acc[item.proposal_id].push(item)
+		acc[project.proposal_id].push(project)
 		return acc
 	}, {})
 }
