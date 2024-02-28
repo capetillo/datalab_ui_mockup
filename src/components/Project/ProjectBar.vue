@@ -8,7 +8,7 @@ const emit = defineEmits(['update:selectedProject'])
 
 const smallImageCache = computed(() => store.state.smallImageCache)
 
-const groupedItems = computed(() => groupByProposalId(smallImageCache.value))
+const groupedProjects = computed(() => groupByProposalId(smallImageCache.value))
 
 function groupByProposalId(projects) {
 	return projects.reduce((acc, project) => {
@@ -20,7 +20,7 @@ function groupByProposalId(projects) {
 	}, {})
 }
 
-console.log('grouped items:', groupedItems)
+console.log('grouped Projects:', groupedProjects)
 
 const selectProject = (projectTitle) => {
 	emit('update:selectedProject', projectTitle)
@@ -38,7 +38,7 @@ const selectProject = (projectTitle) => {
         class="accordion"
       >
         <ProjectSelector
-          v-for="(project, index) in groupedItems"
+          v-for="(project, index) in groupedProjects"
           :key="index"
           :project="project"
           @click="selectProject(project.projectTitle)"
