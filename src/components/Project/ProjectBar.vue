@@ -1,17 +1,26 @@
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { defineEmits, computed } from 'vue'
+import { useStore } from 'vuex'
 import ProjectSelector from './ProjectSelector.vue'
 
-const projects = ref([
-	{ projectTitle: 'PROJECT 1', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 2', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 3', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 4', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 5', projectDescription: 'things like site code, date, image id, etc can go in here'},
-])
-
-
+const store = useStore()
 const emit = defineEmits(['update:selectedProject'])
+
+const smallImageCache = computed(() => store.state.smallImageCache)
+
+const groupedItems = computed(() => groupByProposalId(smallImageCache.value))
+
+function groupByProposalId(items) {
+	return items.reduce((acc, item) => {
+		if (!acc[item.proposal_id]) {
+			acc[item.proposal_id] = []
+		}
+		acc[item.proposal_id].push(item)
+		return acc
+	}, {})
+}
+
+console.log('grouped items:', groupedItems)
 
 const selectProject = (projectTitle) => {
 	emit('update:selectedProject', projectTitle)
@@ -29,7 +38,7 @@ const selectProject = (projectTitle) => {
         class="accordion"
       >
         <ProjectSelector
-          v-for="(project, index) in projects"
+          v-for="(project, index) in groupedItems"
           :key="index"
           :project="project"
           @click="selectProject(project.projectTitle)"
