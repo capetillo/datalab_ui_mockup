@@ -1,26 +1,16 @@
 <script setup>
-import { defineEmits, computed } from 'vue'
-import { useStore } from 'vuex'
+import { defineEmits, defineProps } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
-const store = useStore()
+
 const emit = defineEmits(['update:selectedProject'])
 
-const smallImageCache = computed(() => store.state.smallImageCache)
-
-const groupedProjects = computed(() => groupByProposalId(smallImageCache.value))
-
-function groupByProposalId(projects) {
-	return projects.reduce((acc, project) => {
-		if (!acc[project.proposal_id]) {
-			acc[project.proposal_id] = []
-		}
-		acc[project.proposal_id].push(project)
-		return acc
-	}, {})
-}
-
-console.log('grouped Projects:', groupedProjects)
+defineProps({
+	projects: {
+		type: Object,
+		required: true
+	}
+})
 
 const selectProject = (projectTitle) => {
 	emit('update:selectedProject', projectTitle)
@@ -38,7 +28,7 @@ const selectProject = (projectTitle) => {
         class="accordion"
       >
         <ProjectSelector
-          v-for="(project, index) in groupedProjects"
+          v-for="(project, index) in projects"
           :key="index"
           :project="project"
           @click="selectProject(project.projectTitle)"
