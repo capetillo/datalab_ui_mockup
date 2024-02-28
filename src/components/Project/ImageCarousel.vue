@@ -1,22 +1,26 @@
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch } from 'vue'
 import { useStore } from 'vuex'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from '../ImageAnalyzer.vue'
 
+const props = defineProps({
+	data: {
+		type: Object,
+		required: true
+	}
+})
+
 const store = useStore()
-const props = defineProps(['data'])
 const currentSlide = ref(0)
-const currSmallImage = ref(props.data[currentSlide.value])
-const currLargeImage = ref(store.getters.getLargeImageFromBasename(currSmallImage.value.basename))
+const currSmallImage = ref(null)
+const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
 
-// Invoked any time an image is clicked
 const handleThumbnailClick = (item, index) => {
 	store.dispatch('toggleImageSelection', item)
-	// Checking if there are any selected images after the toggle action
 	if (store.state.selectedImages.length > 0) {
 		currSmallImage.value = store.state.selectedImages[store.state.selectedImages.length - 1]
 		currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
@@ -25,6 +29,15 @@ const handleThumbnailClick = (item, index) => {
 	}
 	currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
 }
+
+watch(() => props.data, (newVal) => {
+	if (newVal && newVal.length > 0) {
+		currSmallImage.value = newVal[0]
+		currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
+	}
+}, {
+	immediate: true
+})
 
 </script>
 
