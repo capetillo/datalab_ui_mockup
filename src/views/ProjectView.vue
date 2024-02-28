@@ -49,17 +49,17 @@ function groupByProposalId() {
 	}
 }
 
-// 
+// sorts projects by group id and handles selectedproject as the first one for when the page first loads 
 function updateGroupedProjects() {
 	projects.value = groupByProposalId(smallImageCache.value)
-	const firstProjectKey = Object.keys(projects.value)[0] // Get the first key of the projects object
+	const firstProjectKey = Object.keys(projects.value)[0]
 	if (firstProjectKey) {
-		const firstProjectProposalIds = [firstProjectKey] // Since handleSelectedProject expects an array of proposalIds
+		const firstProjectProposalIds = [firstProjectKey]
 		handleSelectedProject(firstProjectProposalIds)
 	}
-
 }
 
+// handles the selected project to filter images that only have the selected proposal_id
 const handleSelectedProject = (proposalId) => {
 	selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
 }
