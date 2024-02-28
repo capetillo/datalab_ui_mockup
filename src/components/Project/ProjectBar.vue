@@ -3,7 +3,7 @@ import { defineEmits, defineProps } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
 
-const emit = defineEmits(['update:selectedProject'])
+const emit = defineEmits(['selectedProject'])
 
 defineProps({
 	projects: {
@@ -12,8 +12,9 @@ defineProps({
 	}
 })
 
-const selectProject = (projectTitle) => {
-	emit('update:selectedProject', projectTitle)
+const selectProject = (projects) => {
+	const proposalId = projects.map(p => p.proposal_id)
+	emit('selectedProject', proposalId)
 }
 </script>
 
@@ -31,7 +32,7 @@ const selectProject = (projectTitle) => {
           v-for="(project, index) in projects"
           :key="index"
           :project="project"
-          @click="selectProject(project.projectTitle)"
+          @click="selectProject(project)"
         />
       </v-expansion-panels>
     </v-card>
