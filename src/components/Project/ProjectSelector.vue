@@ -1,8 +1,12 @@
-<!-- eslint-disable vue/require-prop-types -->
 <script setup>
 import { defineProps } from 'vue'
-defineProps(['project'])
-
+const props = defineProps({
+	project: {
+		type: Object,
+		required: true
+	}
+})
+console.log('props:', props.project)
 </script>
 
 <template>
@@ -11,11 +15,8 @@ defineProps(['project'])
       expand-icon="mdi-menu-down"
       class="projects_title"
     >
-      {{ project.projectTitle }}
+      {{ project[0].proposal_id }}
     </v-expansion-panel-title>
-    <v-expansion-panel-text class="project_description">
-      {{ project.projectDescription }}
-    </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
 
