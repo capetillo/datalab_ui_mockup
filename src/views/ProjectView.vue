@@ -25,6 +25,7 @@ let imageDisplayToggle = ref(true)
 
 let smallImageCache = ref([])
 const projects = ref({})
+const selectedProjectImages = ref([])
 
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
@@ -35,6 +36,7 @@ const loadUserImages = async (option) => {
 	updateGroupedProjects()
 }
 
+// groups all projects by proposal id
 function groupByProposalId() {
 	if (smallImageCache.value) {
 		return smallImageCache.value.reduce((acc, project) => {
@@ -47,8 +49,19 @@ function groupByProposalId() {
 	}
 }
 
+// 
 function updateGroupedProjects() {
 	projects.value = groupByProposalId(smallImageCache.value)
+	const firstProjectKey = Object.keys(projects.value)[0] // Get the first key of the projects object
+	if (firstProjectKey) {
+		const firstProjectProposalIds = [firstProjectKey] // Since handleSelectedProject expects an array of proposalIds
+		handleSelectedProject(firstProjectProposalIds)
+	}
+
+}
+
+const handleSelectedProject = (proposalId) => {
+	selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
 }
 
 // boolean computed property used to disable the add to session button
@@ -148,12 +161,14 @@ onMounted(() => {
 })
 
 </script>
+
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
     <ProjectBar
       class="project-bar"
       :projects="projects"
+      @selected-project="handleSelectedProject"
     />
     <div class="image-area h-screen">
       <div
@@ -170,12 +185,12 @@ onMounted(() => {
 
       <div v-else>
         <ImageCarousel
-          v-if="imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
-          :data="store.state.smallImageCache"
+          v-if="imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
         />
         <ImageList
-          v-if="!imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
-          :data="store.state.smallImageCache"
+          v-if="!imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
         />
       </div>
       <v-skeleton-loader
