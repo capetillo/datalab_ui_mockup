@@ -1,20 +1,20 @@
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { defineEmits, defineProps } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
-const projects = ref([
-	{ projectTitle: 'PROJECT 1', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 2', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 3', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 4', projectDescription: 'things like site code, date, image id, etc can go in here'},
-	{ projectTitle: 'PROJECT 5', projectDescription: 'things like site code, date, image id, etc can go in here'},
-])
 
+const emit = defineEmits(['selectedProject'])
 
-const emit = defineEmits(['update:selectedProject'])
+defineProps({
+	projects: {
+		type: Object,
+		required: true
+	}
+})
 
-const selectProject = (projectTitle) => {
-	emit('update:selectedProject', projectTitle)
+const selectProject = (projects) => {
+	const proposalId = projects.map(p => p.proposal_id)
+	emit('selectedProject', proposalId)
 }
 </script>
 
@@ -32,7 +32,7 @@ const selectProject = (projectTitle) => {
           v-for="(project, index) in projects"
           :key="index"
           :project="project"
-          @click="selectProject(project.projectTitle)"
+          @click="selectProject(project)"
         />
       </v-expansion-panels>
     </v-card>

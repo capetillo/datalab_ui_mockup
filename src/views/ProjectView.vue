@@ -23,11 +23,45 @@ onBeforeMount(()=>{
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
 
+let smallImageCache = ref([])
+const projects = ref({})
+const selectedProjectImages = ref([])
+
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
 	isLoading.value = true
 	await store.dispatch('loadAndCacheImages', { option })
 	isLoading.value = false
+	smallImageCache.value = store.state.smallImageCache
+	updateGroupedProjects()
+}
+
+// groups all projects by proposal id
+function groupByProposalId() {
+	if (smallImageCache.value) {
+		return smallImageCache.value.reduce((acc, project) => {
+			if (!acc[project.proposal_id]) {
+				acc[project.proposal_id] = []
+			}
+			acc[project.proposal_id].push(project)
+			return acc
+		}, {})
+	}
+}
+
+// sorts projects by group id and handles selectedproject as the first one for when the page first loads 
+function updateGroupedProjects() {
+	projects.value = groupByProposalId(smallImageCache.value)
+	const firstProjectKey = Object.keys(projects.value)[0]
+	if (firstProjectKey) {
+		const firstProjectProposalIds = [firstProjectKey]
+		filterImagesByProposalId(firstProjectProposalIds)
+	}
+}
+
+// handles the selected project to filter images that only have the selected proposal_id
+const filterImagesByProposalId = (proposalId) => {
+	selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
 }
 
 // boolean computed property used to disable the add to session button
@@ -127,10 +161,15 @@ onMounted(() => {
 })
 
 </script>
+
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
-    <ProjectBar class="project-bar" />
+    <ProjectBar
+      class="project-bar"
+      :projects="projects"
+      @selected-project="filterImagesByProposalId"
+    />
     <div class="image-area h-screen">
       <div
         v-if="isLoading"
@@ -146,13 +185,16 @@ onMounted(() => {
 
       <div v-else>
         <ImageCarousel
-          v-if="imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
-          :data="store.state.smallImageCache"
+          v-if="imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
         />
         <ImageList
-          v-if="!imageDisplayToggle && store.state.smallImageCache.length && store.state.largeImageCache.length"
-          :data="store.state.smallImageCache"
+          v-if="!imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
         />
+        <p v-if="!selectedProjectImages.length">
+          Please create a project to use Datalab
+        </p>
       </div>
       <v-skeleton-loader
         v-if="!store.state.smallImageCache"
