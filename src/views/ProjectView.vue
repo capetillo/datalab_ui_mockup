@@ -55,12 +55,12 @@ function updateGroupedProjects() {
 	const firstProjectKey = Object.keys(projects.value)[0]
 	if (firstProjectKey) {
 		const firstProjectProposalIds = [firstProjectKey]
-		handleSelectedProject(firstProjectProposalIds)
+		filterImagesByProposalId(firstProjectProposalIds)
 	}
 }
 
 // handles the selected project to filter images that only have the selected proposal_id
-const handleSelectedProject = (proposalId) => {
+const filterImagesByProposalId = (proposalId) => {
 	selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
 }
 
@@ -168,7 +168,7 @@ onMounted(() => {
     <ProjectBar
       class="project-bar"
       :projects="projects"
-      @selected-project="handleSelectedProject"
+      @selected-project="filterImagesByProposalId"
     />
     <div class="image-area h-screen">
       <div
