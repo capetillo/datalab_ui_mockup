@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 
 defineProps({
 	project: {
-		type: Object,
+		type: Array,
 		required: true
 	}
 })
