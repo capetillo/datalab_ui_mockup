@@ -8,10 +8,14 @@ import ImageAnalyzer from '../ImageAnalyzer.vue'
 
 const props = defineProps({
 	data: {
-		type: Object,
+		type: Array,
 		required: true
 	}
 })
+
+// const test = () => {
+// 	(props.data.map((data) => store.state.selectedImages[length-1]==(data) ? console.log('yes') : console.log('no')))
+// }
 
 const store = useStore()
 const currentSlide = ref(0)
@@ -20,9 +24,12 @@ const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
 
 const handleThumbnailClick = (item, index) => {
+	// test()
 	store.dispatch('toggleImageSelection', item)
-	if (store.state.selectedImages.length > 0) {
-		currSmallImage.value = store.state.selectedImages[store.state.selectedImages.length - 1]
+	const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
+	const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
+	if (isLastSelectedImageInCurrentProject) {
+		currSmallImage.value = lastSelectedImage
 		currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
 	} else {
 		currentSlide.value = index
@@ -31,6 +38,8 @@ const handleThumbnailClick = (item, index) => {
 }
 
 watch(() => props.data, (newVal) => {
+
+	console.log('propsdata:', props.data)
 	if (newVal && newVal.length > 0) {
 		currSmallImage.value = newVal[0]
 		currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
