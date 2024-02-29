@@ -13,10 +13,6 @@ const props = defineProps({
 	}
 })
 
-// const test = () => {
-// 	(props.data.map((data) => store.state.selectedImages[length-1]==(data) ? console.log('yes') : console.log('no')))
-// }
-
 const store = useStore()
 const currentSlide = ref(0)
 const currSmallImage = ref(null)
@@ -24,7 +20,6 @@ const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
 
 const handleThumbnailClick = (item, index) => {
-	// test()
 	store.dispatch('toggleImageSelection', item)
 	const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
 	const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
@@ -38,8 +33,6 @@ const handleThumbnailClick = (item, index) => {
 }
 
 watch(() => props.data, (newVal) => {
-
-	console.log('propsdata:', props.data)
 	if (newVal && newVal.length > 0) {
 		currSmallImage.value = newVal[0]
 		currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
