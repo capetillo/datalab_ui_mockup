@@ -192,6 +192,9 @@ onMounted(() => {
           v-if="!imageDisplayToggle && selectedProjectImages.length"
           :data="selectedProjectImages"
         />
+        <p v-if="!selectedProjectImages.length">
+          Please create a project to use Datalab
+        </p>
       </div>
       <v-skeleton-loader
         v-if="!store.state.smallImageCache"
