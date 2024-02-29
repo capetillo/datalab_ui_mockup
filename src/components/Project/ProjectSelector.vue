@@ -1,20 +1,27 @@
-<!-- eslint-disable vue/require-prop-types -->
 <script setup>
 import { defineProps } from 'vue'
-defineProps(['project'])
+
+defineProps({
+	project: {
+		type: Array,
+		required: true
+	}
+})
 
 </script>
 
 <template>
   <v-expansion-panel>
     <v-expansion-panel-title
-      expand-icon="mdi-menu-down"
+      icon="chevron-down"
       class="projects_title"
     >
-      {{ project.projectTitle }}
+      {{ project[0].proposal_id }}
     </v-expansion-panel-title>
-    <v-expansion-panel-text class="project_description">
-      {{ project.projectDescription }}
+    <v-expansion-panel-text>
+      <p class="project_description">
+        Project ID: {{ project[0].id }}
+      </p>
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
@@ -28,9 +35,10 @@ defineProps(['project'])
   background-color: var(--metal);
 }
 .project_description {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 500;
   text-align: left;
-  color: var(--light-gray);
+  color: var(--tan);
 }
 
 @media (max-width: 1200px) {
