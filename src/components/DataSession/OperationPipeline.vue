@@ -47,14 +47,16 @@ function operationBtnColor(index) {
 async function pollOperationCompletion(operationID) {
 	const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.data.id + '/operations/' + operationID + '/'
 
-	const response = await fetchApiCall({ url: url, method: 'GET', failCallback: handleError })
-
-	if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
-		operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
-	} else {
-		operationPercentages.value[operationID] = COMPLETE_PERCENT
-		setTimeout(stopPollingOperation(operationID), POLL_WAIT_TIME)
+	const updateOperationPercentages = (response) => {
+		if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
+			operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
+		} else {
+			operationPercentages.value[operationID] = COMPLETE_PERCENT
+			setTimeout(stopPollingOperation(operationID), POLL_WAIT_TIME)
+		}
 	}
+
+	await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
 }
 
 function stopPollingOperation(operationID) {
