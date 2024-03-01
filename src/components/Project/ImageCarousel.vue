@@ -8,7 +8,7 @@ import ImageAnalyzer from '../ImageAnalyzer.vue'
 
 const props = defineProps({
 	data: {
-		type: Object,
+		type: Array,
 		required: true
 	}
 })
@@ -21,8 +21,10 @@ const showAnalysisDialog = ref(false)
 
 const handleThumbnailClick = (item, index) => {
 	store.dispatch('toggleImageSelection', item)
-	if (store.state.selectedImages.length > 0) {
-		currSmallImage.value = store.state.selectedImages[store.state.selectedImages.length - 1]
+	const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
+	const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
+	if (isLastSelectedImageInCurrentProject) {
+		currSmallImage.value = lastSelectedImage
 		currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
 	} else {
 		currentSlide.value = index
