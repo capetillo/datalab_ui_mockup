@@ -20,7 +20,7 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
-const imagesPerRow = 5
+const imagesPerRow = 3
 
 let displayImages = ref(false)
 
@@ -168,6 +168,7 @@ const handleThumbnailClick = (item) => {
         <div
           v-for="(inputDescription, inputKey) in selectedOperationInputs"
           :key="inputKey"
+          class="operation-input-wrapper"
         >
           <v-text-field
             v-if="inputDescription.type !== 'file'"
@@ -274,7 +275,10 @@ const handleThumbnailClick = (item) => {
 }
 .operation-input {
   width: 10vw;
-  margin-bottom: 1rem;
+  position: fixed;
+  left: 3%;
+  top: 7%;
+  background-color: var(--metal);
 }
 .buttons-container {
   position: fixed;
@@ -289,12 +293,29 @@ const handleThumbnailClick = (item) => {
   color:var(--light-blue);
   font-size: 1.2rem;
 }
+@media (max-width: 1200px) {
+.operation-input {
+  left: 5%;
+  top: 10%;
+}
+.images-container {
+  margin-top: 8%;
+}
+}
 @media (max-width: 900px) {
 .selected-operation {
   height: 120%;
 }
 .operation-description{
   font-size: 1rem;
+}
+.operation-input {
+  left: 5%;
+  top: 7%;
+  width: 15vw;
+}
+.images-container {
+  margin-top: 15%;
 }
 }
 </style>
