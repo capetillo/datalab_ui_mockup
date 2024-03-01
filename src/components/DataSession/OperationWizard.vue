@@ -20,7 +20,7 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
-const imagesPerRow = 5
+const imagesPerRow = 3
 
 let displayImages = ref(false)
 
@@ -168,6 +168,7 @@ const handleThumbnailClick = (item) => {
         <div
           v-for="(inputDescription, inputKey) in selectedOperationInputs"
           :key="inputKey"
+          class="operation-input-wrapper"
         >
           <v-text-field
             v-if="inputDescription.type !== 'file'"
@@ -192,7 +193,7 @@ const handleThumbnailClick = (item) => {
       </v-card-text>
     </v-slide-y-reverse-transition>
 
-    <v-card-actions>
+    <v-card-actions class="buttons-container">
       <v-spacer />
       <v-btn
         variant="text"
@@ -215,6 +216,7 @@ const handleThumbnailClick = (item) => {
 <style scoped>
 .wizard-background{
   background-color: var(--dark-blue);
+  height: 100vh;
 }
 .wizard-toolbar {
   background-color: var(--metal);
@@ -259,7 +261,6 @@ const handleThumbnailClick = (item) => {
   flex-wrap: wrap; 
   justify-content: flex-start; 
   width: 100%; 
-  margin-bottom: 50vw; 
   padding-left: 2rem; 
   padding-right: 2rem; 
 }
@@ -274,7 +275,14 @@ const handleThumbnailClick = (item) => {
 }
 .operation-input {
   width: 10vw;
-  margin-bottom: 1rem;
+  margin-left: 2%;
+  margin-bottom: 2%;
+  background-color: var(--metal);
+}
+.buttons-container {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
 }
 .goback-btn {
   color: var(--cancel);
@@ -284,12 +292,27 @@ const handleThumbnailClick = (item) => {
   color:var(--light-blue);
   font-size: 1.2rem;
 }
+@media (max-width: 1200px) {
+.operation-input {
+  margin-left: 3%;
+}
+.images-container {
+  margin-top: 2%;
+}
+}
 @media (max-width: 900px) {
 .selected-operation {
   height: 120%;
 }
 .operation-description{
   font-size: 1rem;
+}
+.operation-input {
+  margin-left: 4%;
+  width: 15vw;
+}
+.images-container {
+  margin-top: 3%;
 }
 }
 </style>
