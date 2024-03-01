@@ -1,10 +1,13 @@
 <script setup>
-import { ref, defineEmits, defineProps} from 'vue'
+import { ref, defineEmits, defineProps, watch, onBeforeUnmount} from 'vue'
+import { useStore } from 'vuex'
+import { fetchApiCall, handleError } from '@/utils/api'
 import OperationWizard from './OperationWizard.vue'
 
+const store = useStore()
 const emit = defineEmits(['addOperation'])
 
-defineProps({
+const props = defineProps({
 	operations: {
 		type: Array,
 		required: true
@@ -17,6 +20,11 @@ defineProps({
 
 const selectedOperation = ref(-1)
 const showWizardDialog = ref(false)
+const operationPollingTimers = {}
+const operationPercentages = ref({})
+const POLL_WAIT_TIME = 1000
+const DEC_TO_PERCENT = 100
+const COMPLETE_PERCENT = 100
 
 function selectOperation(index) {
 	if (index == selectedOperation.value) {
@@ -35,6 +43,40 @@ function operationBtnColor(index) {
 		return 'not-selected'
 	}
 }
+
+async function pollOperationCompletion(operationID) {
+	const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.data.id + '/operations/' + operationID + '/'
+
+	const response = await fetchApiCall({ url: url, method: 'GET', failCallback: handleError })
+
+	if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
+		operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
+	} else {
+		operationPercentages.value[operationID] = COMPLETE_PERCENT
+		setTimeout(stopPollingOperation(operationID), POLL_WAIT_TIME)
+	}
+}
+
+function stopPollingOperation(operationID) {
+	clearInterval(operationPollingTimers[operationID])
+	delete operationPercentages.value[operationID]
+	delete operationPollingTimers[operationID]
+}
+
+watch(() => props.operations, () => {
+	props.operations.forEach(operation => {
+		if (!operationPollingTimers[operation.id]) {
+			operationPollingTimers[operation.id] = setInterval( () => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+		}
+	})
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+	// Clean up Polling Intervals
+	Object.keys(operationPollingTimers).forEach(operationID => {
+		stopPollingOperation(operationID)
+	})
+})
 
 </script>
 <template>
@@ -57,6 +99,12 @@ function operationBtnColor(index) {
     >
       {{ index }}: {{ operation.name }}
     </v-btn>
+    <v-progress-linear
+      v-if="operationPercentages[operation.id] !== undefined"
+      class="operation_completion"
+      :model-value="operationPercentages[operation.id]"
+      :height="5"
+    />
   </v-row>
   <v-divider class="mb-4 mt-4" />
   <v-btn
