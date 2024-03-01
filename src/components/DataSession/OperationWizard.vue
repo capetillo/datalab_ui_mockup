@@ -152,10 +152,7 @@ const handleThumbnailClick = (item) => {
             class="selected-operation"
           >
             <v-card-text>
-              <span
-                style="white-space: pre;"
-                class="operation-description"
-              >
+              <span class="operation-description">
                 {{ selectedOperationDescription }}
               </span>
             </v-card-text>
@@ -281,8 +278,18 @@ const handleThumbnailClick = (item) => {
 }
 .goback-btn {
   color: var(--cancel);
+  font-size: 1.2rem;
 }
 .gofwd-btn{
   color:var(--light-blue);
+  font-size: 1.2rem;
+}
+@media (max-width: 900px) {
+.selected-operation {
+  height: 120%;
+}
+.operation-description{
+  font-size: 1rem;
+}
 }
 </style>
