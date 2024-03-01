@@ -82,7 +82,7 @@ const goForwardText = computed(() => {
 
 const wizardTitle = computed(() => {
 	if (page.value == 'select') {
-		return 'Select Operation'
+		return 'SELECT OPERATION'
 	}
 	else {
 		return 'Configure ' + selectedOperation.value + ' Operation'
@@ -119,33 +119,40 @@ const handleThumbnailClick = (item) => {
 </script>
 
 <template>
-  <v-card>
-    <v-toolbar
-      dark
-      color="primary"
-    >
-      <v-toolbar-title>{{ wizardTitle }}</v-toolbar-title>
+  <v-card class="wizard-background">
+    <v-toolbar class="wizard-toolbar">
+      <v-toolbar-title class="wizard-title">
+        {{ wizardTitle }}
+      </v-toolbar-title>
     </v-toolbar>
     <v-card-text v-show="page == 'select'">
       <v-row>
         <v-col cols="4">
-          <v-list density="compact">
-            <v-list-subheader>Operation</v-list-subheader>
+          <v-list
+            density="compact"
+            class="wizard-list"
+          >
+            <v-list-subheader class="wizard-subheader">
+              OPERATION
+            </v-list-subheader>
             <v-list-item
               v-for="(name, i) in Object.keys(availableOperations)"
               :key="i"
               :value="name"
-              color="primary"
               :title="name"
               :active="name == selectedOperation"
+              class="wizard-operations"
               @click="selectOperation(name)"
             />
           </v-list>
         </v-col>
         <v-col cols="8">
-          <v-card :title="selectedOperation">
+          <v-card
+            :title="selectedOperation"
+            class="selected-operation"
+          >
             <v-card-text>
-              <span style="white-space: pre;">
+              <span class="operation-description">
                 {{ selectedOperationDescription }}
               </span>
             </v-card-text>
@@ -188,15 +195,15 @@ const handleThumbnailClick = (item) => {
     <v-card-actions>
       <v-spacer />
       <v-btn
-        color="blue-darken-1"
         variant="text"
+        class="goback-btn"
         @click="goBack"
       >
         Go Back
       </v-btn>
       <v-btn
-        color="green-darken-1"
         variant="text"
+        class="gofwd-btn"
         @click="goForward"
       >
         {{ goForwardText }}
@@ -206,6 +213,42 @@ const handleThumbnailClick = (item) => {
 </template>
 
 <style scoped>
+.wizard-background{
+  background-color: var(--dark-blue);
+}
+.wizard-toolbar {
+  background-color: var(--metal);
+}
+.wizard-title {
+  color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1.7rem;
+  letter-spacing: 0.05rem;
+  margin-left: 2%;
+}
+.wizard-list{
+  background-color: var(--metal);
+}
+.wizard-subheader {
+  color: var(--tan);
+  font-weight: 500;
+  letter-spacing: 0.05rem;
+  font-size: 1.4rem;
+}
+.wizard-operations {
+  color: var(--tan);
+}
+.selected-operation {
+  color: var(--tan);
+  background-color: var(--metal);
+  text-transform: uppercase;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 3rem;
+}
+.operation-description{
+  font-size: 1rem;
+}
 .wizard-card {
   width: 100%; 
   display: flex;
@@ -232,5 +275,21 @@ const handleThumbnailClick = (item) => {
 .operation-input {
   width: 10vw;
   margin-bottom: 1rem;
+}
+.goback-btn {
+  color: var(--cancel);
+  font-size: 1.2rem;
+}
+.gofwd-btn{
+  color:var(--light-blue);
+  font-size: 1.2rem;
+}
+@media (max-width: 900px) {
+.selected-operation {
+  height: 120%;
+}
+.operation-description{
+  font-size: 1rem;
+}
 }
 </style>
