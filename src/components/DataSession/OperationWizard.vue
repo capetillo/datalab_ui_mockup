@@ -20,7 +20,7 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
-const imagesPerRow = 4
+const imagesPerRow = 5
 
 let displayImages = ref(false)
 
