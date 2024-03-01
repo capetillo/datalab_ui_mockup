@@ -14,7 +14,6 @@ const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-const selectedTab = ref(-1)
 
 onBeforeMount(()=>{
 	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
@@ -34,7 +33,7 @@ onMounted(async () => {
 		} else {
 			console.log('no data sessions available to display')
 		}
-		
+
 	}
 })
 
@@ -42,22 +41,13 @@ function onTabChange(newSessionId) {
 	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
 }
 
-async function deleteSession(id) {
+function deleteSession(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
 
 async function loadSessions() {
 	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
-}
-
-function selectTab(index) {
-	if (index == selectedTab.value) {
-		selectedTab.value = -1
-	}
-	else {
-		selectedTab.value = index
-	}
 }
 
 function tabColor(index) {
@@ -87,7 +77,6 @@ function tabColor(index) {
           :value="ds.id"
           :class="tabColor(index)"
           class="pr-0 tab"
-          @click="selectTab(index)"
         >
           {{ ds.name }}
           <v-btn
