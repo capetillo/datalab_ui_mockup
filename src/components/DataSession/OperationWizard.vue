@@ -275,9 +275,8 @@ const handleThumbnailClick = (item) => {
 }
 .operation-input {
   width: 10vw;
-  position: fixed;
   left: 3%;
-  top: 7%;
+  margin-bottom: 2%;
   background-color: var(--metal);
 }
 .buttons-container {
@@ -295,11 +294,10 @@ const handleThumbnailClick = (item) => {
 }
 @media (max-width: 1200px) {
 .operation-input {
-  left: 5%;
-  top: 10%;
+  margin-left: 3%;
 }
 .images-container {
-  margin-top: 8%;
+  margin-top: 2%;
 }
 }
 @media (max-width: 900px) {
@@ -310,12 +308,11 @@ const handleThumbnailClick = (item) => {
   font-size: 1rem;
 }
 .operation-input {
-  left: 5%;
-  top: 7%;
+  margin-left: 4%;
   width: 15vw;
 }
 .images-container {
-  margin-top: 15%;
+  margin-top: 3%;
 }
 }
 </style>
