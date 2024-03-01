@@ -22,32 +22,38 @@ onBeforeMount(()=>{
 onMounted(async () => {
 	await loadSessions()
 	// if user created or selected a specific datasession, load that tab
-	if (route.params.sessionId) {
+	if (route.params.sessionId && dataSessions.value.some(ds => ds.id == route.params.sessionId)) {
 		tab.value = Number(route.params.sessionId)
 		// if user is navigating to just /datasessions then their first datasession loads and adds /[first id] as params
 	} else {
 		if (dataSessions.value.length > 0) {
 			const firstSessionId = dataSessions.value[0].id
 			tab.value = firstSessionId
-			router.replace({ name: 'DataSessionDetails', params: { sessionId: firstSessionId }})
 		} else {
 			console.log('no data sessions available to display')
 		}
-
 	}
 })
 
-function onTabChange(newSessionId) {
-	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
+function changeTab(newSessionId) {
+	tab.value = newSessionId
 }
 
-function deleteSession(id) {
+function deleteDialog(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
 
 async function loadSessions() {
-	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
+	// if tab is not in new data default to displaying first tab
+	function updateData(data) {
+		dataSessions.value = data.results
+		if(!dataSessions.value.some(ds => ds.id == tab.value)){
+			tab.value = dataSessions.value[0]?.id
+		}
+	}
+
+	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: updateData, failCallback: handleError})
 }
 
 function tabColor(index) {
@@ -69,7 +75,7 @@ function tabColor(index) {
         next-icon="mdi-arrow-right-bold-box-outline"
         prev-icon="mdi-arrow-left-bold-box-outline"
         show-arrows
-        @update:model-value="onTabChange"
+        @update:model-value="changeTab"
       >
         <v-tab
           v-for="(ds, index) in dataSessions"
@@ -84,7 +90,7 @@ function tabColor(index) {
             icon="mdi-close"
             class="tab_button"
             :class="tabColor(index)"
-            @click="deleteSession(ds.id)"
+            @click="deleteDialog(ds.id)"
           />
         </v-tab>
         <v-btn
