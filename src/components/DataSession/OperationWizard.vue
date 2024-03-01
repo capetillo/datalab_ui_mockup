@@ -20,7 +20,7 @@ const availableOperations = ref({})
 const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedDataSessionImages = ref([])
-const imagesPerRow = 5
+const imagesPerRow = 4
 
 let displayImages = ref(false)
 
@@ -192,7 +192,7 @@ const handleThumbnailClick = (item) => {
       </v-card-text>
     </v-slide-y-reverse-transition>
 
-    <v-card-actions>
+    <v-card-actions class="buttons-container">
       <v-spacer />
       <v-btn
         variant="text"
@@ -215,6 +215,7 @@ const handleThumbnailClick = (item) => {
 <style scoped>
 .wizard-background{
   background-color: var(--dark-blue);
+  height: 100vh;
 }
 .wizard-toolbar {
   background-color: var(--metal);
@@ -259,7 +260,6 @@ const handleThumbnailClick = (item) => {
   flex-wrap: wrap; 
   justify-content: flex-start; 
   width: 100%; 
-  margin-bottom: 50vw; 
   padding-left: 2rem; 
   padding-right: 2rem; 
 }
@@ -275,6 +275,11 @@ const handleThumbnailClick = (item) => {
 .operation-input {
   width: 10vw;
   margin-bottom: 1rem;
+}
+.buttons-container {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
 }
 .goback-btn {
   color: var(--cancel);
