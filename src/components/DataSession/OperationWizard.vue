@@ -275,7 +275,7 @@ const handleThumbnailClick = (item) => {
 }
 .operation-input {
   width: 10vw;
-  left: 3%;
+  margin-left: 2%;
   margin-bottom: 2%;
   background-color: var(--metal);
 }
