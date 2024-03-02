@@ -31,7 +31,6 @@ const updateImagesPerRow = () => {
 	} else {
 		imagesPerRow.value = 3
 	}
-	console.log('Images per row:', imagesPerRow.value)
 }
 
 let displayImages = ref(false)
