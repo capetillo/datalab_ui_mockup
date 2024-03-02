@@ -29,25 +29,30 @@ async function confirmDeleteSession() {
     persistent
     width="auto"
   >
-    <v-card>
+    <v-card class="delete-card">
       <v-card-title
         class="text-h5"
-        color="red-lighten-1"
       >
-        Delete Session
+        <p class="delete-session-text">
+          DELETE SESSION
+        </p>
       </v-card-title>
-      <v-card-text>Are you sure you want to delete this Datalab Session? This operation is not reversible!</v-card-text>
+      <v-card-text>
+        <p class="delete-text">
+          Are you sure you want to delete this Datalab Session? This operation is not reversible!
+        </p>
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="green-darken-1"
+          class="close-btn"
           variant="text"
           @click="closeDialog()"
         >
           Go Back
         </v-btn>
         <v-btn
-          color="red-darken-1"
+          class="delete-btn"
           variant="text"
           @click="confirmDeleteSession()"
         >
@@ -64,3 +69,29 @@ async function confirmDeleteSession() {
     Error: Item couldn't be deleted
   </v-snackbar>
 </template>
+
+<style scoped>
+.delete-card {
+  background-color: var(--metal);
+}
+.delete-session-text {
+  color: var(--cancel);
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: 0.1rem;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+.delete-text {
+  color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.2rem;
+}
+.close-btn {
+  color: var(--light-blue);
+  font-size: 1rem;
+}
+.delete-btn {
+  color: var(--cancel);
+  font-size: 1rem;
+}
+</style>
