@@ -162,4 +162,9 @@ function tabColor(index) {
     margin: 0;
   }
 }
+@media (max-width: 900px) {
+  .datasession-container {
+    width: 80vw;
+  }
+}
 </style>
