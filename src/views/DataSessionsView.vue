@@ -122,11 +122,6 @@ function tabColor(index) {
 </template>
 
 <style scoped>
-.datasession-container {
-  position: fixed;
-  left: 2%;
-  width: 80vw;
-}
 .tabs {
   background-color: var(--metal);
   border-bottom: 0.1rem solid var(--tan);
