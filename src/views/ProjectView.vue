@@ -342,7 +342,11 @@ onMounted(() => {
   margin-top: 10px;
   display: flex;
   align-items: center;
+  flex-direction: row-reverse;
   float: right;
+  position: fixed;
+  bottom: 2%;
+  right: 3%;
 }
 .sessions {
   font-family: 'Open Sans', sans-serif;
