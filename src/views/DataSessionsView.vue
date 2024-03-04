@@ -14,7 +14,6 @@ const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
-const selectedTab = ref(-1)
 
 onBeforeMount(()=>{
 	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
@@ -23,40 +22,37 @@ onBeforeMount(()=>{
 onMounted(async () => {
 	await loadSessions()
 	// if user created or selected a specific datasession, load that tab
-	if (route.params.sessionId) {
+	if (route.params.sessionId && dataSessions.value.some(ds => ds.id == route.params.sessionId)) {
 		tab.value = Number(route.params.sessionId)
 		// if user is navigating to just /datasessions then their first datasession loads and adds /[first id] as params
 	} else {
 		if (dataSessions.value.length > 0) {
 			const firstSessionId = dataSessions.value[0].id
 			tab.value = firstSessionId
-			router.replace({ name: 'DataSessionDetails', params: { sessionId: firstSessionId }})
 		} else {
 			console.log('no data sessions available to display')
 		}
-		
 	}
 })
 
 function onTabChange(newSessionId) {
-	router.push({ name: 'DataSessionDetails', params: { sessionId: newSessionId }})
+	tab.value = newSessionId
 }
 
-async function deleteSession(id) {
+function openDeleteDialog(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
 
 async function loadSessions() {
-	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: (data) => {dataSessions.value = data.results}, failCallback: handleError})
+	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: updateData, failCallback: handleError})
 }
 
-function selectTab(index) {
-	if (index == selectedTab.value) {
-		selectedTab.value = -1
-	}
-	else {
-		selectedTab.value = index
+// if tab is not in new data default to displaying first tab
+function updateData(data) {
+	dataSessions.value = data.results
+	if(!dataSessions.value.some(ds => ds.id == tab.value)){
+		tab.value = dataSessions.value[0]?.id
 	}
 }
 
@@ -87,7 +83,6 @@ function tabColor(index) {
           :value="ds.id"
           :class="tabColor(index)"
           class="pr-0 tab"
-          @click="selectTab(index)"
         >
           {{ ds.name }}
           <v-btn
@@ -95,7 +90,7 @@ function tabColor(index) {
             icon="mdi-close"
             class="tab_button"
             :class="tabColor(index)"
-            @click="deleteSession(ds.id)"
+            @click="openDeleteDialog(ds.id)"
           />
         </v-tab>
         <v-btn
