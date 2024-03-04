@@ -18,6 +18,7 @@ const toggleColorblindMode = () => {
       v-model="isColorblindMode"
       class="colorblind-toggle"
       opacity="100"
+      d-inline-block
       @click.stop="toggleColorblindMode"
     />
     <div class="label">
@@ -35,14 +36,15 @@ const toggleColorblindMode = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  max-width: 17%;
 }
 .colorblind-toggle {
-  font-weight: 600;
-  padding: 0.6rem;
+  font-weight: 800;
+  padding: 0.2rem;
 }
 .label {
-  margin-right: 1rem;
-  margin-bottom: 8%;
+  margin-bottom: 12%;
   cursor: default;
+  font-size: 0.82rem;
 }
 </style>

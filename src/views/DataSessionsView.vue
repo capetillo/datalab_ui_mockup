@@ -67,7 +67,7 @@ function tabColor(index) {
 </script>
 
 <template>
-  <v-container class="d-lg">
+  <v-container class="d-lg datasession-container">
     <v-card>
       <v-tabs 
         v-model="tab"
@@ -122,6 +122,11 @@ function tabColor(index) {
 </template>
 
 <style scoped>
+.datasession-container {
+  position: fixed;
+  left: 2%;
+  width: 80vw;
+}
 .tabs {
   background-color: var(--metal);
   border-bottom: 0.1rem solid var(--tan);
@@ -146,6 +151,10 @@ function tabColor(index) {
   background-color: var(--metal);
 }
 @media (max-width: 1200px) {
+.datasession-container {
+  width: 85vw;
+  justify-content: left;
+}
   .tab {
     font-size: 0.85rem;
   }
