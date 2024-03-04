@@ -174,11 +174,12 @@ onBeforeUnmount(() => {
 }
 @media (max-width: 900px) {
   .operations {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   .addop_button {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     height: 4vh;
+    width: 24vw;
   }
   .operation_button {
     width: 15vw;

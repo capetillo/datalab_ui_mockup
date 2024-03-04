@@ -268,17 +268,17 @@ onMounted(() => {
   </v-dialog>
 </template>
 <style scoped>
-.card{
-  height: 450px;
-  width: 700px;
-  align-self: center;
-}
 .container{
   margin: 0;
   display: grid;
   grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
   grid-template-rows: [row-start] 100% [row-end];
   height: 100vh;
+}
+.card{
+  height: 450px;
+  width: 700px;
+  align-self: center;
 }
 .sessions_header {
   font-family: 'Open Sans', sans-serif;
