@@ -26,7 +26,13 @@ async function addOperation(operationDefinition) {
 			image.source = 'archive'
 		}
 	}
-	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: emit('reloadSession'), failCallback: handleError})
+
+	// first operation doesn't load unless this is here
+	function postOperationSuccess(){
+		emit('reloadSession')
+	}
+	
+	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError})
 }
 
 </script>
