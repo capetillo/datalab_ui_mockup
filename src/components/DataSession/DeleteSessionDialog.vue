@@ -14,12 +14,16 @@ const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
 	emit('update:modelValue', false)
+}
+
+function sessionDeleted(){
 	emit('reloadSession')
+	closeDialog()
 }
 
 async function confirmDeleteSession() {
 	const url = dataSessionsUrl + props.deleteId
-	await fetchApiCall({url: url, method: 'DELETE', successCallback: closeDialog, failCallback: () => {showSnackBar.value=true} })
+	await fetchApiCall({url: url, method: 'DELETE', successCallback: sessionDeleted, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
