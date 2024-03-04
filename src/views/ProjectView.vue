@@ -308,7 +308,7 @@ onMounted(() => {
   height: 4rem;
   font-size: 1.3rem;
   align-content: center;
-  margin-right: 3rem;
+  margin-right: 0.5rem;
   background-color: var(--light-blue);
   opacity: calc(1);
   font-weight: 700;
