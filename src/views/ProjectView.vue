@@ -274,10 +274,11 @@ onMounted(() => {
   align-self: center;
 }
 .container{
-  margin: 20px;
+  margin: 0;
   display: grid;
   grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
   grid-template-rows: [row-start] 100% [row-end];
+  height: 100vh;
 }
 .sessions_header {
   font-family: 'Open Sans', sans-serif;
@@ -307,7 +308,7 @@ onMounted(() => {
   height: 4rem;
   font-size: 1.3rem;
   align-content: center;
-  margin-right: 3rem;
+  margin-right: 0.5rem;
   background-color: var(--light-blue);
   opacity: calc(1);
   font-weight: 700;
@@ -341,7 +342,11 @@ onMounted(() => {
   margin-top: 10px;
   display: flex;
   align-items: center;
+  flex-direction: row-reverse;
   float: right;
+  position: fixed;
+  bottom: 2%;
+  right: 3%;
 }
 .sessions {
   font-family: 'Open Sans', sans-serif;

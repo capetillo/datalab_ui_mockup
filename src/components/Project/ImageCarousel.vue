@@ -51,6 +51,7 @@ watch(() => props.data, (newVal) => {
     :items-to-show="1"
     :wrap-around="false"
     :transition="0"
+    class="big-image"
   >
     <Slide
       v-for="(item, index) in data"
@@ -97,11 +98,14 @@ watch(() => props.data, (newVal) => {
 #gallery {
   height: auto;
 }
+.big-image {
+  margin-top: 2%;
+}
 .selected__item {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 65vh;
   margin-top: -3rem;
 }
 .selected__image {
