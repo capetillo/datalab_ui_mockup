@@ -35,25 +35,25 @@ onMounted(async () => {
 	}
 })
 
-function changeTab(newSessionId) {
+function onTabChange(newSessionId) {
 	tab.value = newSessionId
 }
 
-function deleteDialog(id) {
+function openDeleteDialog(id) {
 	deleteSessionId.value = id
 	showDeleteDialog.value = true
 }
 
 async function loadSessions() {
-	// if tab is not in new data default to displaying first tab
-	function updateData(data) {
-		dataSessions.value = data.results
-		if(!dataSessions.value.some(ds => ds.id == tab.value)){
-			tab.value = dataSessions.value[0]?.id
-		}
-	}
-
 	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: updateData, failCallback: handleError})
+}
+
+// if tab is not in new data default to displaying first tab
+function updateData(data) {
+	dataSessions.value = data.results
+	if(!dataSessions.value.some(ds => ds.id == tab.value)){
+		tab.value = dataSessions.value[0]?.id
+	}
 }
 
 function tabColor(index) {
@@ -75,7 +75,7 @@ function tabColor(index) {
         next-icon="mdi-arrow-right-bold-box-outline"
         prev-icon="mdi-arrow-left-bold-box-outline"
         show-arrows
-        @update:model-value="changeTab"
+        @update:model-value="onTabChange"
       >
         <v-tab
           v-for="(ds, index) in dataSessions"
@@ -90,7 +90,7 @@ function tabColor(index) {
             icon="mdi-close"
             class="tab_button"
             :class="tabColor(index)"
-            @click="deleteDialog(ds.id)"
+            @click="openDeleteDialog(ds.id)"
           />
         </v-tab>
         <v-btn
