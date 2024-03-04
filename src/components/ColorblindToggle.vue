@@ -47,4 +47,16 @@ const toggleColorblindMode = () => {
   cursor: default;
   font-size: 0.82rem;
 }
+@media (max-width: 900px) {
+.colorblind-toggle {
+  display: flex;
+  flex-direction: row-reverse;
+  right: 0.25%;
+  top: 0.5%;
+}
+.label {
+  margin-top: 12%;
+  font-size: 0.7rem;
+}
+}
 </style>
