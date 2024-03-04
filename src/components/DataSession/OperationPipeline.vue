@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
   border-style: none;
 }
 .selected {
-  background-color:var(--light-blu)e
+  background-color:var(--light-blue)
 }
 .not-selected{
   background-color: var(--light-gray);
