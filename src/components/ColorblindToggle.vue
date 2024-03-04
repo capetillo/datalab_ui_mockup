@@ -17,23 +17,21 @@ const toggleColorblindMode = () => {
     <v-switch
       v-model="isColorblindMode"
       class="colorblind-toggle"
-      inset
       opacity="100"
       @click.stop="toggleColorblindMode"
     />
     <div class="label">
-      Colorblind Mode: {{ isColorblindMode ? 'On' : 'Off' }}
+      COLORBLIND MODE: {{ isColorblindMode ? 'ON' : 'OFF' }}
     </div>
   </div>
 </template>
 
 <style scoped>
 .colorblind-toggle-container {
-  position: absolute;
-  right: 0.7rem;
-  top: -0.5rem;
+  position: fixed;
+  right: 1%;
+  top: 0.25%;
   z-index: 2000;
-  margin-right: 0.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
