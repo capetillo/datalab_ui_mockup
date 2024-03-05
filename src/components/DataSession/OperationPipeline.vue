@@ -8,14 +8,14 @@ const store = useStore()
 const emit = defineEmits(['addOperation'])
 
 const props = defineProps({
-	operations: {
-		type: Array,
-		required: true
-	},
-	data: {
-		type: Object,
-		required: true
-	}
+  operations: {
+    type: Array,
+    required: true
+  },
+  data: {
+    type: Object,
+    required: true
+  }
 })
 
 const selectedOperation = ref(-1)
@@ -27,57 +27,57 @@ const DEC_TO_PERCENT = 100
 const COMPLETE_PERCENT = 100
 
 function selectOperation(index) {
-	if (index == selectedOperation.value) {
-		selectedOperation.value = -1
-	}
-	else {
-		selectedOperation.value = index
-	}
+  if (index == selectedOperation.value) {
+    selectedOperation.value = -1
+  }
+  else {
+    selectedOperation.value = index
+  }
 }
 
 function operationBtnColor(index) {
-	if(index == selectedOperation.value){
-		return 'selected'
-	}
-	else {
-		return 'not-selected'
-	}
+  if(index == selectedOperation.value){
+    return 'selected'
+  }
+  else {
+    return 'not-selected'
+  }
 }
 
 async function pollOperationCompletion(operationID) {
-	const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.data.id + '/operations/' + operationID + '/'
+  const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.data.id + '/operations/' + operationID + '/'
 
-	const updateOperationPercentages = (response) => {
-		if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
-			operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
-		} else {
-			operationPercentages.value[operationID] = COMPLETE_PERCENT
-			setTimeout(stopPollingOperation(operationID), POLL_WAIT_TIME)
-		}
-	}
+  const updateOperationPercentages = (response) => {
+    if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
+      operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
+    } else {
+      operationPercentages.value[operationID] = COMPLETE_PERCENT
+      setTimeout(stopPollingOperation(operationID), POLL_WAIT_TIME)
+    }
+  }
 
-	await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
+  await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
 }
 
 function stopPollingOperation(operationID) {
-	clearInterval(operationPollingTimers[operationID])
-	delete operationPercentages.value[operationID]
-	delete operationPollingTimers[operationID]
+  clearInterval(operationPollingTimers[operationID])
+  delete operationPercentages.value[operationID]
+  delete operationPollingTimers[operationID]
 }
 
 watch(() => props.operations, () => {
-	props.operations.forEach(operation => {
-		if (!operationPollingTimers[operation.id]) {
-			operationPollingTimers[operation.id] = setInterval( () => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
-		}
-	})
+  props.operations.forEach(operation => {
+    if (!operationPollingTimers[operation.id]) {
+      operationPollingTimers[operation.id] = setInterval( () => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+    }
+  })
 }, { immediate: true })
 
 onBeforeUnmount(() => {
-	// Clean up Polling Intervals
-	Object.keys(operationPollingTimers).forEach(operationID => {
-		stopPollingOperation(operationID)
-	})
+  // Clean up Polling Intervals
+  Object.keys(operationPollingTimers).forEach(operationID => {
+    stopPollingOperation(operationID)
+  })
 })
 
 </script>
