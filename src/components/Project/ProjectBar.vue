@@ -6,15 +6,15 @@ import ProjectSelector from './ProjectSelector.vue'
 const emit = defineEmits(['selectedProject'])
 
 defineProps({
-	projects: {
-		type: Object,
-		required: true
-	}
+  projects: {
+    type: Object,
+    required: true
+  }
 })
 
 const selectProject = (projects) => {
-	const proposalId = projects.map(p => p.proposal_id)
-	emit('selectedProject', proposalId)
+  const proposalId = projects.map(p => p.proposal_id)
+  emit('selectedProject', proposalId)
 }
 </script>
 

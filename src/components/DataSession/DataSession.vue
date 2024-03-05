@@ -7,10 +7,10 @@ import { useStore } from 'vuex'
 import ImageGrid from '../Global/ImageGrid'
 
 const props = defineProps({
-	data: {
-		type: Object,
-		required: true
-	}
+  data: {
+    type: Object,
+    required: true
+  }
 })
 
 const store = useStore()
@@ -20,19 +20,19 @@ const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
 
 async function addOperation(operationDefinition) {
-	const url = dataSessionsUrl + props.data.id + '/operations/'
-	if ('input_files' in operationDefinition.input_data){
-		for (const image of operationDefinition.input_data.input_files) {
-			image.source = 'archive'
-		}
-	}
+  const url = dataSessionsUrl + props.data.id + '/operations/'
+  if ('input_files' in operationDefinition.input_data){
+    for (const image of operationDefinition.input_data.input_files) {
+      image.source = 'archive'
+    }
+  }
 
-	// first operation doesn't load unless this is here
-	function postOperationSuccess(){
-		emit('reloadSession')
-	}
+  // first operation doesn't load unless this is here
+  function postOperationSuccess(){
+    emit('reloadSession')
+  }
 	
-	await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError})
+  await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError})
 }
 
 </script>

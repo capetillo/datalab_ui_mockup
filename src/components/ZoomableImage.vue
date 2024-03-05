@@ -14,27 +14,27 @@ let mouseX
 let mouseY
 
 const zoom = (e, direction) => {
-	if (!direction) direction = e.deltaY > 0 ? -1 : 1
-	let newZoom = currentZoom.value + direction * STEP_SIZE 
-	if (newZoom > MIN_ZOOM && newZoom < MAX_ZOOM) currentZoom.value = newZoom
+  if (!direction) direction = e.deltaY > 0 ? -1 : 1
+  let newZoom = currentZoom.value + direction * STEP_SIZE 
+  if (newZoom > MIN_ZOOM && newZoom < MAX_ZOOM) currentZoom.value = newZoom
 }
 
 // save the position clicked and add the pointermove listener
 const pointerDown = (e) => {
-	mouseX = e.pageX
-	mouseY = e.pageY
-	image.value.onpointermove = pointerMove
+  mouseX = e.pageX
+  mouseY = e.pageY
+  image.value.onpointermove = pointerMove
 }
 
 // use mouse movement delta to set position, limit so image stays on screen
 const pointerMove = (e) => {
-	let x = imageLeftPos.value+e.pageX-mouseX
-	let y = imageTopPos.value+e.pageY-mouseY
-	// TODO change this to be bounded by the condition of whether overflow will happen for a more natural use
-	if( x > -800 && x < 800) imageLeftPos.value   = x
-	if( y > -800 && y < 800) imageTopPos.value    = y
-	mouseX = e.pageX
-	mouseY = e.pageY
+  let x = imageLeftPos.value+e.pageX-mouseX
+  let y = imageTopPos.value+e.pageY-mouseY
+  // TODO change this to be bounded by the condition of whether overflow will happen for a more natural use
+  if( x > -800 && x < 800) imageLeftPos.value   = x
+  if( y > -800 && y < 800) imageTopPos.value    = y
+  mouseX = e.pageX
+  mouseY = e.pageY
 }
 
 </script>

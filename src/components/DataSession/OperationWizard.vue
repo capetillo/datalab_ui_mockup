@@ -6,10 +6,10 @@ import ImageGrid from '../Global/ImageGrid'
 import { useStore } from 'vuex'
 
 defineProps({
-	data: {
-		type: Object,
-		required: true
-	}
+  data: {
+    type: Object,
+    required: true
+  }
 })
 
 const store = useStore()
@@ -23,114 +23,114 @@ const selectedDataSessionImages = ref([])
 const imagesPerRow = ref(3)
 
 const updateImagesPerRow = () => {
-	const width = window.innerWidth
-	if (width >= 1200) {
-		imagesPerRow.value = 5
-	} else if (width >= 900) {
-		imagesPerRow.value = 4
-	} else {
-		imagesPerRow.value = 3
-	}
+  const width = window.innerWidth
+  if (width >= 1200) {
+    imagesPerRow.value = 5
+  } else if (width >= 900) {
+    imagesPerRow.value = 4
+  } else {
+    imagesPerRow.value = 3
+  }
 }
 
 let displayImages = ref(false)
 
 onMounted(async () => {
-	const url = dataSessionsUrl + 'available_operations/'
-	await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {availableOperations.value = data}, failCallback: handleError})
-	if (Object.keys(availableOperations.value).length > 0){
-		selectOperation(Object.keys(availableOperations.value)[0])
-	}
-	updateImagesPerRow()
-	window.addEventListener('resize', updateImagesPerRow)
+  const url = dataSessionsUrl + 'available_operations/'
+  await fetchApiCall({url: url, method: 'GET', successCallback: (data) => {availableOperations.value = data}, failCallback: handleError})
+  if (Object.keys(availableOperations.value).length > 0){
+    selectOperation(Object.keys(availableOperations.value)[0])
+  }
+  updateImagesPerRow()
+  window.addEventListener('resize', updateImagesPerRow)
 })
 
 onUnmounted(() => {
-	window.removeEventListener('resize', updateImagesPerRow)
+  window.removeEventListener('resize', updateImagesPerRow)
 })
 
 const page = ref('select')
 
 function selectOperation(name) {
-	selectedOperation.value = name
-	selectedOperationInput.value = {}
-	for (const [key, value] of Object.entries(selectedOperationInputs.value)) {
-		if ('default' in value){
-			selectedOperationInput.value[key] = value.default
-		}
-		else {
-			selectedOperationInput.value[key] = null
-		}
-	}
+  selectedOperation.value = name
+  selectedOperationInput.value = {}
+  for (const [key, value] of Object.entries(selectedOperationInputs.value)) {
+    if ('default' in value){
+      selectedOperationInput.value[key] = value.default
+    }
+    else {
+      selectedOperationInput.value[key] = null
+    }
+  }
 }
 
 function goBack() {
-	displayImages.value = false
-	if (page.value == 'select') {
-		emit('closeWizard')
-	}
-	else {
-		page.value = 'select'
-	}
+  displayImages.value = false
+  if (page.value == 'select') {
+    emit('closeWizard')
+  }
+  else {
+    page.value = 'select'
+  }
 }
 
 const selectedOperationDescription = computed(() => {
-	if (availableOperations.value && selectedOperation.value) {
-		return availableOperations.value[selectedOperation.value].description
-	}
-	return ''
+  if (availableOperations.value && selectedOperation.value) {
+    return availableOperations.value[selectedOperation.value].description
+  }
+  return ''
 })
 
 const selectedOperationInputs = computed(() => {
-	if (availableOperations.value && selectedOperation.value) {
-		return availableOperations.value[selectedOperation.value].inputs
-	}
-	return {}
+  if (availableOperations.value && selectedOperation.value) {
+    return availableOperations.value[selectedOperation.value].inputs
+  }
+  return {}
 })
 
 const goForwardText = computed(() => {
-	if (page.value == 'select') {
-		return 'Configure Operation'
-	}
-	else {
-		return 'Add Operation'
-	}
+  if (page.value == 'select') {
+    return 'Configure Operation'
+  }
+  else {
+    return 'Add Operation'
+  }
 })
 
 const wizardTitle = computed(() => {
-	if (page.value == 'select') {
-		return 'SELECT OPERATION'
-	}
-	else {
-		return 'Configure ' + selectedOperation.value + ' Operation'
-	}
+  if (page.value == 'select') {
+    return 'SELECT OPERATION'
+  }
+  else {
+    return 'Configure ' + selectedOperation.value + ' Operation'
+  }
 })
 
 function goForward() {
-	if (page.value == 'select') {
-		page.value = 'configure'
-		displayImages.value = true
-	}
-	else {
-		displayImages.value = false
-		let operationDefinition = {
-			'name': selectedOperation.value,
-			'input_data': {
-				...selectedOperationInput.value,
-				'input_files': selectedDataSessionImages.value
-			}
-		}
-		emit('addOperation', operationDefinition)
-	}
+  if (page.value == 'select') {
+    page.value = 'configure'
+    displayImages.value = true
+  }
+  else {
+    displayImages.value = false
+    let operationDefinition = {
+      'name': selectedOperation.value,
+      'input_data': {
+        ...selectedOperationInput.value,
+        'input_files': selectedDataSessionImages.value
+      }
+    }
+    emit('addOperation', operationDefinition)
+  }
 }
 
 const handleThumbnailClick = (item) => {
-	const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
-	if (index === -1) {
-		selectedDataSessionImages.value.push(item)
-	} else {
-		selectedDataSessionImages.value.splice(index, 1)
-	}
+  const index = selectedDataSessionImages.value.findIndex(selectedImage => selectedImage.basename === item.basename)
+  if (index === -1) {
+    selectedDataSessionImages.value.push(item)
+  } else {
+    selectedDataSessionImages.value.splice(index, 1)
+  }
 }
 
 </script>
