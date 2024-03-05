@@ -72,7 +72,6 @@ function selectOperation(operationIndex) {
 }
 
 async function addOperation(operationDefinition) {
-<<<<<<< HEAD
   const url = dataSessionsUrl + props.data.id + '/operations/'
   if ('input_files' in operationDefinition.input_data) {
     for (const image of operationDefinition.input_data.input_files) {
@@ -86,21 +85,6 @@ async function addOperation(operationDefinition) {
   }
 
   await fetchApiCall({ url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError })
-=======
-  const url = dataSessionsUrl + props.data.id + '/operations/'
-  if ('input_files' in operationDefinition.input_data){
-    for (const image of operationDefinition.input_data.input_files) {
-      image.source = 'archive'
-    }
-  }
-
-  // first operation doesn't load unless this is here
-  function postOperationSuccess(){
-    emit('reloadSession')
-  }
-
-  await fetchApiCall({url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError})
->>>>>>> fc904be8a779bf6f16316b0b95400427e2660111
 }
 
 watch(() => props.data, () => {
