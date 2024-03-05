@@ -7,8 +7,8 @@ const store = useStore()
 const isColorblindMode = ref(false)
 
 const toggleColorblindMode = () => {
-	isColorblindMode.value = !isColorblindMode.value
-	store.dispatch('toggleColorblindMode')
+  isColorblindMode.value = !isColorblindMode.value
+  store.dispatch('toggleColorblindMode')
 }
 </script>
 

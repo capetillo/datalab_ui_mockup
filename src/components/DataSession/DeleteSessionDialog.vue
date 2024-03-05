@@ -13,17 +13,17 @@ const datalabApiBaseUrl = store.state.datalabApiBaseUrl
 const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
-	emit('update:modelValue', false)
+  emit('update:modelValue', false)
 }
 
 function sessionDeleted(){
-	emit('reloadSession')
-	closeDialog()
+  emit('reloadSession')
+  closeDialog()
 }
 
 async function confirmDeleteSession() {
-	const url = dataSessionsUrl + props.deleteId
-	await fetchApiCall({url: url, method: 'DELETE', successCallback: sessionDeleted, failCallback: () => {showSnackBar.value=true} })
+  const url = dataSessionsUrl + props.deleteId
+  await fetchApiCall({url: url, method: 'DELETE', successCallback: sessionDeleted, failCallback: () => {showSnackBar.value=true} })
 }
 </script>
 <template>
