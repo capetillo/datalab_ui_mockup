@@ -60,9 +60,9 @@ function addCompletedOperation(operationResponse) {
 
 
 function selectOperation(operationIndex) {
-	if (operationIndex != selectedOperation){
+	if (operationIndex != selectedOperation) {
 		selectedOperation = operationIndex
-		if (selectedOperation == -1){
+		if (selectedOperation == -1) {
 			filteredImages.value = images.value
 		}
 		else {
@@ -108,7 +108,7 @@ onMounted(() => {
 		<v-col cols="3" justify="center" align="center">
 			<!-- The operations bar list goes here -->
 			<operation-pipeline :images="images" :session_id="data.id" :operations="data.operations"
-				@add-operation="addOperation" @operation-completed="addCompletedOperation" @select-operation="selectOperation"/>
+				@add-operation="addOperation" @operation-completed="addCompletedOperation" @select-operation="selectOperation" />
 		</v-col>
 	</v-container>
 </template>
