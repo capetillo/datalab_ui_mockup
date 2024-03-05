@@ -7,7 +7,7 @@ const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
 
 function closeDialog() { 
-	emit('update:modelValue', false)
+  emit('update:modelValue', false)
 }
 
 </script>

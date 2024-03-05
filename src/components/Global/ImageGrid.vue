@@ -4,16 +4,16 @@ import { useStore } from 'vuex'
 import { fetchApiCall, handleError } from '../../utils/api'
 
 const props = defineProps({
-	data: {
-		type: Object,
-		required: true
-	},
-	columnSpan: {
-		type: Number,
-		required: true
-	},
-	// eslint-disable-next-line vue/require-default-prop
-	selectedImages: Array
+  data: {
+    type: Object,
+    required: true
+  },
+  columnSpan: {
+    type: Number,
+    required: true
+  },
+  // eslint-disable-next-line vue/require-default-prop
+  selectedImages: Array
 })
 
 const emit = defineEmits(['imageClicked'])
@@ -22,32 +22,32 @@ let images = ref([])
 const store = useStore()
 
 const saveImages = (data) => {
-	const results = data.results
-	if (results.length) {
-		images.value.push(data.results[0])
-	}
+  const results = data.results
+  if (results.length) {
+    images.value.push(data.results[0])
+  }
 }
 
 const getImages = async () => {
-	const responseData = props.data
-	const inputData = responseData.input_data
-	for (const data of inputData) {
-		const basename = data.basename
-		const url =  store.state.datalabArchiveApiUrl + 'frames/?basename_exact=' + basename + '-small'
-		await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
-	}
+  const responseData = props.data
+  const inputData = responseData.input_data
+  for (const data of inputData) {
+    const basename = data.basename
+    const url =  store.state.datalabArchiveApiUrl + 'frames/?basename_exact=' + basename + '-small'
+    await fetchApiCall({url: url, method: 'GET', successCallback: saveImages, failCallback: handleError})
+  }
 }
 
 const isSelected = (image) => {
-	return props.selectedImages?.some(selectedImage => selectedImage.basename === image.basename)
+  return props.selectedImages?.some(selectedImage => selectedImage.basename === image.basename)
 }
 
 const onImageClick = (image) => {
-	emit('imageClicked', image)
+  emit('imageClicked', image)
 }
 
 onMounted(() => {
-	getImages()
+  getImages()
 })
 
 </script>

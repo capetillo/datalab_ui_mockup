@@ -9,10 +9,10 @@ const props = defineProps(['data'])
 
 // v-data-table setup variables
 let headers = ref([
-	{ title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
-	{ title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
-	{ title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
-	{ title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
+  { title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
+  { title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
+  { title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
+  { title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
 ])
 let itemsPerPage = ref(15)
 
@@ -20,11 +20,11 @@ let itemsPerPage = ref(15)
 let selected = ref([])
 
 function select(selectedImageNames) {
-	store.dispatch('setSelectedImages', selectedImageNames)
+  store.dispatch('setSelectedImages', selectedImageNames)
 }
 
 onMounted ( () => {
-	selected.value = store.getters.selectedImages
+  selected.value = store.getters.selectedImages
 })
 
 </script>
