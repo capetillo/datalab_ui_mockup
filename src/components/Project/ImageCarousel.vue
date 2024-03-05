@@ -7,10 +7,10 @@ import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from '../ImageAnalyzer.vue'
 
 const props = defineProps({
-	data: {
-		type: Array,
-		required: true
-	}
+  data: {
+    type: Array,
+    required: true
+  }
 })
 
 const store = useStore()
@@ -20,25 +20,25 @@ const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
 
 const handleThumbnailClick = (item, index) => {
-	store.dispatch('toggleImageSelection', item)
-	const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
-	const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
-	if (isLastSelectedImageInCurrentProject) {
-		currSmallImage.value = lastSelectedImage
-		currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
-	} else {
-		currentSlide.value = index
-	}
-	currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
+  store.dispatch('toggleImageSelection', item)
+  const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
+  const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
+  if (isLastSelectedImageInCurrentProject) {
+    currSmallImage.value = lastSelectedImage
+    currentSlide.value = props.data.findIndex(img => img.basename === currSmallImage.value.basename)
+  } else {
+    currentSlide.value = index
+  }
+  currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
 }
 
 watch(() => props.data, (newVal) => {
-	if (newVal && newVal.length > 0) {
-		currSmallImage.value = newVal[0]
-		currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
-	}
+  if (newVal && newVal.length > 0) {
+    currSmallImage.value = newVal[0]
+    currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
+  }
 }, {
-	immediate: true
+  immediate: true
 })
 
 </script>

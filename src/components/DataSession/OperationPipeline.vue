@@ -8,18 +8,18 @@ const store = useStore()
 const emit = defineEmits(['addOperation', 'operationCompleted', 'selectOperation'])
 
 const props = defineProps({
-	operations: {
-		type: Array,
-		required: true
-	},
-	session_id: {
-		type: Number,
-		required: true
-	},
-	images: {
-		type: Array,
-		required: true
-	}
+  operations: {
+    type: Array,
+    required: true
+  },
+  session_id: {
+    type: Number,
+    required: true
+  },
+  images: {
+    type: Array,
+    required: true
+  }
 })
 
 const selectedOperation = ref(-1)
@@ -31,152 +31,152 @@ const DEC_TO_PERCENT = 100
 const COMPLETE_PERCENT = 100
 
 function selectOperation(index) {
-	if (index == selectedOperation.value) {
-		selectedOperation.value = -1
-	}
-	else {
-		selectedOperation.value = index
-	}
-	emit('selectOperation', selectedOperation.value)
+  if (index == selectedOperation.value) {
+    selectedOperation.value = -1
+  }
+  else {
+    selectedOperation.value = index
+  }
+  emit('selectOperation', selectedOperation.value)
 }
 
 function operationBtnColor(index) {
-	if (index == selectedOperation.value) {
-		return 'selected'
-	}
-	else {
-		return 'not-selected'
-	}
+  if (index == selectedOperation.value) {
+    return 'selected'
+  }
+  else {
+    return 'not-selected'
+  }
 }
 
 async function pollOperationCompletion(operationID) {
-	const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
+  const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
 
-	const updateOperationPercentages = (response) => {
-		if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
-			operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
-		} else {
-			operationPercentages.value[operationID] = COMPLETE_PERCENT
-			emit('operationCompleted', response)
-			if (operationID in operationPollingTimers) {
-				clearInterval(operationPollingTimers[operationID])
-				setTimeout(clearPollingData(operationID), POLL_WAIT_TIME)
-			}
-		}
-	}
+  const updateOperationPercentages = (response) => {
+    if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
+      operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
+    } else {
+      operationPercentages.value[operationID] = COMPLETE_PERCENT
+      emit('operationCompleted', response)
+      if (operationID in operationPollingTimers) {
+        clearInterval(operationPollingTimers[operationID])
+        setTimeout(clearPollingData(operationID), POLL_WAIT_TIME)
+      }
+    }
+  }
 
-	await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
+  await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
 }
 
 function clearPollingData(operationID) {
-	delete operationPercentages.value[operationID]
-	delete operationPollingTimers[operationID]
+  delete operationPercentages.value[operationID]
+  delete operationPollingTimers[operationID]
 }
 
 watch(() => props.operations, () => {
-	props.operations.forEach(operation => {
-		if (!operationPollingTimers[operation.id]) {
-			operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
-		}
-	})
+  props.operations.forEach(operation => {
+    if (!operationPollingTimers[operation.id]) {
+      operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+    }
+  })
 }, { immediate: true })
 
 onBeforeUnmount(() => {
-	// Clean up Polling Intervals
-	Object.keys(operationPollingTimers).forEach(operationID => {
-		clearInterval(operationPollingTimers[operationID])
-		clearPollingData(operationID)
-	})
+  // Clean up Polling Intervals
+  Object.keys(operationPollingTimers).forEach(operationID => {
+    clearInterval(operationPollingTimers[operationID])
+    clearPollingData(operationID)
+  })
 })
 
 </script>
 <template>
-	<h3 class="operations">
-		OPERATIONS
-	</h3>
-	<v-divider class="mb-6" />
-	<v-row v-for="(operation, index) in operations" :key="operation.id" align="center" justify="center" class="mb-2">
-		<v-btn :class="operationBtnColor(index)" variant="outlined" class="operation_button" @click="selectOperation(index)">
-			{{ index }}: {{ operation.name }}
-		</v-btn>
-		<v-progress-linear v-if="operationPercentages[operation.id] !== undefined" class="operation_completion"
-			:model-value="operationPercentages[operation.id]" :height="5" />
-	</v-row>
-	<v-divider class="mb-4 mt-4" />
-	<v-btn variant="flat" class="addop_button">
-		Add Operation
-		<v-dialog v-model="showWizardDialog" activator="parent" fullscreen transition="dialog-bottom-transition">
-			<operation-wizard :images="images" @close-wizard="showWizardDialog = false"
-				@add-operation="emit('addOperation', $event); showWizardDialog = false;" />
-		</v-dialog>
-	</v-btn>
+  <h3 class="operations">
+    OPERATIONS
+  </h3>
+  <v-divider class="mb-6" />
+  <v-row v-for="(operation, index) in operations" :key="operation.id" align="center" justify="center" class="mb-2">
+    <v-btn :class="operationBtnColor(index)" variant="outlined" class="operation_button" @click="selectOperation(index)">
+      {{ index }}: {{ operation.name }}
+    </v-btn>
+    <v-progress-linear v-if="operationPercentages[operation.id] !== undefined" class="operation_completion"
+      :model-value="operationPercentages[operation.id]" :height="5" />
+  </v-row>
+  <v-divider class="mb-4 mt-4" />
+  <v-btn variant="flat" class="addop_button">
+    Add Operation
+    <v-dialog v-model="showWizardDialog" activator="parent" fullscreen transition="dialog-bottom-transition">
+      <operation-wizard :images="images" @close-wizard="showWizardDialog = false"
+        @add-operation="emit('addOperation', $event); showWizardDialog = false;" />
+    </v-dialog>
+  </v-btn>
 </template>
 
 <style scoped>
 .operations {
-	color: var(--tan);
-	letter-spacing: 0.05rem;
-	font-size: 2rem;
+  color: var(--tan);
+  letter-spacing: 0.05rem;
+  font-size: 2rem;
 }
 
 .addop_button {
-	width: 16rem;
-	height: 4rem;
-	font-size: 1.3rem;
-	align-content: center;
-	background-color: var(--light-blue);
-	font-weight: 700;
-	color: white;
+  width: 16rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  background-color: var(--light-blue);
+  font-weight: 700;
+  color: white;
 }
 
 .operation_button {
-	width: 12rem;
-	height: 3rem;
-	font-size: 1.2rem;
-	font-weight: 600;
-	border-style: none;
+  width: 12rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-style: none;
 }
 
 .selected {
-	background-color: var(--light-blue)
+  background-color: var(--light-blue)
 }
 
 .not-selected {
-	background-color: var(--light-gray);
-	color: var(--metal);
+  background-color: var(--light-gray);
+  color: var(--metal);
 }
 
 @media (max-width: 1200px) {
-	.operations {
-		font-size: 1.3rem;
-	}
+  .operations {
+    font-size: 1.3rem;
+  }
 
-	.addop_button {
-		font-size: 1rem;
-		height: 5vh;
-	}
+  .addop_button {
+    font-size: 1rem;
+    height: 5vh;
+  }
 
-	.operation_button {
-		width: 13vw;
-		height: 4.5vh;
-		font-size: 0.8rem;
-	}
+  .operation_button {
+    width: 13vw;
+    height: 4.5vh;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 900px) {
-	.operations {
-		font-size: 1.2rem;
-	}
+  .operations {
+    font-size: 1.2rem;
+  }
 
-	.addop_button {
-		font-size: 0.9rem;
-		height: 4vh;
-	}
+  .addop_button {
+    font-size: 0.9rem;
+    height: 4vh;
+  }
 
-	.operation_button {
-		width: 15vw;
-		height: 3vh;
-		font-size: 0.7rem;
-	}
+  .operation_button {
+    width: 15vw;
+    height: 3vh;
+    font-size: 0.7rem;
+  }
 }
 </style>
