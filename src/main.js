@@ -10,7 +10,7 @@ import './assets/css/custom-colors.css'
 loadFonts()
 
 createApp(App)
-	.use(vuetify)
-	.use(router)
-	.use(store)
-	.mount('#app')
+  .use(vuetify)
+  .use(router)
+  .use(store)
+  .mount('#app')

@@ -2,10 +2,10 @@
 import { defineProps } from 'vue'
 
 defineProps({
-	project: {
-		type: Array,
-		required: true
-	}
+  project: {
+    type: Array,
+    required: true
+  }
 })
 
 </script>
