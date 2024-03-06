@@ -16,10 +16,10 @@ function closeDialog() {
     :model-value="modelValue"
     fullscreen
   >
-    <v-card>
+    <v-sheet class="analysis-sheet">
       <v-toolbar
+        class="analysis-toolbar"
         density="comfortable"
-        :elevation="8"
         :title="image.target_name"
       >
         <a
@@ -36,13 +36,12 @@ function closeDialog() {
           @click="closeDialog()"
         />
       </v-toolbar>
-      <div class="anaylzer_content">
+      <div class="analysis-content">
         <zoomable-image
+          class="image"
           :image-src="image.url"
         />
-        <v-sheet
-          class="pa-6"
-        >
+        <v-sheet class="side-panel">
           <h1>Details</h1>
           <p>Basename: {{ image.basename }}</p>
           <p>Date & Time: {{ image.observation_date }}</p>
@@ -51,11 +50,31 @@ function closeDialog() {
           <p>Instrument: {{ image.instrument_id }}</p>
         </v-sheet>
       </div>
-    </v-card>
+    </v-sheet>
   </v-dialog>
 </template>
 <style scoped>
-.anaylzer_content{
-	display: flex;
+.analysis-sheet{
+  background-color: var(--dark-blue);
+}
+.analysis-toolbar{
+  color: var(--tan);
+  background-color: var(--metal);
+}
+.analysis-content{
+  margin-top: 20px;
+  margin-left: 20px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: 1fr;
+  height: 90%;
+}
+.image{
+  background-color: var(--dark-blue);
+}
+.side-panel{
+  background-color: var(--dark-blue);
+  color: var(--tan);
+  margin-left: 20px;
 }
 </style>
