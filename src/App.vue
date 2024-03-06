@@ -8,29 +8,29 @@ const loadedConfig = computed(() => store.state.isConfigLoaded)
 
 // loading config  when app first mounts
 onMounted(async () => {
-	try {
-		const response = await fetch('/config/config.json')
-		if (!response.ok) {
-			throw Error('Failed to load configuration')
-		}
-		const config = await response.json()
-		if (config) {
-			store.commit('setIsConfigLoaded', true)
-			store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
-			store.commit('setObservationPortalUrl', config.observationPortalUrl)
-			store.commit('setDatalabArchiveUrl', config.dataLabArchiveApiUrl)
-		}  
-	} catch (error) {
-		console.error('Error loading configuration:', error)
-	} 
+  try {
+    const response = await fetch('/config/config.json')
+    if (!response.ok) {
+      throw Error('Failed to load configuration')
+    }
+    const config = await response.json()
+    if (config) {
+      store.commit('setIsConfigLoaded', true)
+      store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
+      store.commit('setObservationPortalUrl', config.observationPortalUrl)
+      store.commit('setDatalabArchiveUrl', config.dataLabArchiveApiUrl)
+    }  
+  } catch (error) {
+    console.error('Error loading configuration:', error)
+  } 
 })
 
 watch(() => store.state.isColorblindMode, (newVal) => {
-	if (newVal) {
-		document.documentElement.setAttribute('colorblind', 'true')
-	} else {
-		document.documentElement.removeAttribute('colorblind')
-	}
+  if (newVal) {
+    document.documentElement.setAttribute('colorblind', 'true')
+  } else {
+    document.documentElement.removeAttribute('colorblind')
+  }
 }, { immediate: true })
 
 </script>
