@@ -56,6 +56,8 @@ function closeDialog() {
 <style scoped>
 .analysis-sheet{
   background-color: var(--dark-blue);
+  font-family: 'Open Sans', sans-serif;
+  text-transform: uppercase;
 }
 .analysis-toolbar{
   color: var(--tan);
