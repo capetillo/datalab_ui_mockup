@@ -16,52 +16,51 @@ const showDeleteDialog = ref(false)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(()=>{
-	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
+  if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
 onMounted(async () => {
-	await loadSessions()
-	// if user created or selected a specific datasession, load that tab
-	if (route.params.sessionId && dataSessions.value.some(ds => ds.id == route.params.sessionId)) {
-		tab.value = Number(route.params.sessionId)
-		// if user is navigating to just /datasessions then their first datasession loads and adds /[first id] as params
-	} else {
-		if (dataSessions.value.length > 0) {
-			const firstSessionId = dataSessions.value[0].id
-			tab.value = firstSessionId
-		} else {
-			console.log('no data sessions available to display')
-		}
-	}
+  await loadSessions()
+  // if user created or selected a specific datasession, load that tab
+  if (route.params.sessionId && dataSessions.value.some(ds => ds.id == route.params.sessionId)) {
+    tab.value = Number(route.params.sessionId)
+  } else {
+    if (dataSessions.value.length > 0) {
+      const firstSessionId = dataSessions.value[0].id
+      tab.value = firstSessionId
+    } else {
+      console.log('no data sessions available to display')
+    }
+  }
 })
 
 function onTabChange(newSessionId) {
-	tab.value = newSessionId
+  tab.value = newSessionId
 }
 
 function openDeleteDialog(id) {
-	deleteSessionId.value = id
-	showDeleteDialog.value = true
+  deleteSessionId.value = id
+  showDeleteDialog.value = true
 }
 
 async function loadSessions() {
-	await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: updateData, failCallback: handleError})
+  await fetchApiCall({url: dataSessionsUrl, method: 'GET', successCallback: updateData, failCallback: handleError})
 }
 
 // if tab is not in new data default to displaying first tab
 function updateData(data) {
-	dataSessions.value = data.results
-	if(!dataSessions.value.some(ds => ds.id == tab.value)){
-		tab.value = dataSessions.value[0]?.id
-	}
+  dataSessions.value = data.results
+  if(!dataSessions.value.some(ds => ds.id == tab.value)){
+    tab.value = dataSessions.value[0]?.id
+  }
 }
 
 function tabColor(index) {
-	if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
-		return 'selected'
-	} else {
-		return 'not-selected'
-	}
+  if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
+    return 'selected'
+  } else {
+    return 'not-selected'
+  }
 }
 
 </script>

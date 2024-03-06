@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, onMounted, onBeforeMount, onUnmounted } from 'vue'
 import ProjectBar from '@/components/Project/ProjectBar.vue'
 import ImageCarousel from '@/components/Project/ImageCarousel.vue'
 import ImageList from '@/components/Project/ImageList.vue'
@@ -17,7 +17,7 @@ const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(()=>{
-	if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
+  if(!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
 })
 
 // toggle for optional data viewing, controlled by a v-switch
@@ -29,135 +29,139 @@ const selectedProjectImages = ref([])
 
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
-	isLoading.value = true
-	await store.dispatch('loadAndCacheImages', { option })
-	isLoading.value = false
-	smallImageCache.value = store.state.smallImageCache
-	updateGroupedProjects()
+  isLoading.value = true
+  await store.dispatch('loadAndCacheImages', { option })
+  isLoading.value = false
+  smallImageCache.value = store.state.smallImageCache
+  updateGroupedProjects()
 }
 
 // groups all projects by proposal id
 function groupByProposalId() {
-	if (smallImageCache.value) {
-		return smallImageCache.value.reduce((acc, project) => {
-			if (!acc[project.proposal_id]) {
-				acc[project.proposal_id] = []
-			}
-			acc[project.proposal_id].push(project)
-			return acc
-		}, {})
-	}
+  if (smallImageCache.value) {
+    return smallImageCache.value.reduce((acc, project) => {
+      if (!acc[project.proposal_id]) {
+        acc[project.proposal_id] = []
+      }
+      acc[project.proposal_id].push(project)
+      return acc
+    }, {})
+  }
 }
 
 // sorts projects by group id and handles selectedproject as the first one for when the page first loads 
 function updateGroupedProjects() {
-	projects.value = groupByProposalId(smallImageCache.value)
-	const firstProjectKey = Object.keys(projects.value)[0]
-	if (firstProjectKey) {
-		const firstProjectProposalIds = [firstProjectKey]
-		filterImagesByProposalId(firstProjectProposalIds)
-	}
+  projects.value = groupByProposalId(smallImageCache.value)
+  const firstProjectKey = Object.keys(projects.value)[0]
+  if (firstProjectKey) {
+    const firstProjectProposalIds = [firstProjectKey]
+    filterImagesByProposalId(firstProjectProposalIds)
+  }
 }
 
 // handles the selected project to filter images that only have the selected proposal_id
 const filterImagesByProposalId = (proposalId) => {
-	selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
+  selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
 }
 
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
-	return store.getters.selectedImages.length === 0
+  return store.getters.selectedImages.length === 0
 })
 
 // manages successful api response by mapping data to unique sessions
 const mapDataSessions = (data) => {
-	const results = data.results
-	uniqueDataSessions.value = results
-		.map(session => ({ id: session.id, name: session.name }))
-	isPopupVisible.value = true
+  const results = data.results
+  uniqueDataSessions.value = results
+    .map(session => ({ id: session.id, name: session.name }))
+  isPopupVisible.value = true
 }
 
 // manages api call failures by logging errors
 const handleError = (error) => {
-	console.error('API call failed with error:', error)
-	errorMessage.value = error.message || 'An error occurred'
+  console.error('API call failed with error:', error)
+  errorMessage.value = error.message || 'An error occurred'
 }
 
 // fetches session data from API and handles response or error using the callbacks
 const getDataSessions = async () => {
-	await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
+  await fetchApiCall({ url: dataSessionsUrl, method: 'GET', successCallback: mapDataSessions, failCallback: handleError })
 }
 
 // updates an existing session with selected images
 const addImagesToExistingSession = async (session) => {
-	const sessionIdUrl = dataSessionsUrl + session.id + '/'
-	// fetches existing session data
-	const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
-	if (currentSessionResponse) {
-		const currentSessionData = currentSessionResponse.input_data
-		// merging existing and new image data
-		// this is temporary since the backend has to be updated to handle this
-		// remove this when backend gets updated
-		const selectedImages = store.state.selectedImages
-		const inputData = [...currentSessionData, ...selectedImages.map(image => ({
-			'source': 'archive',
-			'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
-		}))]
-		const requestBody = {
-			'name': session.name,
-			'input_data': inputData
-		}
+  const sessionIdUrl = dataSessionsUrl + session.id + '/'
+  // fetches existing session data
+  const currentSessionResponse = await fetchApiCall({ url: sessionIdUrl, method: 'GET' })
+  if (currentSessionResponse) {
+    const currentSessionData = currentSessionResponse.input_data
+    // merging existing and new image data
+    // this is temporary since the backend has to be updated to handle this
+    // remove this when backend gets updated
+    const selectedImages = store.state.selectedImages
+    const inputData = [...currentSessionData, ...selectedImages.map(image => ({
+      'source': 'archive',
+      'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
+    }))]
+    const requestBody = {
+      'name': session.name,
+      'input_data': inputData
+    }
 
-		// sending the PATCH request with the merged data
-		await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody })
-	} else {
-		handleError()
-	}
+    // sending the PATCH request with the merged data
+    await fetchApiCall({ url: sessionIdUrl, method: 'PATCH', body: requestBody })
+  } else {
+    handleError()
+  }
 }
 
 // closes popup, invokes addImagesToExistingSession, and reroutes user to DataSessions view
 const selectDataSession = async (session) => {
-	isPopupVisible.value = false
-	await addImagesToExistingSession(session)
-	router.push({ name: 'DataSessionDetails', params: { sessionId: session.id } })
+  isPopupVisible.value = false
+  await addImagesToExistingSession(session)
+  router.push({ name: 'DataSessionDetails', params: { sessionId: session.id } })
 
 }
 
 // handles creation of a new session 
 const createNewDataSession = async () => { 
-	if (sessionNameExists(newSessionName.value)) {
-		errorMessage.value = 'Data Session name already exists. Please choose a different name.'
-		return
-	}
-	const selectedImages = store.state.selectedImages
-	const inputData = selectedImages.map(image => ({
-		'source': 'archive',
-		'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
-	}))
-	const requestBody = { 
-		'name': newSessionName.value,
-		'input_data': inputData 
-	}
+  if (sessionNameExists(newSessionName.value)) {
+    errorMessage.value = 'Data Session name already exists. Please choose a different name.'
+    return
+  }
+  const selectedImages = store.state.selectedImages
+  const inputData = selectedImages.map(image => ({
+    'source': 'archive',
+    'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
+  }))
+  const requestBody = { 
+    'name': newSessionName.value,
+    'input_data': inputData 
+  }
 
-	// attempting a POST request for new session
-	const response = await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
-	if (response) {
-		isPopupVisible.value = false
-		newSessionName.value = ''
-		errorMessage.value = ''
-		router.push({ name: 'DataSessionDetails', params: { sessionId: response.id } })
-	} else {
-		errorMessage.value = 'Error creating new data session'
-	}
+  // attempting a POST request for new session
+  const response = await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
+  if (response) {
+    isPopupVisible.value = false
+    newSessionName.value = ''
+    errorMessage.value = ''
+    router.push({ name: 'DataSessionDetails', params: { sessionId: response.id } })
+  } else {
+    errorMessage.value = 'Error creating new data session'
+  }
 }
 
 const sessionNameExists = (name) => {
-	return uniqueDataSessions.value.some(session => session.name === name)
+  return uniqueDataSessions.value.some(session => session.name === name)
 }
 
 onMounted(() => {
-	loadUserImages('reduction_level=95')
-	loadUserImages('reduction_level=96')
+  loadUserImages('reduction_level=95')
+  loadUserImages('reduction_level=96')
+})
+
+onUnmounted(() => {
+  store.commit('selectedImages', [])
 })
 
 </script>
