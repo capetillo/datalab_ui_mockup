@@ -13,42 +13,42 @@ const errorMessage = ref('')
 const showPassword = ref(false)
 
 onBeforeMount(()=>{
-	if(store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
+  if(store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
 })
 
 // validation rule for vuetify components
 // we can add rules here in the future for passwords
 const rules = {
-	required: value => !!value || 'Required.'
+  required: value => !!value || 'Required.'
 }
 
 const storeToken = async (data) => {
-	const authToken = data.token
-	if (authToken) {
-		store.dispatch('userData/setAuthToken', authToken)
-		await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
-	}
+  const authToken = data.token
+  if (authToken) {
+    store.dispatch('userData/setAuthToken', authToken)
+    await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
+  }
 }
 
 const handleError = (error) => {
-	console.error('API call failed with error:', error)
-	errorMessage.value = 'Failed to authenticate user'
+  console.error('API call failed with error:', error)
+  errorMessage.value = 'Failed to authenticate user'
 }
 
 const storeUser = (user) => {
-	store.dispatch('userData/setUsername', username.value)
-	store.dispatch('userData/setUserProfile', user)
-	store.commit('setProjects', user.proposals)
-	router.push({ name: 'ProjectView' })
+  store.dispatch('userData/setUsername', username.value)
+  store.dispatch('userData/setUserProfile', user)
+  store.commit('setProjects', user.proposals)
+  router.push({ name: 'ProjectView' })
 }
 
 const Login = async () => {
-	const requestBody = {
-		username: username.value,
-		password: password.value
-	}
-	// store an auth token from login credentials
-	await fetchApiCall({ url: store.state.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
+  const requestBody = {
+    username: username.value,
+    password: password.value
+  }
+  // store an auth token from login credentials
+  await fetchApiCall({ url: store.state.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
 }
 
 </script>
