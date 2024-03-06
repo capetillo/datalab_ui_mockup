@@ -63,6 +63,7 @@ onMounted(() => {
         cover
         :class="{ 'selected-image': isSelected(image) }"
         aspect-ratio="1"
+        class="image-grid"
         @click="onImageClick(image)"
       />
     </v-col>
@@ -72,8 +73,15 @@ onMounted(() => {
 <style scoped>
 .image-grid-container {
   display: flex;
+  max-width: 200px;
+  max-height: 200px;
 }
 .selected-image {
   border: 0.3rem solid var(--dark-green);
+}
+.image-grid {
+  max-width: 200px;
+  height: auto;
+  
 }
 </style>
