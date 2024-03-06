@@ -82,6 +82,11 @@ onMounted(() => {
 .image-grid {
   max-width: 200px;
   height: auto;
-  
+}
+@media (max-width: 900px) {
+.image-grid {
+  width: 20vw;
+  height: auto;
+}
 }
 </style>
