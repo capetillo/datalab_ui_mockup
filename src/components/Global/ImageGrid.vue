@@ -8,10 +8,6 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  columnSpan: {
-    type: Number,
-    required: true
-  },
   // eslint-disable-next-line vue/require-default-prop
   selectedImages: Array
 })
@@ -57,7 +53,8 @@ onMounted(() => {
     <v-col
       v-for="image of images"
       :key="image.basename"
-      :cols="columnSpan"
+      class="image-grid-container"
+      :cols="3"
     >
       <v-img
         :src="image.url"
@@ -73,6 +70,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.image-grid-container {
+  display: flex;
+}
 .selected-image {
   border: 0.3rem solid var(--dark-green);
 }
