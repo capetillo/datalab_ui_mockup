@@ -12,8 +12,8 @@ const password = ref('')
 const errorMessage = ref('')
 const showPassword = ref(false)
 
-onBeforeMount(()=>{
-  if(store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
+onBeforeMount(() => {
+  if (store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
 })
 
 // validation rule for vuetify components
@@ -57,44 +57,19 @@ const Login = async () => {
   <v-container class="registration-container">
     <v-card class="login-card pa-10">
       <div class="login-title">
-        <img
-          class="lambdaLogo"
-          :src="lambdaLogo"
-        >
+        <img class="lambdaLogo" :src="lambdaLogo">
         <h1>Datalab</h1>
       </div>
-      <v-form
-        class="pt-7"
-        @submit.prevent="Login"
-      >
-        <v-text-field
-          v-model="username"
-          autocomplete="username"
-          label="Username"
-          :rules="[rules.required]"
-          required
-        />
+      <v-form class="pt-7" @submit.prevent="Login">
+        <v-text-field v-model="username" autocomplete="username" label="Username" :rules="[rules.required]" required />
 
-        <v-text-field
-          v-model="password"
-          autocomplete="current-password"
-          label="Password"
-          :type="showPassword ? 'text' : 'password'"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="[rules.required]"
-          required
-          @click:append="showPassword = !showPassword"
-        />
-        <v-btn
-          type="submit"
-          color="primary"
-        >
+        <v-text-field v-model="password" autocomplete="current-password" label="Password"
+          :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :rules="[rules.required]" required @click:append="showPassword = !showPassword" />
+        <v-btn type="submit" color="primary">
           Login
         </v-btn>
-        <div
-          v-if="errorMessage"
-          class="error-message"
-        >
+        <div v-if="errorMessage" class="error-message">
           {{ errorMessage }}
         </div>
       </v-form>
@@ -103,7 +78,7 @@ const Login = async () => {
 </template>
 
 <style scoped>
-.registration-container{
+.registration-container {
   height: 100%;
   display: flex;
   justify-content: center;
@@ -111,19 +86,23 @@ const Login = async () => {
   align-items: center;
 
 }
-.login-card{
+
+.login-card {
   width: 500px;
 }
-.lambdaLogo{
+
+.lambdaLogo {
   height: 1.8em;
   margin-right: 10px;
 }
-.login-title{
+
+.login-title {
   display: flex;
   align-items: center;
 }
+
 .error-message {
-    color: red;
-    margin-top: 10px;
+  color: red;
+  margin-top: 10px;
 }
 </style>
