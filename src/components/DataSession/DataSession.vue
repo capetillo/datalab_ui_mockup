@@ -2,7 +2,7 @@
 import { ref, defineEmits, defineProps, onMounted, watch } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../../utils/api'
-import { calculateColumnSpan } from '../../utils/common'
+import { calculateColumnSpan } from '@/utils/common'
 import { useStore } from 'vuex'
 import ImageGrid from '../Global/ImageGrid'
 
@@ -103,7 +103,7 @@ onMounted(() => {
 
 <template>
   <v-container class="d-lg-flex ds-container">
-    <image-grid :images="filteredImages" :column-span="calculateColumnSpan(data.input_data.length, imagesPerRow)" />
+    <image-grid :images="filteredImages" :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)" />
     <v-col cols="3" justify="center" align="center">
       <!-- The operations bar list goes here -->
       <operation-pipeline :images="images" :session_id="data.id" :operations="data.operations"

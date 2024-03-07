@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed, defineEmits, defineProps } from 'vue'
-import { fetchApiCall, handleError } from '../../utils/api'
-import { calculateColumnSpan } from '../../utils/common'
+import { ref, onMounted, computed, defineEmits, defineProps} from 'vue'
+import { fetchApiCall, handleError } from '@/utils/api'
+import { calculateColumnSpan } from '@/utils/common'
 import ImageGrid from '../Global/ImageGrid'
 import { useStore } from 'vuex'
 
@@ -22,17 +22,6 @@ const selectedOperationInput = ref({})
 const selectedImages = ref({})
 const imagesPerRow = ref(3)
 
-const updateImagesPerRow = () => {
-  const width = window.innerWidth
-  if (width >= 1200) {
-    imagesPerRow.value = 5
-  } else if (width >= 900) {
-    imagesPerRow.value = 4
-  } else {
-    imagesPerRow.value = 3
-  }
-}
-
 let displayImages = ref(false)
 
 onMounted(async () => {
@@ -41,12 +30,6 @@ onMounted(async () => {
   if (Object.keys(availableOperations.value).length > 0) {
     selectOperation(Object.keys(availableOperations.value)[0])
   }
-  updateImagesPerRow()
-  window.addEventListener('resize', updateImagesPerRow)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateImagesPerRow)
 })
 
 const page = ref('select')

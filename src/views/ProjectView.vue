@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, onMounted, onBeforeMount, onUnmounted } from 'vue'
 import ProjectBar from '@/components/Project/ProjectBar.vue'
 import ImageCarousel from '@/components/Project/ImageCarousel.vue'
 import ImageList from '@/components/Project/ImageList.vue'
@@ -158,6 +158,10 @@ const sessionNameExists = (name) => {
 onMounted(() => {
   loadUserImages('reduction_level=95')
   loadUserImages('reduction_level=96')
+})
+
+onUnmounted(() => {
+  store.commit('selectedImages', [])
 })
 
 </script>

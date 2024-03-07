@@ -67,7 +67,7 @@ watch(() => props.images, () => {
   <v-row v-if="props.images.length">
     <v-col v-for="(image, index) in props.images" :key="index" :cols="columnSpan">
       <v-img v-if="image.basename in imageDetails" :src="imageDetails[image.basename].url" :alt="image.basename" cover
-        :class="{ 'selected-image': isSelected(index) }" aspect-ratio="1" @click="onImageClick(index)">
+        :class="{ 'selected-image': isSelected(index) }" aspect-ratio="1" class="image-grid" @click="onImageClick(index)">
         <span v-if="'operationIndex' in image" class="image-text-overlay">{{ image.operationIndex }}</span>
       </v-img>
     </v-col>
@@ -75,6 +75,11 @@ watch(() => props.images, () => {
 </template>
 
 <style scoped>
+.image-grid-container {
+  display: flex;
+  max-width: 200px;
+  max-height: 200px;
+}
 .selected-image {
   border: 0.3rem solid var(--dark-green);
 }
@@ -84,5 +89,15 @@ watch(() => props.images, () => {
   font-weight: bold;
   margin-right: 5px;
   float: right;
+}
+.image-grid {
+  max-width: 200px;
+  height: auto;
+}
+@media (max-width: 900px) {
+.image-grid {
+  width: 20vw;
+  height: auto;
+}
 }
 </style>
