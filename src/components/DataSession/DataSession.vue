@@ -15,8 +15,8 @@ const props = defineProps({
 
 const store = useStore()
 const emit = defineEmits(['reloadSession'])
-const images = ref([])
-const filteredImages = ref([])
+const images = ref([...props.data.input_data])
+const filteredImages = ref([...images.value])
 
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
@@ -87,16 +87,15 @@ async function addOperation(operationDefinition) {
   await fetchApiCall({ url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError })
 }
 
-watch(() => props.data, () => {
-  props.data.operations.forEach((operation, index) => {
-    operationMap[operation.id] = index
-  })
-}, { immediate: true })
+watch(
+  () => props.data.operations, () => {
+    props.data.operations.forEach((operation, index) => {
+      operationMap[operation.id] = index
+    })
+  }, { immediate: true })
 
 
 onMounted(() => {
-  images.value = [...props.data.input_data]
-  filteredImages.value = [...images.value]
   addCompletedOperationsOutput()
 })
 
