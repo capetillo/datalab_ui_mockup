@@ -19,10 +19,10 @@ onMounted(async () => {
       store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
       store.commit('setObservationPortalUrl', config.observationPortalUrl)
       store.commit('setDatalabArchiveUrl', config.dataLabArchiveApiUrl)
-    }  
+    }
   } catch (error) {
     console.error('Error loading configuration:', error)
-  } 
+  }
 })
 
 watch(() => store.state.isColorblindMode, (newVal) => {
@@ -44,9 +44,10 @@ watch(() => store.state.isColorblindMode, (newVal) => {
 
 <style>
 body {
-	background-color: var(--dark-blue);
+  background-color: var(--dark-blue);
 }
+
 #app {
-	font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 </style>
