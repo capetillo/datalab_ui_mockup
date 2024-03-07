@@ -8,10 +8,6 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  columnSpan: {
-    type: Number,
-    required: true
-  },
   // eslint-disable-next-line vue/require-default-prop
   selectedImages: Array
 })
@@ -57,7 +53,8 @@ onMounted(() => {
     <v-col
       v-for="image of images"
       :key="image.basename"
-      :cols="columnSpan"
+      class="image-grid-container"
+      :cols="3"
     >
       <v-img
         :src="image.url"
@@ -66,6 +63,7 @@ onMounted(() => {
         cover
         :class="{ 'selected-image': isSelected(image) }"
         aspect-ratio="1"
+        class="image-grid"
         @click="onImageClick(image)"
       />
     </v-col>
@@ -73,7 +71,22 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.image-grid-container {
+  display: flex;
+  max-width: 200px;
+  max-height: 200px;
+}
 .selected-image {
   border: 0.3rem solid var(--dark-green);
+}
+.image-grid {
+  max-width: 200px;
+  height: auto;
+}
+@media (max-width: 900px) {
+.image-grid {
+  width: 20vw;
+  height: auto;
+}
 }
 </style>
