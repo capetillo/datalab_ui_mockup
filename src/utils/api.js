@@ -20,7 +20,7 @@ async function fetchApiCall({ url, method, body = null, header, successCallback 
   try {
     const response = await fetch(url, config)
     // ok response but empty content
-    if (response.ok && !response.headers.has('content-length')) {
+    if (response.ok && (!response.headers.has('content-length') || response.headers.get('content-length') == 0)) {
       successCallback ? successCallback(null) : null
     } else {
       const responseData = await response.json()
