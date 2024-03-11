@@ -169,31 +169,30 @@ onUnmounted(() => {
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
-    <ProjectBar
-      class="project-bar"
-      :projects="projects"
+    <ProjectBar    
+      class="project-bar"    
+      :projects="projects"     
       @selected-project="filterImagesByProposalId"
     />
     <div class="image-area h-screen">
-      <div
-        v-if="isLoading"
+      <div       
+        v-if="isLoading"     
         class="loading-indicator-container"
       >
         <v-progress-circular
-          indeterminate
-          model-value="20"
-          :size="50"
+          indeterminate         
+          model-value="20"        
+          :size="50"       
           :width="9"
         />
       </div>
-
       <div v-else>
-        <ImageCarousel
-          v-if="imageDisplayToggle && selectedProjectImages.length"
+        <ImageCarousel         
+          v-if="imageDisplayToggle && selectedProjectImages.length"         
           :data="selectedProjectImages"
         />
-        <ImageList
-          v-if="!imageDisplayToggle && selectedProjectImages.length"
+        <ImageList         
+          v-if="!imageDisplayToggle && selectedProjectImages.length"         
           :data="selectedProjectImages"
         />
         <p v-if="!selectedProjectImages.length">
@@ -222,8 +221,8 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
-  <v-dialog
-    v-model="isPopupVisible"
+  <v-dialog   
+    v-model="isPopupVisible"   
     width="300"
   >
     <v-card class="card">
@@ -232,9 +231,9 @@ onUnmounted(() => {
       </v-card-title>
       <v-card-text class="scroll-container">
         <v-list>
-          <v-list-item
-            v-for="session in uniqueDataSessions"
-            :key="session.id"
+          <v-list-item           
+            v-for="session in uniqueDataSessions"           
+            :key="session.id"           
             class="sessions"
             @click="selectDataSession(session)"
           >
@@ -244,9 +243,9 @@ onUnmounted(() => {
       </v-card-text>
       <!-- Input for new session name -->
       <div class="create-container">
-        <v-text-field
-          v-model="newSessionName"
-          label="New Session Name"
+        <v-text-field         
+          v-model="newSessionName"         
+          label="New Session Name"         
           class="new-session-field sessions"
         />
         <!-- Error message -->
@@ -254,16 +253,16 @@ onUnmounted(() => {
           {{ errorMessage }}
         </div>
         <v-card-actions class="button-container">
-          <v-btn
-            text
-            class="create_button"
+          <v-btn           
+            text           
+            class="create_button"          
             @click="createNewDataSession"
           >
             Create New Session
           </v-btn>
-          <v-btn
-            text
-            class="cancel_button"
+          <v-btn           
+            text          
+            class="cancel_button"          
             @click="isPopupVisible = false"
           >
             Close
@@ -428,5 +427,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-
