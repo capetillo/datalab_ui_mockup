@@ -254,18 +254,18 @@ onUnmounted(() => {
         </div>
         <v-card-actions class="button-container">
           <v-btn
-            text
-            class="create_button" 
-            @click="createNewDataSession"
-          >
-            Create New Session
-          </v-btn>
-          <v-btn
             text 
             class="cancel_button" 
             @click="isPopupVisible = false"
           >
             Close
+          </v-btn>
+          <v-btn
+            text
+            class="create_button" 
+            @click="createNewDataSession"
+          >
+            Create New Session
           </v-btn>
         </v-card-actions>
       </div>
