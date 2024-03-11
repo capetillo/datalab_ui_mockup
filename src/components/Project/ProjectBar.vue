@@ -14,10 +14,10 @@ const props = defineProps({
 
 const filteredProjects = computed(() => {
   if (searchQuery.value) {
-    const filtered = Object.entries(props.projects).reduce((acc, [key, project]) => {
-      if (project[0].proposal_id && project[0].proposal_id.includes(searchQuery.value)) {
-        console.log('yes')
-        acc[key] = project 
+    const filtered = Object.entries(props.projects).reduce((acc, [key, projects]) => {
+      const match = projects.some(project => project.proposal_id.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      if (match) {
+        acc[key] = projects
       }
       return acc
     }, {})
@@ -46,28 +46,17 @@ const selectProject = (projects) => {
         variant="solo"
         hide-details
         single-line
-        class="search_field"
       />
       <v-expansion-panels
         variant="accordion"
         class="accordion"
       >
-        <!-- <div v-if="searchQuery.length"> -->
         <ProjectSelector
           v-for="(project, index) in filteredProjects"
           :key="index"
           :project="project"
           @click="selectProject(project)"
         />
-        <!-- </div>
-        <div v-else>
-          <ProjectSelector
-            v-for="(project, index) in props.projects"
-            :key="index"
-            :project="project"
-            @click="selectProject(project)"
-          />
-        </div> -->
       </v-expansion-panels>
     </v-card>
   </div>
@@ -79,6 +68,7 @@ const selectProject = (projects) => {
 }
 .project_card {
   background-color: var(--metal);
+  width: 15vw;
 }
 .project_header { 
   letter-spacing: 0.1rem;
