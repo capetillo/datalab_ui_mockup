@@ -169,92 +169,119 @@ onUnmounted(() => {
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
-    <ProjectBar class="project-bar" :projects="projects" @selected-project="filterImagesByProposalId" />
+    <ProjectBar
+      class="project-bar"
+      :projects="projects"
+      @selected-project="filterImagesByProposalId"
+    />
     <div class="image-area h-screen">
-      <div v-if="isLoading" class="loading-indicator-container">
-        <v-progress-circular indeterminate model-value="20" :size="50" :width="9" />
+      <div
+        v-if="isLoading"
+        class="loading-indicator-container"
+      >
+        <v-progress-circular
+          indeterminate
+          model-value="20"
+          :size="50"
+          :width="9"
+        />
       </div>
 
       <div v-else>
-        <ImageCarousel v-if="imageDisplayToggle && selectedProjectImages.length" :data="selectedProjectImages" />
-        <ImageList v-if="!imageDisplayToggle && selectedProjectImages.length" :data="selectedProjectImages" />
+        <ImageCarousel
+          v-if="imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
+        />
+        <ImageList
+          v-if="!imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
+        />
         <p v-if="!selectedProjectImages.length">
           Please create a project to use Datalab
         </p>
       </div>
-      <v-skeleton-loader v-if="!store.state.smallImageCache" type="card" />
+      <v-skeleton-loader
+        v-if="!store.state.smallImageCache"
+        type="card"
+      />
       <div class="control-buttons">
-        <v-switch v-model="imageDisplayToggle" class="d-flex mr-4" inset prepend-icon="mdi-view-list"
-          append-icon="mdi-image" />
-        <v-btn :disabled="noSelectedImages" class="add_button" @click="getDataSessions">
+        <v-switch
+          v-model="imageDisplayToggle"
+          class="d-flex mr-4"
+          inset
+          prepend-icon="mdi-view-list"
+          append-icon="mdi-image"
+        />
+        <v-btn
+          :disabled="noSelectedImages"
+          class="add_button"
+          @click="getDataSessions"
+        >
           Add to a Session
         </v-btn>
       </div>
     </div>
   </div>
-  <v-dialog v-model="isPopupVisible" width="300">
+  <v-dialog
+    v-model="isPopupVisible"
+    width="300"
+  >
     <v-card class="card">
       <v-card-title class="sessions_header">
         DATA SESSIONS
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="scroll-container">
         <v-list>
-          <v-list-item v-for="session in uniqueDataSessions" :key="session.id" class="sessions"
-            @click="selectDataSession(session)">
+          <v-list-item
+            v-for="session in uniqueDataSessions"
+            :key="session.id"
+            class="sessions"
+            @click="selectDataSession(session)"
+          >
             {{ session.name }}
           </v-list-item>
         </v-list>
-        <!-- Input for new session name -->
-        <v-text-field v-model="newSessionName" label="New Session Name" class="sessions" />
+      </v-card-text>
+      <!-- Input for new session name -->
+      <div class="create-container">
+        <v-text-field
+          v-model="newSessionName"
+          label="New Session Name"
+          class="new-session-field sessions"
+        />
         <!-- Error message -->
         <div v-if="errorMessage">
           {{ errorMessage }}
         </div>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn text class="button create_button" @click="createNewDataSession">
-          Create New Session
-        </v-btn>
-        <v-btn text class="button cancel_button" @click="isPopupVisible = false">
-          Close
-        </v-btn>
-      </v-card-actions>
+        <v-card-actions class="button-container">
+          <v-btn
+            text
+            class="create_button"
+            @click="createNewDataSession"
+          >
+            Create New Session
+          </v-btn>
+          <v-btn
+            text
+            class="cancel_button"
+            @click="isPopupVisible = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </div>
     </v-card>
   </v-dialog>
 </template>
 <style scoped>
-.container {
+.container{
   margin: 0;
   display: grid;
   grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
   grid-template-rows: [row-start] 100% [row-end];
   height: 100vh;
 }
-
-.card {
-  height: 450px;
-  width: 700px;
-  align-self: center;
-}
-
-.sessions_header {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1.6rem;
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--tan);
-  font-weight: 600;
-  letter-spacing: 0.05rem;
-}
-
-.loading-indicator-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.project-bar {
+.project-bar{
   display: flex;
   grid-column-start: col1-start;
   grid-column-end: col1-end;
@@ -262,7 +289,26 @@ onUnmounted(() => {
   grid-row-end: row-end;
   height: 50%;
 }
-
+.image-area {
+  grid-column-start: col2-start;
+  grid-column-end: col2-end;
+}
+.loading-indicator-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.control-buttons {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  float: right;
+  position: fixed;
+  bottom: 2%;
+  right: 3%;
+}
 .add_button {
   width: 16rem;
   height: 4rem;
@@ -274,100 +320,107 @@ onUnmounted(() => {
   font-weight: 700;
   color: white;
 }
-
 .add_button:disabled {
-  background-color: var(--light-blue);
-  color: white;
+  background-color:var(--light-blue);
+  color: white;  
   opacity: calc(0.7);
 }
-
-.button {
+.card{
+  height: 550px;
+  width: 900px;
+  align-self: center;
+  display: flex !important;
+}
+.sessions_header {
   font-family: 'Open Sans', sans-serif;
-  font-size: 1.4rem;
-  padding: 0 1rem;
-  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--tan);
+  font-weight: 600;
+  letter-spacing: 0.05rem;
 }
-
-.create_button {
-  color: var(--light-blue);
-  font-weight: 700;
+.scroll-container {
+  overflow-y: scroll;
 }
-
-.cancel_button {
-  color: var(--cancel);
-  font-weight: 700;
-  padding-left: 38%;
+.sessions-container {
+  height: 70%;
+  margin-left: 3%;
 }
-
-.image-area {
-  grid-column-start: col2-start;
-  grid-column-end: col2-end;
+.v-list-item {
+  overflow: auto;
 }
-
-.control-buttons {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  float: right;
-  position: fixed;
-  bottom: 2%;
-  right: 3%;
-}
-
 .sessions {
   font-family: 'Open Sans', sans-serif;
   color: var(--tan);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
-
+.create-container {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+}
+.new-session-field {
+  max-height: 20px;
+  max-width: 90%;
+  margin-left: 3%;
+}
+.button-container {
+  font-family: 'Open Sans', sans-serif;
+  padding: 0 1rem;
+  margin-top: 7%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.create_button {
+  color: var(--light-blue);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+.cancel_button {
+  color: var(--cancel);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
 @media (max-width: 1200px) {
   .card {
     height: 55vh;
     width: 30vw;
     align-self: center;
   }
-
   .sessions_header {
     font-size: 1.2rem;
     padding: 0.8rem;
   }
-
   .add_button {
     width: 12rem;
     height: 3rem;
     font-size: 1rem;
   }
-
   .project-bar {
     height: 60%;
   }
-
   .button {
     font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
     padding: 0 1rem;
     margin-bottom: 1rem;
   }
-
   .sessions {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.85rem;
   }
 }
-
 @media (max-width: 900px) {
   .card {
     width: 40vw;
     height: 35vh;
-  }
-
+  } 
   .add_button {
     width: 22vw;
     height: 4.8vh;
     font-size: 1rem;
-  }
-
+  } 
   .project-bar {
     height: 35vh;
     width: 25vw;
@@ -375,3 +428,5 @@ onUnmounted(() => {
   }
 }
 </style>
+
+
