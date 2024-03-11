@@ -1,15 +1,30 @@
 <script setup>
-import { defineEmits, defineProps } from 'vue'
+import { defineEmits, defineProps, ref, computed } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
-
+const searchQuery = ref('')
 const emit = defineEmits(['selectedProject'])
 
-defineProps({
+const props = defineProps({
   projects: {
     type: Object,
     required: true
   }
+})
+
+// filtering projects by proposal_id
+const filteredProjects = computed(() => {
+  if (searchQuery.value) {
+    const filtered = Object.entries(props.projects).reduce((acc, [key, projects]) => {
+      const match = projects.some(project => project.proposal_id.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      if (match) {
+        acc[key] = projects
+      }
+      return acc
+    }, {})
+    return filtered
+  }
+  return props.projects
 })
 
 const selectProject = (projects) => {
@@ -24,12 +39,21 @@ const selectProject = (projects) => {
       <p class="project_header">
         PROJECTS
       </p>
+      <v-text-field
+        v-model="searchQuery"
+        append-inner-icon="mdi-magnify"
+        density="compact"
+        label="Search for a project"
+        variant="solo"
+        hide-details
+        single-line
+      />
       <v-expansion-panels
         variant="accordion"
         class="accordion"
       >
         <ProjectSelector
-          v-for="(project, index) in projects"
+          v-for="(project, index) in filteredProjects"
           :key="index"
           :project="project"
           @click="selectProject(project)"
@@ -45,6 +69,7 @@ const selectProject = (projects) => {
 }
 .project_card {
   background-color: var(--metal);
+  width: 15vw;
 }
 .project_header { 
   letter-spacing: 0.1rem;
