@@ -31,6 +31,7 @@ const selectProject = (projects) => {
   const proposalId = projects.map(p => p.proposal_id)
   emit('selectedProject', proposalId)
 }
+
 </script>
 
 <template>
