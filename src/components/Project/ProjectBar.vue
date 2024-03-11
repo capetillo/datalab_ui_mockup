@@ -1,8 +1,8 @@
 <script setup>
-import { defineEmits, defineProps } from 'vue'
+import { defineEmits, defineProps, ref } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
-
+const searchQuery = ref('')
 const emit = defineEmits(['selectedProject'])
 
 defineProps({
@@ -24,6 +24,17 @@ const selectProject = (projects) => {
       <p class="project_header">
         PROJECTS
       </p>
+      <v-text-field
+        :model="searchQuery"
+        :loading="loading"
+        append-inner-icon="mdi-magnify"
+        density="compact"
+        label="Search for a project"
+        variant="solo"
+        hide-details
+        single-line
+        class="search_field"
+      />
       <v-expansion-panels
         variant="accordion"
         class="accordion"
@@ -53,6 +64,9 @@ const selectProject = (projects) => {
   text-align: center;
   padding: 2rem;
   color: var(--tan);
+}
+.search_field {
+  background-color: var(--tan)
 }
 @media (max-width: 1200px) {
   .project_bar {
