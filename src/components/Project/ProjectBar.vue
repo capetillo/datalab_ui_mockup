@@ -12,8 +12,6 @@ const props = defineProps({
   }
 })
 
-
-
 const filteredProjects = computed(() => {
   if (searchQuery.value) {
     const filtered = Object.entries(props.projects).reduce((acc, [key, project]) => {
