@@ -221,8 +221,8 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
-  <v-dialog   
-    v-model="isPopupVisible"   
+  <v-dialog
+    v-model="isPopupVisible"
     width="300"
   >
     <v-card class="card">
@@ -231,9 +231,9 @@ onUnmounted(() => {
       </v-card-title>
       <v-card-text class="scroll-container">
         <v-list>
-          <v-list-item  
-            v-for="session in uniqueDataSessions"  
-            :key="session.id"  
+          <v-list-item
+            v-for="session in uniqueDataSessions"
+            :key="session.id"
             class="sessions"
             @click="selectDataSession(session)"
           >
@@ -253,14 +253,14 @@ onUnmounted(() => {
           {{ errorMessage }}
         </div>
         <v-card-actions class="button-container">
-          <v-btn  
-            text  
+          <v-btn
+            text
             class="create_button" 
             @click="createNewDataSession"
           >
             Create New Session
           </v-btn>
-          <v-btn  
+          <v-btn
             text 
             class="cancel_button" 
             @click="isPopupVisible = false"
