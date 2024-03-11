@@ -1,17 +1,32 @@
 <script setup>
-import { defineEmits, defineProps, ref } from 'vue'
+import { defineEmits, defineProps, ref, computed } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
 const searchQuery = ref('')
 const emit = defineEmits(['selectedProject'])
 
-defineProps({
+const props = defineProps({
   projects: {
-    type: Array,
+    type: Object,
     required: true
   }
 })
 
+
+
+const filteredProjects = computed(() => {
+  if (searchQuery.value) {
+    const filtered = Object.entries(props.projects).reduce((acc, [key, project]) => {
+      if (project[0].proposal_id && project[0].proposal_id.includes(searchQuery.value)) {
+        console.log('yes')
+        acc[key] = project 
+      }
+      return acc
+    }, {})
+    return filtered
+  }
+  return props.projects
+})
 
 const selectProject = (projects) => {
   const proposalId = projects.map(p => p.proposal_id)
@@ -39,12 +54,22 @@ const selectProject = (projects) => {
         variant="accordion"
         class="accordion"
       >
+        <!-- <div v-if="searchQuery.length"> -->
         <ProjectSelector
-          v-for="(project, index) in projects"
+          v-for="(project, index) in filteredProjects"
           :key="index"
           :project="project"
           @click="selectProject(project)"
         />
+        <!-- </div>
+        <div v-else>
+          <ProjectSelector
+            v-for="(project, index) in props.projects"
+            :key="index"
+            :project="project"
+            @click="selectProject(project)"
+          />
+        </div> -->
       </v-expansion-panels>
     </v-card>
   </div>
