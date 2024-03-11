@@ -7,10 +7,11 @@ const emit = defineEmits(['selectedProject'])
 
 defineProps({
   projects: {
-    type: Object,
+    type: Array,
     required: true
   }
 })
+
 
 const selectProject = (projects) => {
   const proposalId = projects.map(p => p.proposal_id)
@@ -25,8 +26,7 @@ const selectProject = (projects) => {
         PROJECTS
       </p>
       <v-text-field
-        :model="searchQuery"
-        :loading="loading"
+        v-model="searchQuery"
         append-inner-icon="mdi-magnify"
         density="compact"
         label="Search for a project"
@@ -64,9 +64,6 @@ const selectProject = (projects) => {
   text-align: center;
   padding: 2rem;
   color: var(--tan);
-}
-.search_field {
-  background-color: var(--tan)
 }
 @media (max-width: 1200px) {
   .project_bar {
