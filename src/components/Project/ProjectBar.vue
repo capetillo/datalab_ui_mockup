@@ -12,6 +12,7 @@ const props = defineProps({
   }
 })
 
+// filtering projects by proposal_id
 const filteredProjects = computed(() => {
   if (searchQuery.value) {
     const filtered = Object.entries(props.projects).reduce((acc, [key, projects]) => {
