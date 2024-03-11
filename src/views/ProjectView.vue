@@ -169,53 +169,102 @@ onUnmounted(() => {
 <template>
   <!-- only load if config is loaded -->
   <div class="container">
-    <ProjectBar class="project-bar" :projects="projects" @selected-project="filterImagesByProposalId" />
+    <ProjectBar
+      class="project-bar"
+      :projects="projects"
+      @selected-project="filterImagesByProposalId"
+    />
     <div class="image-area h-screen">
-      <div v-if="isLoading" class="loading-indicator-container">
-        <v-progress-circular indeterminate model-value="20" :size="50" :width="9" />
+      <div
+        v-if="isLoading"
+        class="loading-indicator-container"
+      >
+        <v-progress-circular
+          indeterminate
+          model-value="20"
+          :size="50"
+          :width="9"
+        />
       </div>
 
       <div v-else>
-        <ImageCarousel v-if="imageDisplayToggle && selectedProjectImages.length" :data="selectedProjectImages" />
-        <ImageList v-if="!imageDisplayToggle && selectedProjectImages.length" :data="selectedProjectImages" />
+        <ImageCarousel
+          v-if="imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
+        />
+        <ImageList
+          v-if="!imageDisplayToggle && selectedProjectImages.length"
+          :data="selectedProjectImages"
+        />
         <p v-if="!selectedProjectImages.length">
           Please create a project to use Datalab
         </p>
       </div>
-      <v-skeleton-loader v-if="!store.state.smallImageCache" type="card" />
+      <v-skeleton-loader
+        v-if="!store.state.smallImageCache"
+        type="card"
+      />
       <div class="control-buttons">
-        <v-switch v-model="imageDisplayToggle" class="d-flex mr-4" inset prepend-icon="mdi-view-list"
-          append-icon="mdi-image" />
-        <v-btn :disabled="noSelectedImages" class="add_button" @click="getDataSessions">
+        <v-switch
+          v-model="imageDisplayToggle"
+          class="d-flex mr-4"
+          inset
+          prepend-icon="mdi-view-list"
+          append-icon="mdi-image"
+        />
+        <v-btn
+          :disabled="noSelectedImages"
+          class="add_button"
+          @click="getDataSessions"
+        >
           Add to a Session
         </v-btn>
       </div>
     </div>
   </div>
-  <v-dialog v-model="isPopupVisible" width="300">
+  <v-dialog
+    v-model="isPopupVisible"
+    width="300"
+  >
     <v-card class="card">
       <v-card-title class="sessions_header">
         DATA SESSIONS
       </v-card-title>
       <v-card-text>
         <v-list>
-          <v-list-item v-for="session in uniqueDataSessions" :key="session.id" class="sessions"
-            @click="selectDataSession(session)">
+          <v-list-item
+            v-for="session in uniqueDataSessions"
+            :key="session.id"
+            class="sessions"
+            @click="selectDataSession(session)"
+          >
             {{ session.name }}
           </v-list-item>
         </v-list>
         <!-- Input for new session name -->
-        <v-text-field v-model="newSessionName" label="New Session Name" class="sessions" />
+        <v-text-field
+          v-model="newSessionName"
+          label="New Session Name"
+          class="sessions"
+        />
         <!-- Error message -->
         <div v-if="errorMessage">
           {{ errorMessage }}
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn text class="button create_button" @click="createNewDataSession">
+        <v-btn
+          text
+          class="button create_button"
+          @click="createNewDataSession"
+        >
           Create New Session
         </v-btn>
-        <v-btn text class="button cancel_button" @click="isPopupVisible = false">
+        <v-btn
+          text
+          class="button cancel_button"
+          @click="isPopupVisible = false"
+        >
           Close
         </v-btn>
       </v-card-actions>
