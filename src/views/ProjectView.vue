@@ -131,12 +131,23 @@ const selectDataSession = async (session) => {
 
 }
 
-// handles creation of a new session 
-const createNewDataSession = async () => {
+const validateSessionName = () => {
+  errorMessage.value = ''
+
   if (sessionNameExists(newSessionName.value)) {
     errorMessage.value = 'Data Session name already exists. Please choose a different name.'
     return
+  } else if (newSessionName.value.length < 5) {
+    errorMessage.value = 'Data Session name is too short.'
+    return
+  } else if (newSessionName.value.length > 25) {
+    errorMessage.value = 'Data Session name is too long.'
+    return
   }
+}
+
+// handles creation of a new session 
+const createNewDataSession = async () => {
   const selectedImages = store.state.selectedImages
   const inputData = selectedImages.map(image => ({
     'source': 'archive',
@@ -267,9 +278,13 @@ onUnmounted(() => {
           v-model="newSessionName"
           label="New Session Name"
           class="new-session-field sessions"
+          @input="validateSessionName"
         />
         <!-- Error message -->
-        <div v-if="errorMessage">
+        <div
+          v-if="errorMessage"
+          class="error-message"
+        >
           {{ errorMessage }}
         </div>
         <v-card-actions class="button-container">
@@ -378,10 +393,6 @@ onUnmounted(() => {
 .scroll-container {
   overflow-y: scroll;
 }
-.sessions-container {
-  height: 70%;
-  margin-left: 3%;
-}
 .v-list-item {
   overflow: auto;
 }
@@ -393,12 +404,20 @@ onUnmounted(() => {
 .create-container {
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
+  width: 100%; 
 }
 .new-session-field {
-  max-height: 20px;
+  max-height: 40px;
   max-width: 90%;
   margin-left: 3%;
+}
+.error-message {
+  color: var(--cancel);
+  font-size: 1.1rem;
+  font-family: 'Open Sans', sans-serif;
+  margin-left: 10%;
+  position: fixed;
+  bottom: 10%;
 }
 .button-container {
   font-family: 'Open Sans', sans-serif;
