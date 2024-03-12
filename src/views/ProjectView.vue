@@ -69,7 +69,7 @@ const noSelectedImages = computed(() => {
   return store.getters.selectedImages.length === 0
 })
 
-const displayImageCounter = computed(() => {
+const imageCounter = computed(() => {
   return store.state.selectedImages.length
 })
 
@@ -220,11 +220,11 @@ onUnmounted(() => {
           class="add_button"
           @click="getDataSessions"
         >
-          <template v-if="displayImageCounter === 0">
+          <template v-if="imageCounter === 0">
             Select images
           </template>
           <template v-else>
-            Add {{ displayImageCounter }} image<span v-if="displayImageCounter > 1">s</span>
+            Add {{ imageCounter }} image<span v-if="imageCounter > 1">s</span>
           </template>
         </v-btn>
       </div>
