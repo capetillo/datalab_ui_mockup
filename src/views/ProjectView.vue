@@ -73,6 +73,10 @@ const imageCounter = computed(() => {
   return store.state.selectedImages.length
 })
 
+const unselectImages = () => {
+  store.commit('selectedImages', [])
+}
+
 // manages successful api response by mapping data to unique sessions
 const mapDataSessions = (data) => {
   const results = data.results
@@ -165,7 +169,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  store.commit('selectedImages', [])
+  unselectImages()
 })
 
 </script>
@@ -226,6 +230,13 @@ onUnmounted(() => {
           <template v-else>
             Add {{ imageCounter }} image<span v-if="imageCounter > 1">s</span>
           </template>
+        </v-btn>
+        <v-btn
+          :disabled="noSelectedImages"
+          class="unselect_images"
+          @click="unselectImages"
+        >
+          Unselect All Images
         </v-btn>
       </div>
     </div>
@@ -318,7 +329,7 @@ onUnmounted(() => {
   right: 3%;
 }
 .add_button {
-  width: 16rem;
+  width: 17.3rem;
   height: 4rem;
   font-size: 1.3rem;
   align-content: center;
@@ -330,6 +341,22 @@ onUnmounted(() => {
 }
 .add_button:disabled {
   background-color:var(--light-blue);
+  color: white;  
+  opacity: calc(0.7);
+}
+.unselect_images {
+  width: 17.3rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  margin-right: 1rem;
+  background-color: var(--cancel);
+  opacity: calc(1);
+  font-weight: 700;
+  color: white;
+}
+.unselect_images:disabled {
+  background-color:var(--cancel);
   color: white;  
   opacity: calc(0.7);
 }
