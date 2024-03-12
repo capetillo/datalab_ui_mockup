@@ -39,10 +39,7 @@ const pointerMove = (e) => {
 
 </script>
 <template>
-  <div
-    class="image_container"
-    :style="{height: image?.naturalHeight, width: image?.naturalWidth}"
-  >
+  <div class="image_container">
     <img
       ref="image"
       :src="imageSrc"
@@ -72,15 +69,15 @@ const pointerMove = (e) => {
 	position: relative;
 	top: 0px;
 	left: 0px;
+  height: 100%;
 }
 .image:hover{
 	cursor: grab;
 }
 .image_container{
-	border: 4px solid #d2d2d2;
-	background-color: black;
 	position: relative;
 	overflow: hidden;
+  height: 100%;
 }
 .zoom_buttons{
 	position: absolute;
