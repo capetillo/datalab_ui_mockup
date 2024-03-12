@@ -69,6 +69,10 @@ const noSelectedImages = computed(() => {
   return store.getters.selectedImages.length === 0
 })
 
+const displayImageCounter = computed(() => {
+  return store.state.selectedImages.length
+})
+
 // manages successful api response by mapping data to unique sessions
 const mapDataSessions = (data) => {
   const results = data.results
@@ -216,7 +220,12 @@ onUnmounted(() => {
           class="add_button"
           @click="getDataSessions"
         >
-          Add to a Session
+          <template v-if="displayImageCounter === 0">
+            Select images
+          </template>
+          <template v-else>
+            Add {{ displayImageCounter }} image<span v-if="displayImageCounter > 1">s</span>
+          </template>
         </v-btn>
       </div>
     </div>
