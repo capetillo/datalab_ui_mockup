@@ -149,6 +149,7 @@ const validateSessionName = () => {
 const closePopup = () => {
   isPopupVisible.value = false
   newSessionName.value = ''
+  errorMessage.value = ''
 }
 
 // handles creation of a new session 
