@@ -395,10 +395,6 @@ onUnmounted(() => {
 .scroll-container {
   overflow-y: scroll;
 }
-.sessions-container {
-  height: 70%;
-  margin-left: 3%;
-}
 .v-list-item {
   overflow: auto;
 }
@@ -410,14 +406,20 @@ onUnmounted(() => {
 .create-container {
   display: flex;
   flex-direction: column;
+  width: 100%; 
 }
 .new-session-field {
-  max-height: 20px;
+  max-height: 40px;
   max-width: 90%;
   margin-left: 3%;
 }
 .error-message {
-  padding-top: 15%;
+  color: var(--cancel);
+  font-size: 1.1rem;
+  font-family: 'Open Sans', sans-serif;
+  margin-left: 10%;
+  position: fixed;
+  bottom: 10%;
 }
 .button-container {
   font-family: 'Open Sans', sans-serif;
