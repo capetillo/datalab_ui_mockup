@@ -13,7 +13,6 @@ const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
-const nameLength = ref('')
 const isLoading = ref(true)
 const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 
@@ -132,25 +131,23 @@ const selectDataSession = async (session) => {
 
 }
 
-const sessionNameLengthError = (name) => {
-  if (name.length < 5) {
-    nameLength.value = 'short'
-    return true
-  } else if (name.length > 25) {
-    nameLength.value = 'long'
-    return true
+const validateSessionName = () => {
+  errorMessage.value = ''
+
+  if (sessionNameExists(newSessionName.value)) {
+    errorMessage.value = 'Data Session name already exists. Please choose a different name.'
+    return
+  } else if (newSessionName.value.length < 5) {
+    errorMessage.value = 'Data Session name is too short.'
+    return
+  } else if (newSessionName.value.length > 25) {
+    errorMessage.value = 'Data Session name is too long.'
+    return
   }
 }
 
 // handles creation of a new session 
 const createNewDataSession = async () => {
-  if (sessionNameExists(newSessionName.value)) {
-    errorMessage.value = 'Data Session name already exists. Please choose a different name.'
-    return
-  } else if (sessionNameLengthError(newSessionName.value)) {
-    errorMessage.value = `Data Session name is too ${nameLength.value}.`
-    return
-  }
   const selectedImages = store.state.selectedImages
   const inputData = selectedImages.map(image => ({
     'source': 'archive',
@@ -281,6 +278,7 @@ onUnmounted(() => {
           v-model="newSessionName"
           label="New Session Name"
           class="new-session-field sessions"
+          @input="validateSessionName"
         />
         <!-- Error message -->
         <div
