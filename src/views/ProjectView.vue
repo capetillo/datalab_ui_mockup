@@ -146,6 +146,11 @@ const validateSessionName = () => {
   }
 }
 
+const closePopup = () => {
+  isPopupVisible.value = false
+  newSessionName.value = ''
+}
+
 // handles creation of a new session 
 const createNewDataSession = async () => {
   const selectedImages = store.state.selectedImages
@@ -291,7 +296,7 @@ onUnmounted(() => {
           <v-btn
             text 
             class="cancel_button" 
-            @click="isPopupVisible = false"
+            @click="closePopup"
           >
             Close
           </v-btn>
