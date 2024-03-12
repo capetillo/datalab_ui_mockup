@@ -132,7 +132,7 @@ const selectDataSession = async (session) => {
 
 }
 
-const displayErrorMessage = (name) => {
+const sessionNameLengthError = (name) => {
   if (name.length < 5) {
     nameLength.value = 'short'
     return true
@@ -147,7 +147,7 @@ const createNewDataSession = async () => {
   if (sessionNameExists(newSessionName.value)) {
     errorMessage.value = 'Data Session name already exists. Please choose a different name.'
     return
-  } else if (displayErrorMessage(newSessionName.value)) {
+  } else if (sessionNameLengthError(newSessionName.value)) {
     errorMessage.value = `Data Session name is too ${nameLength.value}.`
     return
   }
