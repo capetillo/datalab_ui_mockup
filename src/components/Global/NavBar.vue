@@ -1,6 +1,7 @@
 <script setup>
 import ColorblindToggle from './ColorblindToggle.vue'
 import { useRouter } from 'vue-router'
+import telescope from '../../assets/telescope.png'
 
 const router = useRouter()
 
@@ -14,6 +15,13 @@ const navigateTo = (path) => {
   <div class="navbar-wrapper">
     <nav class="navbar">
       <ol>
+        <li class="nav-item">
+          <img
+            class="telescope"
+            :src="telescope"
+          >
+          DATALAB
+        </li>
         <li
           class="nav-item"
           @click="navigateTo('/projects')"
@@ -46,6 +54,11 @@ const navigateTo = (path) => {
   align-items: center;
   height: 65px;
 }
+.telescope {
+  height: 55px;
+  width: auto; 
+  padding-right: 5px;
+}
 ol {
   display: flex;
   justify-content: center;
@@ -59,7 +72,7 @@ ol {
   justify-content: center;
   color: var(--tan);
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   padding-right: 1rem;
   padding-left: 2rem;
   cursor: grab;
