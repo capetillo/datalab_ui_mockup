@@ -60,8 +60,8 @@ ol {
   color: var(--tan);
   font-weight: 600;
   font-size: 1.2rem;
-  padding: 0 1rem;
+  padding-right: 1rem;
+  padding-left: 2rem;
   cursor: grab;
 }
-
 </style>
