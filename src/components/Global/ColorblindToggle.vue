@@ -32,20 +32,19 @@ const toggleColorblindMode = () => {
   position: fixed;
   right: 1%;
   top: 0.25%;
-  z-index: 2000;
   display: flex;
   align-items: center;
-  justify-content: center;
   max-width: 17%;
 }
 .colorblind-toggle {
   font-weight: 800;
   padding: 0.2rem;
+  align-items: center;
 }
 .label {
-  margin-bottom: 12%;
+  margin-bottom: 9.5%;
   cursor: default;
-  font-size: 0.82rem;
+  font-size: 1.2rem;
 }
 @media (max-width: 900px) {
 .colorblind-toggle {
