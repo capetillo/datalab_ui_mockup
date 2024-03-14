@@ -1,5 +1,12 @@
 <script setup>
 import ColorblindToggle from './ColorblindToggle.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const navigateTo = (path) => {
+  router.push(path)
+}
 
 </script>
 
@@ -7,13 +14,21 @@ import ColorblindToggle from './ColorblindToggle.vue'
   <div class="navbar-wrapper">
     <nav class="navbar">
       <ol>
-        <li class="nav-item">
+        <li
+          class="nav-item"
+          @click="navigateTo('/projects')"
+        >
           PROJECTS
         </li>
-        <li class="nav-item">
-          DATA SESSION
+        <li
+          class="nav-item"
+          @click="navigateTo('/datasessions')"
+        >
+          DATA SESSIONS
         </li>
-        <li class="nav-item">
+        <li
+          class="nav-item"
+        >
           <colorblind-toggle />
         </li>
       </ol>
@@ -46,6 +61,7 @@ ol {
   font-weight: 600;
   font-size: 1.2rem;
   padding: 0 1rem;
+  cursor: grab;
 }
 
 </style>
