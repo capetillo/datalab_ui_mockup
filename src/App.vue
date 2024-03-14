@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import ColorblindToggle from './components/ColorblindToggle.vue'
+import NavBar from './components/Global/NavBar.vue'
 
 const store = useStore()
 const loadedConfig = computed(() => store.state.isConfigLoaded)
@@ -36,7 +36,7 @@ watch(() => store.state.isColorblindMode, (newVal) => {
 </script>
 
 <template>
-  <colorblind-toggle />
+  <nav-bar />
   <template v-if="loadedConfig">
     <router-view />
   </template>
