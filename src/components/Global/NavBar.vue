@@ -15,7 +15,7 @@ const navigateTo = (path) => {
   <div class="navbar-wrapper">
     <nav class="navbar">
       <ol>
-        <li class="nav-item">
+        <li class="nav-item logo">
           <img
             class="telescope"
             :src="telescope"
@@ -53,6 +53,9 @@ const navigateTo = (path) => {
   display: flex;
   align-items: center;
   height: 65px;
+}
+.logo {
+  cursor: default !important;
 }
 .telescope {
   height: 55px;
