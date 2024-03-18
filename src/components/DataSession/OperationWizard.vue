@@ -272,10 +272,12 @@ function selectImage(inputKey, imageIndex) {
   font-size: 1rem;
 }
 
-.wizard-card {
-  width: 100%;
-  display: flex;
-  flex-direction: column-reverse;
+.operation-input {
+  width: 10vw;
+  margin-left: 2%;
+  background-color: var(--metal);
+  position: fixed;
+  top: 6%;
 }
 
 .images-container {
@@ -286,6 +288,7 @@ function selectImage(inputKey, imageIndex) {
   width: 100%;
   padding-left: 2rem;
   padding-right: 2rem;
+  margin-top: 6%;
 }
 .input-images {
   font-family: 'Open Sans', sans-serif;
@@ -302,13 +305,6 @@ function selectImage(inputKey, imageIndex) {
 
 .selected-image {
   border: 0.3rem solid var(--dark-green);
-}
-
-.operation-input {
-  width: 10vw;
-  margin-left: 2%;
-  margin-bottom: 2%;
-  background-color: var(--metal);
 }
 
 .buttons-container {
