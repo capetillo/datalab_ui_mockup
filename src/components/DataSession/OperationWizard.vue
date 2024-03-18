@@ -191,8 +191,11 @@ function selectImage(inputKey, imageIndex) {
             v-else-if="inputDescription.type == 'file'"
             class="images-container"
           >
-            <div class="input-images">
-              Input Images
+            <div
+              v-if="inputDescription.name == 'Input Files'"
+              class="input-images"
+            >
+              Input Files
             </div>
             <image-grid
               :images="images"
