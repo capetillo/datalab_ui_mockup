@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits, defineProps, ref, computed, onMounted, watch } from 'vue'
+import { defineEmits, defineProps, ref, computed } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
 
 const searchQuery = ref('')
@@ -28,31 +28,9 @@ const filteredProjects = computed(() => {
 })
 
 const selectProject = (projects) => {
-  console.log('bing')
   const proposalId = projects.map(p => p.proposal_id)
   emit('selectedProject', proposalId)
 }
-
-const selectFirstProject = () => {
-  console.log('click')
-  const allProjects = Object.values(props.projects)
-  if (allProjects.length > 0 && allProjects[0].length > 0) {
-    console.log('yes')
-    const firstProject = allProjects[0][0]
-    console.log('first project:', firstProject.proposal_id)
-    selectProject([firstProject.proposal_id])
-  }
-}
-onMounted(() => {
-  const unwatch = watch(() => props.projects, (newValue) => {
-    if (newValue && Object.keys(newValue).length > 0) {
-      selectFirstProject()
-      unwatch() // Unwatch immediately after selecting the first project
-    }
-  }, {
-    immediate: true
-  })
-})
 
 </script>
 
