@@ -56,9 +56,11 @@ const navigateTo = (path) => {
 }
 .logo {
   cursor: default !important;
+  margin-right: 5rem;
+  margin-left: 1rem;
 }
 .telescope {
-  height: 55px;
+  height: 59px;
   width: auto; 
   padding-right: 5px;
 }
