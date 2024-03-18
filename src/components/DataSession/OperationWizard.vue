@@ -138,16 +138,29 @@ function selectImage(inputKey, imageIndex) {
     <v-card-text v-show="page == 'select'">
       <v-row>
         <v-col cols="4">
-          <v-list density="compact" class="wizard-list">
+          <v-list
+            density="compact"
+            class="wizard-list"
+          >
             <v-list-subheader class="wizard-subheader">
               OPERATION
             </v-list-subheader>
-            <v-list-item v-for="(name, i) in Object.keys(availableOperations)" :key="i" :value="name" :title="name"
-              :active="name == selectedOperation" class="wizard-operations" @click="selectOperation(name)" />
+            <v-list-item
+              v-for="(name, i) in Object.keys(availableOperations)"
+              :key="i"
+              :value="name"
+              :title="name"
+              :active="name == selectedOperation"
+              class="wizard-operations"
+              @click="selectOperation(name)"
+            />
           </v-list>
         </v-col>
         <v-col cols="8">
-          <v-card :title="selectedOperation" class="selected-operation">
+          <v-card
+            :title="selectedOperation"
+            class="selected-operation"
+          >
             <v-card-text>
               <span class="operation-description">
                 {{ selectedOperationDescription }}
@@ -158,14 +171,36 @@ function selectImage(inputKey, imageIndex) {
       </v-row>
     </v-card-text>
     <v-slide-y-reverse-transition hide-on-leave>
-      <v-card-text v-show="page == 'configure'" class="wizard-card">
-        <div v-for="(inputDescription, inputKey) in selectedOperationInputs" :key="inputKey"
-          class="operation-input-wrapper">
-          <v-text-field v-if="inputDescription.type !== 'file'" v-model="selectedOperationInput[inputKey]"
-            :label="inputDescription.name" :type="inputDescription.type" class="operation-input" />
-          <div v-else-if="inputDescription.type == 'file'" class="images-container">
-            <image-grid :images="images" :column-span="calculateColumnSpan(images.length, imagesPerRow)"
-              class="wizard-images" :allow-selection="true" @select-image="selectImage(inputKey, $event)" />
+      <v-card-text
+        v-show="page == 'configure'"
+        class="wizard-card"
+      >
+        <div
+          v-for="(inputDescription, inputKey) in selectedOperationInputs"
+          :key="inputKey"
+          class="operation-input-wrapper"
+        >
+          <v-text-field
+            v-if="inputDescription.type !== 'file'"
+            v-model="selectedOperationInput[inputKey]"
+            :label="inputDescription.name"
+            :type="inputDescription.type"
+            class="operation-input"
+          />
+          <div
+            v-else-if="inputDescription.type == 'file'"
+            class="images-container"
+          >
+            <div class="input-images">
+              Input Images
+            </div>
+            <image-grid
+              :images="images"
+              :column-span="calculateColumnSpan(images.length, imagesPerRow)"
+              class="wizard-images"
+              :allow-selection="true"
+              @select-image="selectImage(inputKey, $event)"
+            />
           </div>
         </div>
       </v-card-text>
@@ -173,10 +208,18 @@ function selectImage(inputKey, imageIndex) {
 
     <v-card-actions class="buttons-container">
       <v-spacer />
-      <v-btn variant="text" class="goback-btn" @click="goBack">
+      <v-btn
+        variant="text"
+        class="goback-btn"
+        @click="goBack"
+      >
         Go Back
       </v-btn>
-      <v-btn variant="text" class="gofwd-btn" @click="goForward">
+      <v-btn
+        variant="text"
+        class="gofwd-btn"
+        @click="goForward"
+      >
         {{ goForwardText }}
       </v-btn>
     </v-card-actions>
@@ -239,11 +282,17 @@ function selectImage(inputKey, imageIndex) {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
+  flex-direction: column;
   width: 100%;
   padding-left: 2rem;
   padding-right: 2rem;
 }
-
+.input-images {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--tan);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
 .wizard-images {
   max-width: 100%;
   height: auto;
