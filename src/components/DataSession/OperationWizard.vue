@@ -192,10 +192,10 @@ function selectImage(inputKey, imageIndex) {
             class="images-container"
           >
             <div
-              v-if="inputDescription.name == 'Input Files'"
+              v-if="inputDescription.name"
               class="input-images"
             >
-              Input Files
+              {{ inputDescription.name }}
             </div>
             <image-grid
               :images="images"
