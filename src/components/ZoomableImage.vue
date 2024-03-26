@@ -1,11 +1,17 @@
+<!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { defineProps, ref} from 'vue'
+import { defineProps, ref, onMounted, watch } from 'vue'
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['imageSrc'])
 const image = ref(null)
+const canvas = ref(null)
+const ctx = ref(null)
 const imageLeftPos = ref(0)
 const imageTopPos = ref(0)
 const currentZoom = ref(1)
+const drawing = ref(false)
+const startPoint = ref({ x: 0, y: 0 })
+const endPoint = ref({ x: 0, y: 0 })
 
 const MIN_ZOOM = 1
 const MAX_ZOOM = 3
@@ -37,9 +43,61 @@ const pointerMove = (e) => {
   mouseY = e.pageY
 }
 
+onMounted(() => {
+  if (canvas.value) {
+    ctx.value = canvas.value.getContext('2d')
+  }
+})
+
+watch([currentZoom, imageLeftPos, imageTopPos], () => {
+  updateCanvas()
+})
+
+const updateCanvas = () => {
+  if (image.value && canvas.value) {
+    const rect = image.value.getBoundingClientRect()
+    canvas.value.style.left = `${rect.left}px`
+    canvas.value.style.top = `${rect.top}px`
+    canvas.value.width = rect.width
+    canvas.value.height = rect.height
+  }
+}
+
+const startDrawing = (ev) => {
+  drawing.value = true
+  startPoint.value = { x: ev.offsetX, y: ev.offsetY }
+}
+
+const drawLine = (ev) => {
+  if (!drawing.value) return
+  endPoint.value = { x: ev.offsetX, y: ev.offsetY }
+  
+  if (ctx.value) {
+    ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
+    ctx.value.beginPath()
+    ctx.value.moveTo(startPoint.value.x, startPoint.value.y)
+    ctx.value.lineTo(endPoint.value.x, endPoint.value.y)
+    ctx.value.strokeStyle = 'yellow'
+    ctx.value.stroke()
+  }
+}
+
+const stopDrawing = (ev) => {
+  if (!drawing.value) return
+  drawing.value = false
+  drawLine(ev)
+  console.log(`Start Point: ${startPoint.value.x}, ${startPoint.value.y}, End Point: ${endPoint.value.x}, ${endPoint.value.y}`)
+}
+
 </script>
 <template>
-  <div class="image_container">
+  <div
+    class="image_container"
+    @pointerdown.prevent="startDrawing"
+    @pointermove="drawLine"
+    @pointerup="stopDrawing"
+    @pointerleave="stopDrawing"
+  >
     <img
       ref="image"
       :src="imageSrc"
@@ -50,6 +108,10 @@ const pointerMove = (e) => {
       @pointerup="image.onpointermove = null"
       @pointerleave="image.onpointermove = null"
     >
+    <canvas
+      ref="canvas"
+      class="drawing-canvas"
+    />
     <v-btn-group class="zoom_buttons">
       <v-btn
         icon="mdi-magnify-plus"
@@ -65,11 +127,14 @@ const pointerMove = (e) => {
   </div>
 </template>
 <style scoped>
-.image{
-	position: relative;
+.image .drawing-canvas{
+	position: absolute;
 	top: 0px;
 	left: 0px;
   height: 100%;
+}
+.drawing-canvas {
+  pointer-events: none; /* Ensure canvas doesn't interfere with image panning */
 }
 .image:hover{
 	cursor: grab;
