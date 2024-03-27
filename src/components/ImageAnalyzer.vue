@@ -77,6 +77,7 @@ function closeDialog() {
 .side-panel{
   background-color: var(--dark-blue);
   color: var(--tan);
-  margin-left: 20px;
+  position: fixed;
+  right: 20px;
 }
 </style>
