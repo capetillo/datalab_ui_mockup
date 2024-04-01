@@ -29,11 +29,11 @@ const loadImageOverlay = (src) => {
     if (imageOverlay) {
       map.removeLayer(imageOverlay)
     }
-
     // Add new overlay with correct bounds
     imageOverlay = L.imageOverlay(src, imageBounds).addTo(map)
     // Fit map view to the bounds of the image
-    map.fitBounds(imageBounds) 
+    map.fitBounds(imageBounds)
+    map.setMaxBounds(imageBounds)
   }
   img.src = src
 }
