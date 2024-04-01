@@ -18,6 +18,8 @@ const mapContainer = ref(null)
 let map = null
 let imageOverlay = null
 let imageBounds
+let initialCenter = [0, 0] // Will be updated with actual image center
+let initialZoom = 1
 
 const loadImageOverlay = (src) => {
   const img = new Image()
@@ -33,6 +35,9 @@ const loadImageOverlay = (src) => {
     // Fit map view to the bounds of the image
     map.fitBounds(imageBounds)
     map.setMaxBounds(imageBounds)
+
+    initialCenter = map.getCenter()
+    initialZoom = map.getZoom()
   }
   img.src = src
 }
@@ -48,7 +53,21 @@ onMounted(() => {
 
   loadImageOverlay(props.imageSrc)
 
-  const zoomedInThreshold = 1
+  // Create custom control to reset view
+  map.pm.Toolbar.createCustomControl({
+    name: 'resetView',
+    block: 'custom',
+    title: 'Reset View',
+    className: 'leaflet-pm-icon-drag',
+    onClick: () => {
+      map.setView(initialCenter, initialZoom)
+    },
+    actions: [],
+    toggle: false,
+    disabled: false,
+  })
+
+
 
   map.pm.addControls({
     position: 'topleft',
@@ -65,6 +84,7 @@ onMounted(() => {
     removalMode: true
   })
 
+  const zoomedInThreshold = 1
   // Disable dragging until zoomed in
   map.on('zoomend', () => {
     if (map.getZoom() >= zoomedInThreshold) {
@@ -90,7 +110,7 @@ onMounted(() => {
     })
   })
 
-
+  // Get coordinates of the line
   map.on('pm:create', (e) => {
     const latLngs = e.layer.getLatLngs()
 
@@ -129,25 +149,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; 
-}
-.toolbar {
-  z-index: 1000;
-  margin: 2% 1% 0 0;
-}
-
-select {
-  padding: 4px;
-  margin: 0;
-  background-color: var(--metal);
-  color: var(--tan);
-  border-radius: 4px;
-  text-align: center;
-}
-
 .leaflet-map-container {
   flex: 1; 
   width: 100%;
