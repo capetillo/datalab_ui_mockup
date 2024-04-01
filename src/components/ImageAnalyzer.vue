@@ -1,7 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 import ImageViewer from './Project/ImageViewer.vue'
-// import LineAnalysis from './Global/LineAnalysis.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
