@@ -13,6 +13,8 @@ const props = defineProps({
   }
 })
 
+const isLoading = ref(true)
+
 const imageContainer = ref(null)
 const startCoordinates = ref({x1: 0, y1: 0})
 const endCoordinates = ref({x2: 0, y2: 0})
@@ -41,6 +43,7 @@ const loadImageOverlay = (src) => {
 
     initialCenter = image.getCenter()
     initialZoom = image.getZoom()
+    isLoading.value = false
   }
   img.src = src
 }
@@ -152,6 +155,17 @@ onMounted(() => {
 
 <template>
   <div
+    v-if="isLoading"
+    class="image-loading-container"
+  >
+    <v-progress-circular
+      indeterminate
+      model-value="20"
+      :size="50"
+      :width="9"
+    />
+  </div>
+  <div
     ref="imageContainer"
     class="leaflet-map-container"
   />
@@ -162,6 +176,7 @@ onMounted(() => {
   flex: 1; 
   width: 100%;
   background-color: transparent;
+  margin-left: 5%;
 }
 .leaflet-tooltip {
   display: none !important;
