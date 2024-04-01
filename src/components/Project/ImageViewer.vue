@@ -82,7 +82,7 @@ onMounted(() => {
     const currentZoomLevel = map.getZoom() + 1
     const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel) // Calculate scale factor
 
-    // Updated function to adjust for zoom level
+    // Adjust coordinates based on zoom level
     const latLngToImagePixelAdjusted = (latLng) => {
       const point = map.latLngToContainerPoint(latLng)
       const boundsTopLeft = map.latLngToContainerPoint(L.latLng(bounds[1][0], bounds[0][1]))
