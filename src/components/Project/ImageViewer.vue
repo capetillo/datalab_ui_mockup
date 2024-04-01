@@ -15,11 +15,15 @@ const props = defineProps({
 })
 
 const mapContainer = ref(null)
+const startCoordinates = ref({x1: 0, y1: 0})
+const endCoordinates = ref({x2: 0, y2: 0})
 let map = null
 let imageOverlay = null
 let imageBounds
-let initialCenter = [0, 0] // Will be updated with actual image center
+let initialCenter = [0, 0]
 let initialZoom = 1
+let lastDrawnLine = null
+
 
 const loadImageOverlay = (src) => {
   const img = new Image()
@@ -67,8 +71,6 @@ onMounted(() => {
     disabled: false,
   })
 
-
-
   map.pm.addControls({
     position: 'topleft',
     drawMarker: false,
@@ -101,6 +103,10 @@ onMounted(() => {
   let pointsCount = 0
   // Finish line after 2 points
   map.on('pm:drawstart', ({ workingLayer }) => {
+    // remove last drawn line when starting new one
+    if (lastDrawnLine && map.hasLayer(lastDrawnLine)) {
+      map.removeLayer(lastDrawnLine)
+    }
     pointsCount = 0
     workingLayer.on('pm:vertexadded', () => {
       pointsCount++
@@ -112,6 +118,8 @@ onMounted(() => {
 
   // Get coordinates of the line
   map.on('pm:create', (e) => {
+    // Save last drawn line
+    lastDrawnLine = e.layer
     const latLngs = e.layer.getLatLngs()
 
     const startPoint = latLngs[0]
@@ -133,8 +141,10 @@ onMounted(() => {
     const startPixel = latLngToImagePixelAdjusted(startPoint)
     const endPixel = latLngToImagePixelAdjusted(endPoint)
 
-    console.log(`Start: ${startPixel.x}, ${startPixel.y}`)
-    console.log(`End: ${endPixel.x}, ${endPixel.y}`)
+    startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
+    endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
+    console.log(`Start: ${startCoordinates.value.x1}, ${startCoordinates.value.y1}`)
+    console.log(`End: ${endCoordinates.value.x2}, ${endCoordinates.value.y2}`)
   })
 })
 
