@@ -24,7 +24,6 @@ const loadImageOverlay = (src) => {
   img.onload = () => {
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [img.height, img.width]] 
-    console.log('Image dimensions:', img.width, 'x', img.height)
 
     if (imageOverlay) {
       map.removeLayer(imageOverlay)
@@ -153,5 +152,8 @@ select {
   flex: 1; 
   width: 100%;
   background-color: transparent;
+}
+.leaflet-tooltip {
+  display: none !important;
 }
 </style>
