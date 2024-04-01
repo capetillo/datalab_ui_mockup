@@ -15,9 +15,31 @@ const props = defineProps({
 })
 
 const mapContainer = ref(null)
+let map = null
+let imageOverlay = null
+let imageBounds
+
+const loadImageOverlay = (src) => {
+  const img = new Image()
+  img.onload = () => {
+    // Getting image bounds based on img's size
+    imageBounds = [[0, 0], [img.height, img.width]] 
+    console.log('Image dimensions:', img.width, 'x', img.height)
+
+    if (imageOverlay) {
+      map.removeLayer(imageOverlay)
+    }
+
+    // Add new overlay with correct bounds
+    imageOverlay = L.imageOverlay(src, imageBounds).addTo(map)
+    // Fit map view to the bounds of the image
+    map.fitBounds(imageBounds) 
+  }
+  img.src = src
+}
 
 onMounted(() => {
-  const map = L.map(mapContainer.value, {
+  map = L.map(mapContainer.value, {
     center: [0, 0],
     zoom: 1,
     crs: L.CRS.Simple,
@@ -25,13 +47,9 @@ onMounted(() => {
     dragging: false,
   })
 
+  loadImageOverlay(props.imageSrc)
 
-  const bounds = [[0, 0], [1000, 1000]]
-  const centerBounds = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2]
   const zoomedInThreshold = 1
-
-  L.imageOverlay(props.imageSrc, bounds).addTo(map)
-  map.fitBounds(bounds)
 
   map.pm.addControls({
     position: 'topleft',
@@ -55,8 +73,9 @@ onMounted(() => {
     } else {
       map.dragging.disable()
     }
-    if (map.getZoom() === map.getMinZoom()) {
-      map.panTo(new L.LatLng(centerBounds[0], centerBounds[1]))
+    if (map.getZoom() === map.getMinZoom() && imageBounds) {
+      const centerOfImage = [(imageBounds[0][0] + imageBounds[1][0]) / 2, (imageBounds[0][1] + imageBounds[1][1]) / 2]
+      map.panTo(new L.LatLng(centerOfImage[0], centerOfImage[1]))
     }
   })
 
@@ -80,12 +99,12 @@ onMounted(() => {
     const endPoint = latLngs[1]
     const baseZoomLevel = 1
     const currentZoomLevel = map.getZoom() + 1
-    const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel) // Calculate scale factor
-
+    // Calculate scale factor
+    const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel)
     // Adjust coordinates based on zoom level
     const latLngToImagePixelAdjusted = (latLng) => {
       const point = map.latLngToContainerPoint(latLng)
-      const boundsTopLeft = map.latLngToContainerPoint(L.latLng(bounds[1][0], bounds[0][1]))
+      const boundsTopLeft = map.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
       // Apply zoom scale factor to adjust coordinates
       const x = (point.x - boundsTopLeft.x) / zoomScaleFactor
       const y = (point.y - boundsTopLeft.y) / zoomScaleFactor
