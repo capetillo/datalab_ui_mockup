@@ -157,4 +157,7 @@ onMounted(() => {
 .leaflet-tooltip {
   display: none !important;
 }
+.button-container.active .leaflet-pm-actions-container {
+  display: none !important;
+}
 </style>
