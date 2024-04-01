@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import ZoomableImage from './ZoomableImage.vue'
+import ImageViewer from './Project/ImageViewer.vue'
+// import LineAnalysis from './Global/LineAnalysis.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -37,10 +38,11 @@ function closeDialog() {
         />
       </v-toolbar>
       <div class="analysis-content">
-        <zoomable-image
+        <image-viewer
           class="image"
           :image-src="image.url"
         />
+        <!-- <line-analysis /> -->
         <v-sheet class="side-panel">
           <h1>Details</h1>
           <p>Basename: {{ image.basename }}</p>
