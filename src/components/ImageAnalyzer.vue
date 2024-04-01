@@ -41,7 +41,6 @@ function closeDialog() {
           class="image"
           :image-src="image.url"
         />
-        <!-- <line-analysis /> -->
         <v-sheet class="side-panel">
           <h1>Details</h1>
           <p>Basename: {{ image.basename }}</p>
