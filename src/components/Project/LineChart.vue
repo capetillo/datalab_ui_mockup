@@ -1,0 +1,63 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+// import { fetchApiCall, handleError } from '../../utils/api'
+import * as d3 from 'd3'
+  
+const svg = ref(null)
+
+// const displayData = (data) => {
+//   if(data) {
+//     console.log(data)
+//   }
+// }
+
+// bogus api call to get the data
+// async function getPlotValues() {
+//   // const url = '/api/plot_values'
+//   // const requestBody = {
+//   // props from Image Viewer from the response of the api call with coordinates
+//   // }
+//   // fetchApiCall({url: url, method: 'GET', body: requestBody,  successCallback: displayData, failCallback: handleError})
+//   if ()
+// }
+  
+onMounted(() => {
+  const margin = { top: 20, right: 20, bottom: 30, left: 50 },
+    width = 600 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom
+  
+  // The two domains can be dynamically changed to fit the data
+  const x = d3.scaleLinear()
+    .domain([0, 500])
+    .range([0, width])
+  
+  const y = d3.scaleLinear()
+    .domain([0, 500])
+    .range([height, 0])
+  
+  const svgElement = d3.select(svg.value)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`)
+  
+  // Add X axis
+  svgElement.append('g')
+    .attr('class', 'x axis')
+    .attr('transform', `translate(0,${height})`)
+    .call(d3.axisBottom(x))
+  
+  // Add Y axis
+  svgElement.append('g')
+    .attr('class', 'y axis')
+    .call(d3.axisLeft(y))
+})
+</script>
+  
+<template>
+  <div>
+    <svg
+      ref="svg"
+      width="600"
+      height="400"
+    />
+  </div>
+</template>
