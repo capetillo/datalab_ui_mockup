@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 import ZoomableImage from './ZoomableImage.vue'
+import LineChart from './Project/LineChart.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -49,6 +50,7 @@ function closeDialog() {
           <p>Telescope: {{ image.telescope_id }}</p>
           <p>Instrument: {{ image.instrument_id }}</p>
         </v-sheet>
+        <line-chart />
       </div>
     </v-sheet>
   </v-dialog>
