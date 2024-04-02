@@ -1,27 +1,44 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, defineProps } from 'vue'
 // import { fetchApiCall, handleError } from '../../utils/api'
 import * as d3 from 'd3'
   
+const props = defineProps({
+  xaxis: {
+    type: Number,
+    required: true
+  },
+  yaxis: {
+    type: Number,
+    required: true
+  }
+})
 const svg = ref(null)
 
-// const displayData = (data) => {
-//   if(data) {
-//     console.log(data)
-//   }
-// }
 
-// bogus api call to get the data
-// async function getPlotValues() {
-//   // const url = '/api/plot_values'
-//   // const requestBody = {
-//   // props from Image Viewer from the response of the api call with coordinates
-//   // }
-//   // fetchApiCall({url: url, method: 'GET', body: requestBody,  successCallback: displayData, failCallback: handleError})
-//   if ()
-// }
+const displayData = (data) => {
+  if(data) {
+    console.log(data)
+  }
+}
+
+//bogus api call to get the data
+async function getPlotValues() {
+  // const url = '/api/plot_values'
+  // const requestBody = {
+  // props from Image Viewer from the response of the api call with coordinates
+  // }
+  // await fetchApiCall({url: url, method: 'GET', body: requestBody,  successCallback: displayData, failCallback: handleError})
+  if (props.xaxis && props.yaxis) {
+    displayData({x: props.xaxis, y: props.yaxis})
+  }
+}
   
 onMounted(() => {
+  if (props.xaxis && props.yaxis) {
+    getPlotValues()
+  }
+
   const margin = { top: 20, right: 20, bottom: 30, left: 50 },
     width = 600 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom
