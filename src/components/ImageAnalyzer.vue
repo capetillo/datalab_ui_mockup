@@ -42,15 +42,17 @@ function closeDialog() {
           class="image"
           :image-src="image.url"
         />
-        <v-sheet class="side-panel">
-          <h1>Details</h1>
-          <p>Basename: {{ image.basename }}</p>
-          <p>Date & Time: {{ image.observation_date }}</p>
-          <p>Site: {{ image.site_id }}</p>
-          <p>Telescope: {{ image.telescope_id }}</p>
-          <p>Instrument: {{ image.instrument_id }}</p>
-        </v-sheet>
-        <line-chart />
+        <div class="side-panel-container">
+          <v-sheet class="side-panel">
+            <h1>Details</h1>
+            <p>Basename: {{ image.basename }}</p>
+            <p>Date & Time: {{ image.observation_date }}</p>
+            <p>Site: {{ image.site_id }}</p>
+            <p>Telescope: {{ image.telescope_id }}</p>
+            <p>Instrument: {{ image.instrument_id }}</p>
+          </v-sheet>
+          <line-chart />
+        </div>
       </div>
     </v-sheet>
   </v-dialog>
@@ -76,9 +78,15 @@ function closeDialog() {
 .image{
   background-color: var(--dark-blue);
 }
+.side-panel-container {
+  display: flex;
+  flex-direction: column;
+}
 .side-panel{
   background-color: var(--dark-blue);
   color: var(--tan);
   margin-left: 20px;
+  margin-bottom: 5%;
 }
+
 </style>
