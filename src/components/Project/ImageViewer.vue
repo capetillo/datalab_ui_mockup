@@ -5,6 +5,7 @@ import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet/dist/leaflet.css'
+// import { fetchApiCall, handleError } from '../../utils/api'
 
 const props = defineProps({
   imageSrc: {
@@ -25,7 +26,7 @@ let initialCenter = [0, 0]
 let initialZoom = 1
 let lastDrawnLine = null
 
-
+// loads image overlay and set bounds
 const loadImageOverlay = (src) => {
   const img = new Image()
   img.onload = () => {
@@ -48,7 +49,28 @@ const loadImageOverlay = (src) => {
   img.src = src
 }
 
+const displayLineProfile = (data) =>{
+  if (data) {
+    console.log(data)
+  }
+}
+
+async function getLineProfile(startPoint, endPoint) {
+  // const url = 'http://localhost:8000/api/line-profile/'
+  // await fetchApiCall({ 
+  //   url: url,
+  //   method: 'GET', 
+  //   data: {startPoint, endPoint}, 
+  //   successCallback: displayLineProfile, 
+  //   failCallback: handleError 
+  // })
+  if (startPoint && endPoint) {
+    displayLineProfile({startPoint, endPoint})
+  }
+}
+
 onMounted(() => {
+  // Create leaflet map (here referred to as image)
   image = L.map(imageContainer.value, {
     center: [0, 0],
     zoom: 1,
@@ -59,7 +81,7 @@ onMounted(() => {
 
   loadImageOverlay(props.imageSrc)
 
-  // Create custom control to reset view
+  // Create custom control to reset view after zooming in
   image.pm.Toolbar.createCustomControl({
     name: 'resetView',
     block: 'custom',
@@ -73,6 +95,7 @@ onMounted(() => {
     disabled: false,
   })
 
+  // Disabling default controls
   image.pm.addControls({
     position: 'topleft',
     drawMarker: false,
@@ -96,6 +119,7 @@ onMounted(() => {
     } else {
       image.dragging.disable()
     }
+    // Pan to the center of the image when zoomed out
     if (image.getZoom() === image.getMinZoom() && imageBounds) {
       const centerOfImage = [(imageBounds[0][0] + imageBounds[1][0]) / 2, (imageBounds[0][1] + imageBounds[1][1]) / 2]
       image.panTo(new L.LatLng(centerOfImage[0], centerOfImage[1]))
@@ -103,7 +127,7 @@ onMounted(() => {
   })
 
   let pointsCount = 0
-  // Finish line after 2 points
+  // Finish line after 2 points (default is multiple points for a line)
   image.on('pm:drawstart', ({ workingLayer }) => {
     // remove last drawn line when starting new one
     if (lastDrawnLine && image.hasLayer(lastDrawnLine)) {
@@ -145,8 +169,7 @@ onMounted(() => {
 
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
-    console.log(`Start: ${startCoordinates.value.x1}, ${startCoordinates.value.y1}`)
-    console.log(`End: ${endCoordinates.value.x2}, ${endCoordinates.value.y2}`)
+    getLineProfile(startCoordinates.value, endCoordinates.value)
   })
 })
 
