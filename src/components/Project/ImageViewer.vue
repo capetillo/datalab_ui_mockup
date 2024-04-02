@@ -151,7 +151,7 @@ onMounted(() => {
     const startPoint = latLngs[0]
     const endPoint = latLngs[1]
     const baseZoomLevel = 1
-    const currentZoomLevel = image.getZoom() + 1
+    const currentZoomLevel = image.getZoom() + baseZoomLevel
     // Calculate scale factor
     const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel)
     // Adjust coordinates based on zoom level
