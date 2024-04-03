@@ -27,6 +27,7 @@ let initialZoom = 1
 let lastDrawnLine = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
+const randomArr = ref([])
 
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
@@ -45,6 +46,7 @@ const loadImageOverlay = (src) => {
     image.fitBounds(imageBounds)
     image.setMaxBounds(imageBounds)
 
+    // waits for DOM to load then recalculates image's size and position after the container's dimensions have changed (built in method of Leaflet)
     nextTick(() => {
       image.invalidateSize()
     })
@@ -77,6 +79,13 @@ async function getLineProfile(startPoint, endPoint) {
     displayLineProfile({startPoint, endPoint})
   }
 }
+
+function getRandomArrNumbers(max) {
+  randomArr.value = Array.from({length: 10}, () => Math.floor(Math.random() * max))
+  console.log('randomarr', randomArr.value)
+}
+
+
 
 onMounted(() => {
   // Create leaflet map (here referred to as image)
@@ -179,6 +188,7 @@ onMounted(() => {
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
     getLineProfile(startCoordinates.value, endCoordinates.value)
+    getRandomArrNumbers(65000)
   })
 })
 
