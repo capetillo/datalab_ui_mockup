@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import ZoomableImage from './ZoomableImage.vue'
+import ImageViewer from './Project/ImageViewer.vue'
 import LineChart from './Project/LineChart.vue'
 
 // eslint-disable-next-line no-unused-vars
@@ -38,7 +38,7 @@ function closeDialog() {
         />
       </v-toolbar>
       <div class="analysis-content">
-        <zoomable-image
+        <image-viewer
           class="image"
           :image-src="image.url"
         />
@@ -80,7 +80,7 @@ function closeDialog() {
 }
 .side-panel-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column
 }
 .side-panel{
   background-color: var(--dark-blue);
