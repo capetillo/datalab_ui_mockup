@@ -68,13 +68,7 @@ function closeDialog() {
   background-color: var(--metal);
 }
 .analysis-content{
-  /* margin-top: 20px;
-  margin-left: 20px; */
   display: flex;
-  /* display: grid; */
-  /* grid-template-columns: 60% 40%;
-  grid-template-rows: 1fr; */
-  /* height: 90%; */
   width: 100%;
   height: 100%;
 
