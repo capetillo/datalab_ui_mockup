@@ -1,6 +1,7 @@
 
 <script setup>
 import { onMounted, ref, nextTick } from 'vue'
+import { useStore } from 'vuex'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -13,6 +14,8 @@ const props = defineProps({
     required: true,
   }
 })
+
+const store = useStore()
 
 const isLoading = ref(true)
 
@@ -27,7 +30,6 @@ let initialZoom = 1
 let lastDrawnLine = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
-const randomArr = ref([])
 
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
@@ -80,9 +82,12 @@ async function getLineProfile(startPoint, endPoint) {
   }
 }
 
+// creates random numbers for the line chart to display
+// TO DO: get rid of this code and actually implement real data
 function getRandomArrNumbers(max) {
-  randomArr.value = Array.from({length: 10}, () => Math.floor(Math.random() * max))
-  console.log('randomarr', randomArr.value)
+  const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
+  store.commit('setRandomNumbers', randomNumbers)
+  console.log('random numbers', store.state.randomNumbers)
 }
 
 
