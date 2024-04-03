@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import ZoomableImage from './ZoomableImage.vue'
+import ImageViewer from './Project/ImageViewer.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -37,7 +37,7 @@ function closeDialog() {
         />
       </v-toolbar>
       <div class="analysis-content">
-        <zoomable-image
+        <image-viewer
           class="image"
           :image-src="image.url"
         />
@@ -77,6 +77,7 @@ function closeDialog() {
 .side-panel{
   background-color: var(--dark-blue);
   color: var(--tan);
-  margin-left: 20px;
+  position: fixed;
+  right: 20px;
 }
 </style>
