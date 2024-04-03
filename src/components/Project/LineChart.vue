@@ -81,14 +81,12 @@ onMounted(() => {
     svgElement.append('circle')
       .attr('cx', x(props.xaxis))
       .attr('cy', y(props.yaxis))
-      .attr('r', 5) // You can adjust the radius
+      .attr('r', 5)
       .style('fill', 'red')
   }
 
-  // Initial plot
   plotPoint()
 
-  // Reactively plot a point when props change
   watchEffect(() => {
     if (props.xaxis && props.yaxis) {
       plotPoint()
