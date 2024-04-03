@@ -34,7 +34,6 @@ const loadImageOverlay = (src) => {
   img.onload = () => {
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [img.height, img.width]] 
-    console.log('image bounds:', imageBounds)
     if (imageOverlay) {
       image.removeLayer(imageOverlay)
     }
@@ -154,7 +153,6 @@ onMounted(() => {
 
   // Get coordinates of the line
   image.on('pm:create', (e) => {
-    console.log('image bounds:', imageBounds)
     // Save last drawn line
     lastDrawnLine = e.layer
     const latLngs = e.layer.getLatLngs()
