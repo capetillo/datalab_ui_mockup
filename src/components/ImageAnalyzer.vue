@@ -68,24 +68,29 @@ function closeDialog() {
   background-color: var(--metal);
 }
 .analysis-content{
-  margin-top: 20px;
-  margin-left: 20px;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  grid-template-rows: 1fr;
-  height: 90%;
+  /* margin-top: 20px;
+  margin-left: 20px; */
+  display: flex;
+  /* display: grid; */
+  /* grid-template-columns: 60% 40%;
+  grid-template-rows: 1fr; */
+  /* height: 90%; */
+  width: 100%;
+  height: 100%;
+
 }
 .image{
   background-color: var(--dark-blue);
 }
 .side-panel-container {
+  margin: 2% 0 0 5%;
   display: flex;
   flex-direction: column
 }
 .side-panel{
   background-color: var(--dark-blue);
   color: var(--tan);
-  margin-left: 20px;
+  margin-left: 10px;
   margin-bottom: 5%;
 }
 
