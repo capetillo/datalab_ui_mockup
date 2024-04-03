@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, defineProps } from 'vue'
+import { onMounted, ref, defineProps, watchEffect } from 'vue'
 // import { fetchApiCall, handleError } from '../../utils/api'
 import * as d3 from 'd3'
   
@@ -68,6 +68,34 @@ onMounted(() => {
   svgElement.append('g')
     .attr('class', 'y axis')
     .call(d3.axisLeft(y))
+
+    
+  const plotPoint = () => {
+    if (props.xaxis === undefined || props.yaxis === undefined) {
+      return
+    }
+    // Remove existing point to prevent duplication
+    svgElement.selectAll('circle').remove()
+
+    // Add a circle for the new point
+    svgElement.append('circle')
+      .attr('cx', x(props.xaxis))
+      .attr('cy', y(props.yaxis))
+      .attr('r', 5) // You can adjust the radius
+      .style('fill', 'red')
+  }
+
+  // Initial plot
+  plotPoint()
+
+  // Reactively plot a point when props change
+  watchEffect(() => {
+    if (props.xaxis && props.yaxis) {
+      plotPoint()
+    }
+  })
+
+    
 })
 </script>
   
