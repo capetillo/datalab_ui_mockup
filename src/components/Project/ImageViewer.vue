@@ -189,7 +189,6 @@ onMounted(() => {
     const startPixel = latLngToImagePixelAdjusted(startPoint)
     const endPixel = latLngToImagePixelAdjusted(endPoint)
 
-
     // Calculate line length in pixels
     const dx = endPixel.x - startPixel.x
     const dy = endPixel.y - startPixel.y
