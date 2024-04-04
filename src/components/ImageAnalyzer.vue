@@ -70,7 +70,6 @@ function closeDialog() {
   display: flex;
   width: 100%;
   height: 100%;
-
 }
 .side-panel-container {
   margin: 2% 0 0 7%;
