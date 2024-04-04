@@ -190,6 +190,14 @@ onMounted(() => {
     const startPixel = latLngToImagePixelAdjusted(startPoint)
     const endPixel = latLngToImagePixelAdjusted(endPoint)
 
+
+    // Calculate line length in pixels
+    const dx = endPixel.x - startPixel.x
+    const dy = endPixel.y - startPixel.y
+    const lineLengthInPixels = Math.sqrt(dx * dx + dy * dy)
+
+    console.log(`Line length in pixels: ${lineLengthInPixels}`)
+
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
     getLineProfile(startCoordinates.value, endCoordinates.value)
