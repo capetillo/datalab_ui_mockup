@@ -22,7 +22,7 @@ export default createStore({
       largeImageCache: [],
       smallImageCache: [],
       randomNumbers: [],
-      lineLength: ''
+      lineLength: 1
     }
   },
 
