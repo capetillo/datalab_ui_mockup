@@ -193,7 +193,7 @@ onMounted(() => {
     // Calculate line length in pixels
     const dx = endPixel.x - startPixel.x
     const dy = endPixel.y - startPixel.y
-    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy))
+    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy)) 
 
     store.commit('setLineLength', lineLengthInPixels)
     console.log(`Line length in pixels: ${lineLengthInPixels}`)
