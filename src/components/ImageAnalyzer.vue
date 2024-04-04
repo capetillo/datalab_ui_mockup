@@ -77,7 +77,7 @@ function closeDialog() {
   background-color: var(--dark-blue);
 }
 .side-panel-container {
-  margin: 2% 0 0 5%;
+  margin: 2% 0 0 7%;
   display: flex;
   flex-direction: column
 }
