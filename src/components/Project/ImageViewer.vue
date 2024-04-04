@@ -196,7 +196,6 @@ onMounted(() => {
     const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy)) 
 
     store.commit('setLineLength', lineLengthInPixels)
-    console.log(`Line length in pixels: ${lineLengthInPixels}`)
 
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
