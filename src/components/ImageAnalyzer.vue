@@ -39,7 +39,6 @@ function closeDialog() {
       </v-toolbar>
       <div class="analysis-content">
         <image-viewer
-          class="image"
           :image-src="image.url"
         />
         <div class="side-panel-container">
@@ -72,9 +71,6 @@ function closeDialog() {
   width: 100%;
   height: 100%;
 
-}
-.image{
-  background-color: var(--dark-blue);
 }
 .side-panel-container {
   margin: 2% 0 0 7%;
