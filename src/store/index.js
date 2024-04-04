@@ -21,7 +21,8 @@ export default createStore({
       projects: [],
       largeImageCache: [],
       smallImageCache: [],
-      randomNumbers: []
+      randomNumbers: [],
+      lineLength: ''
     }
   },
 
@@ -75,6 +76,10 @@ export default createStore({
 
     setRandomNumbers(state, numbers) {
       state.randomNumbers = numbers
+    },
+
+    setLineLength(state, length) {
+      state.lineLength = length
     }
   },
 
