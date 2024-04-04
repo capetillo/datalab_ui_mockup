@@ -7,6 +7,7 @@ const svg = ref(null)
 const store = useStore()
 
 const randomNumbers = computed(() => store.state.randomNumbers)
+const lineLength = computed(() => store.state.lineLength)
 
 // Setting dimensions and margins for the chart
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
@@ -24,15 +25,15 @@ let svgElement
 // Mapping an array of data points to an SVG path
 const line = d3.line()
 // index of each point for x
-  .x((d, i) => x(i))
+  .x((d, i) => x((i / (randomNumbers.value.length - 1)) * lineLength.value))
   // value for y
   .y(d => y(d))
 
 
 const updateAxes = () => {
-// Add 5% to the largest number from the randomNumbers array to buffer the chart
+  const maxX = lineLength.value
+  // Add 5% to the largest number from the randomNumbers array to buffer the chart
   const maxY = d3.max(randomNumbers.value) * 1.05
-  const maxX = randomNumbers.value.length * 1.05
 
   x.domain([0, maxX])
   y.domain([0, maxY])
@@ -93,8 +94,8 @@ onMounted(() => {
   
 })
 
-watch(randomNumbers, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
+watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLength]) => {
+  if (newNumbers !== oldNumbers || newLength !== oldLength) {
     updateAxes()
   }
 }, { deep: true })
