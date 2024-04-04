@@ -82,12 +82,11 @@ async function getLineProfile(startPoint, endPoint) {
   }
 }
 
-// creates random numbers for the line chart to display
+// Create random numbers for the line chart to display
 // TO DO: get rid of this code and actually implement real data
 function getRandomArrNumbers(max) {
   const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
   store.commit('setRandomNumbers', randomNumbers)
-  console.log('random numbers', store.state.randomNumbers)
 }
 
 
@@ -194,8 +193,9 @@ onMounted(() => {
     // Calculate line length in pixels
     const dx = endPixel.x - startPixel.x
     const dy = endPixel.y - startPixel.y
-    const lineLengthInPixels = Math.sqrt(dx * dx + dy * dy)
+    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy))
 
+    store.commit('setLineLength', lineLengthInPixels)
     console.log(`Line length in pixels: ${lineLengthInPixels}`)
 
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
