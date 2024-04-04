@@ -209,25 +209,30 @@ onMounted(() => {
 
 
 <template>
-  <div
-    v-if="isLoading"
-    class="image-loading-container"
-  >
-    <v-progress-circular
-      indeterminate
-      model-value="20"
-      :size="50"
-      :width="9"
+  <div class="wrapper">
+    <div
+      v-if="isLoading"
+      class="image-loading-container"
+    >
+      <v-progress-circular
+        indeterminate
+        model-value="20"
+        :size="50"
+        :width="9"
+      />
+    </div>
+    <div
+      ref="imageContainer"
+      class="leaflet-map-container"
+      :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
     />
   </div>
-  <div
-    ref="imageContainer"
-    class="leaflet-map-container"
-    :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
-  />
 </template>
 
 <style scoped>
+.wrapper{
+  background-color: var(--dark-blue);
+}
 .leaflet-map-container {
   background-color: transparent;
   margin-left: 2%;
