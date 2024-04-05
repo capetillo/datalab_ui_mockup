@@ -20,7 +20,9 @@ export default createStore({
       observationPortalUrl: '',
       projects: [],
       largeImageCache: [],
-      smallImageCache: []
+      smallImageCache: [],
+      randomNumbers: [],
+      lineLength: 1
     }
   },
 
@@ -70,6 +72,14 @@ export default createStore({
 
     setLargeImageCache(state, imageData) {
       state.largeImageCache = imageData
+    },
+
+    setRandomNumbers(state, numbers) {
+      state.randomNumbers = numbers
+    },
+
+    setLineLength(state, length) {
+      state.lineLength = length
     }
   },
 
