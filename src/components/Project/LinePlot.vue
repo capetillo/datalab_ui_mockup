@@ -9,7 +9,7 @@ const store = useStore()
 const randomNumbers = computed(() => store.state.randomNumbers)
 const lineLength = computed(() => store.state.lineLength)
 
-// Setting dimensions and margins for the chart
+// Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
   svgWidth = 700,
   svgHeight = 480,
@@ -32,7 +32,7 @@ const line = d3.line()
 
 const updateAxes = () => {
   const maxX = lineLength.value
-  // Add 5% to the largest number from the randomNumbers array to buffer the chart
+  // Add 5% to the largest number from the randomNumbers array to buffer the plot
   const maxY = d3.max(randomNumbers.value) * 1.05
 
   x.domain([0, maxX])
@@ -41,10 +41,10 @@ const updateAxes = () => {
   svgElement.select('.x.axis').call(d3.axisBottom(x))
   svgElement.select('.y.axis').call(d3.axisLeft(y))
 
-  updateChart()
+  updatePlot()
 }
 
-const updateChart = () => {
+const updatePlot = () => {
   // Clearing the existing line before drawing a new one
   svgElement.selectAll('.line').remove()
   // Getting new data points and drawing a new line
