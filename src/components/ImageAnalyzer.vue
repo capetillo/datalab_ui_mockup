@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 import ImageViewer from './Project/ImageViewer.vue'
+import LinePlot from './Project/LinePlot.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -38,17 +39,19 @@ function closeDialog() {
       </v-toolbar>
       <div class="analysis-content">
         <image-viewer
-          class="image"
           :image-src="image.url"
         />
-        <v-sheet class="side-panel">
-          <h1>Details</h1>
-          <p>Basename: {{ image.basename }}</p>
-          <p>Date & Time: {{ image.observation_date }}</p>
-          <p>Site: {{ image.site_id }}</p>
-          <p>Telescope: {{ image.telescope_id }}</p>
-          <p>Instrument: {{ image.instrument_id }}</p>
-        </v-sheet>
+        <div class="side-panel-container">
+          <v-sheet class="side-panel">
+            <h1>Details</h1>
+            <p>Basename: {{ image.basename }}</p>
+            <p>Date & Time: {{ image.observation_date }}</p>
+            <p>Site: {{ image.site_id }}</p>
+            <p>Telescope: {{ image.telescope_id }}</p>
+            <p>Instrument: {{ image.instrument_id }}</p>
+          </v-sheet>
+          <line-plot />
+        </div>
       </div>
     </v-sheet>
   </v-dialog>
@@ -64,20 +67,20 @@ function closeDialog() {
   background-color: var(--metal);
 }
 .analysis-content{
-  margin-top: 20px;
-  margin-left: 20px;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  grid-template-rows: 1fr;
-  height: 90%;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
-.image{
-  background-color: var(--dark-blue);
+.side-panel-container {
+  margin: 2% 0 0 7%;
+  display: flex;
+  flex-direction: column
 }
 .side-panel{
   background-color: var(--dark-blue);
   color: var(--tan);
-  position: fixed;
-  right: 20px;
+  margin-left: 10px;
+  margin-bottom: 5%;
 }
+
 </style>

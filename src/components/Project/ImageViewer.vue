@@ -1,6 +1,7 @@
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
+import { useStore } from 'vuex'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -14,6 +15,8 @@ const props = defineProps({
   }
 })
 
+const store = useStore()
+
 const isLoading = ref(true)
 
 const imageContainer = ref(null)
@@ -25,6 +28,8 @@ let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
 let lastDrawnLine = null
+const imageWidth = ref(0)
+const imageHeight = ref(0)
 
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
@@ -32,15 +37,21 @@ const loadImageOverlay = (src) => {
   img.onload = () => {
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [img.height, img.width]] 
-
     if (imageOverlay) {
       image.removeLayer(imageOverlay)
     }
+    imageWidth.value = img.width
+    imageHeight.value = img.height
     // Add new overlay with correct bounds
     imageOverlay = L.imageOverlay(src, imageBounds).addTo(image)
     // Fit image view to the bounds of the image
     image.fitBounds(imageBounds)
     image.setMaxBounds(imageBounds)
+
+    // waits for DOM to load then recalculates image's size and position after the container's dimensions have changed (built in method of Leaflet)
+    nextTick(() => {
+      image.invalidateSize()
+    })
 
     initialCenter = image.getCenter()
     initialZoom = image.getZoom()
@@ -49,12 +60,14 @@ const loadImageOverlay = (src) => {
   img.src = src
 }
 
+// TO DO: Implement success callback to display line profile
 const displayLineProfile = (data) =>{
   if (data) {
     console.log(data)
   }
 }
 
+// TO DO: Implement API call to get line profile
 async function getLineProfile(startPoint, endPoint) {
   // const url = 'http://localhost:8000/api/line-profile/'
   // await fetchApiCall({ 
@@ -68,6 +81,15 @@ async function getLineProfile(startPoint, endPoint) {
     displayLineProfile({startPoint, endPoint})
   }
 }
+
+// Create random numbers for the plot to display
+// TO DO: get rid of this code and actually implement real data
+function getRandomArrNumbers(max) {
+  const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
+  store.commit('setRandomNumbers', randomNumbers)
+}
+
+
 
 onMounted(() => {
   // Create leaflet map (here referred to as image)
@@ -167,9 +189,17 @@ onMounted(() => {
     const startPixel = latLngToImagePixelAdjusted(startPoint)
     const endPixel = latLngToImagePixelAdjusted(endPoint)
 
+    // Calculate line length in pixels
+    const dx = endPixel.x - startPixel.x
+    const dy = endPixel.y - startPixel.y
+    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy)) 
+
+    store.commit('setLineLength', lineLengthInPixels)
+
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
     getLineProfile(startCoordinates.value, endCoordinates.value)
+    getRandomArrNumbers(65000)
   })
 })
 
@@ -177,29 +207,38 @@ onMounted(() => {
 
 
 <template>
-  <div
-    v-if="isLoading"
-    class="image-loading-container"
-  >
-    <v-progress-circular
-      indeterminate
-      model-value="20"
-      :size="50"
-      :width="9"
+  <div class="wrapper">
+    <div
+      v-if="isLoading"
+      class="image-loading-container"
+    >
+      <v-progress-circular
+        indeterminate
+        model-value="20"
+        :size="50"
+        :width="9"
+      />
+    </div>
+    <div
+      ref="imageContainer"
+      class="leaflet-map-container"
+      :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
     />
   </div>
-  <div
-    ref="imageContainer"
-    class="leaflet-map-container"
-  />
 </template>
 
 <style scoped>
+.wrapper{
+  background-color: var(--dark-blue);
+}
 .leaflet-map-container {
-  flex: 1; 
-  width: 100%;
   background-color: transparent;
-  margin-left: 5%;
+  margin-left: 2%;
+  margin-top: 2%;
+}
+.leaflet-image-layer {
+  width: 100% !important;
+  height: 100% !important;
 }
 .leaflet-tooltip {
   display: none !important;
