@@ -82,7 +82,7 @@ async function getLineProfile(startPoint, endPoint) {
   }
 }
 
-// Create random numbers for the line chart to display
+// Create random numbers for the plot to display
 // TO DO: get rid of this code and actually implement real data
 function getRandomArrNumbers(max) {
   const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
