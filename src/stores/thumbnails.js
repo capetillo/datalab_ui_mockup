@@ -35,16 +35,6 @@ const cacheOptionsLarge = {
   updateAgeOnHas: true,
 }
 
-// function mySerializer(value) {
-//   console.log(value)
-//   return JSON.stringify(value)
-// }
-
-// function myDeserializer(value) {
-//   console.log(value)
-//   return JSON.parse(value)
-// }
-
 export const useThumbnailsStore = defineStore('thumbnails', {
   state() {
     return {
