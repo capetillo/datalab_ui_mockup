@@ -4,20 +4,22 @@ import ProjectBar from '@/components/Project/ProjectBar.vue'
 import ImageCarousel from '@/components/Project/ImageCarousel.vue'
 import ImageList from '@/components/Project/ImageList.vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
+import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall } from '../utils/api'
 
 const router = useRouter()
-const store = useStore()
+const settingsStore = useSettingsStore()
+const userDataStore = useUserDataStore()
 const isPopupVisible = ref(false)
 const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const isLoading = ref(true)
-const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const dataSessionsUrl = settingsStore.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(() => {
-  if (!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
+  if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
 })
 
 // toggle for optional data viewing, controlled by a v-switch
@@ -30,9 +32,9 @@ const selectedProjectImages = ref([])
 // Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
 const loadUserImages = async (option) => {
   isLoading.value = true
-  await store.dispatch('loadAndCacheImages', { option })
+  await settingsStore.loadAndCacheImages(option)
   isLoading.value = false
-  smallImageCache.value = store.state.smallImageCache
+  smallImageCache.value = settingsStore.smallImageCache
   updateGroupedProjects()
 }
 
@@ -66,15 +68,15 @@ const filterImagesByProposalId = (proposalId) => {
 
 // boolean computed property used to disable the add to session button
 const noSelectedImages = computed(() => {
-  return store.getters.selectedImages.length === 0
+  return settingsStore.selectedImages.length === 0
 })
 
 const imageCounter = computed(() => {
-  return store.state.selectedImages.length
+  return settingsStore.selectedImages.length
 })
 
 const unselectImages = () => {
-  store.commit('selectedImages', [])
+  settingsStore.selectedImages = []
 }
 
 // manages successful api response by mapping data to unique sessions
@@ -106,7 +108,7 @@ const addImagesToExistingSession = async (session) => {
     // merging existing and new image data
     // this is temporary since the backend has to be updated to handle this
     // remove this when backend gets updated
-    const selectedImages = store.state.selectedImages
+    const selectedImages = settingsStore.selectedImages
     const inputData = [...currentSessionData, ...selectedImages.map(image => ({
       'source': 'archive',
       'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
@@ -154,7 +156,7 @@ const closePopup = () => {
 
 // handles creation of a new session 
 const createNewDataSession = async () => {
-  const selectedImages = store.state.selectedImages
+  const selectedImages = settingsStore.selectedImages
   const inputData = selectedImages.map(image => ({
     'source': 'archive',
     'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
@@ -225,7 +227,7 @@ onUnmounted(() => {
         </p>
       </div>
       <v-skeleton-loader
-        v-if="!store.state.smallImageCache"
+        v-if="!settingsStore.smallImageCache"
         type="card"
       />
       <div class="control-buttons">
