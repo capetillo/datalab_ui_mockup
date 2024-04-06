@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
+import { useUserDataStore } from '@/stores/userData'
 import { useRouter } from 'vue-router'
 import { fetchApiCall } from '@/utils/api'
 import lambdaLogo from '../assets/PTR-lambda.png'
 
-const store = useStore()
+const settingsStore = useSettingsStore()
+const userDataStore = useUserDataStore()
 const router = useRouter()
 const username = ref('')
 const password = ref('')
@@ -13,7 +15,7 @@ const errorMessage = ref('')
 const showPassword = ref(false)
 
 onBeforeMount(() => {
-  if (store.getters['userData/userIsAuthenticated']) router.push({ name: 'ProjectView' })
+  if (userDataStore.userIsAuthenticated) router.push({ name: 'ProjectView' })
 })
 
 // validation rule for vuetify components
@@ -25,8 +27,8 @@ const rules = {
 const storeToken = async (data) => {
   const authToken = data.token
   if (authToken) {
-    store.dispatch('userData/setAuthToken', authToken)
-    await fetchApiCall({ url: store.state.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
+    userDataStore.authToken = authToken
+    await fetchApiCall({ url: settingsStore.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
   }
 }
 
@@ -36,9 +38,9 @@ const handleError = (error) => {
 }
 
 const storeUser = (user) => {
-  store.dispatch('userData/setUsername', username.value)
-  store.dispatch('userData/setUserProfile', user)
-  store.commit('setProjects', user.proposals)
+  userDataStore.username = username.value
+  userDataStore.profile = user
+  settingsStore.projects = user.proposals
   router.push({ name: 'ProjectView' })
 }
 
@@ -48,7 +50,7 @@ const Login = async () => {
     password: password.value
   }
   // store an auth token from login credentials
-  await fetchApiCall({ url: store.state.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
+  await fetchApiCall({ url: settingsStore.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
 }
 
 </script>

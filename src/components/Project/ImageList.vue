@@ -1,9 +1,9 @@
 <!-- eslint-disable vue/require-prop-types -->
 <script setup>
 import { ref, onMounted, defineProps } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
 
-const store = useStore()
+const store = useSettingsStore()
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['data'])
 
@@ -20,11 +20,11 @@ let itemsPerPage = ref(15)
 let selected = ref([])
 
 function select(selectedImageNames) {
-  store.dispatch('setSelectedImages', selectedImageNames)
+  store.selectedImages = selectedImageNames
 }
 
 onMounted ( () => {
-  selected.value = store.getters.selectedImages
+  selected.value = store.selectedImages
 })
 
 </script>
@@ -45,7 +45,7 @@ onMounted ( () => {
   >
     <template #[`item.url`]="{ item }">
       <v-img
-        :src="item.url"
+        :src="item.cachedUrl"
         :alt="item.OBJECT"
         class="list_image"
         cover
