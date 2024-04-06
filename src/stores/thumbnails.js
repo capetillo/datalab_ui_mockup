@@ -118,7 +118,6 @@ export const useThumbnailsStore = defineStore('thumbnails', {
               if (persist) this.$persist()  // must persist manually since it doesn't detect the cache changed
             }
             else {
-              console.log('Caching new URL ' + responseUrl + ' for basename ' + basename)
               this.smallThumbnailsCache.set(basename, responseUrl)
               if (persist) this.$persist()  // must persist manually since it doesn't detect the cache changed
             }
