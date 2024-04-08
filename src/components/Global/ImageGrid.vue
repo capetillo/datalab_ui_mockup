@@ -55,10 +55,25 @@ watch(() => props.images, () => {
 
 <template>
   <v-row v-if="props.images.length">
-    <v-col v-for="(image, index) in props.images" :key="index" :cols="columnSpan">
-      <v-img v-if="image.basename in imageDetails && imageDetails[image.basename]" :src="imageDetails[image.basename]" :alt="image.basename" cover
-        :class="{ 'selected-image': isSelected(index) }" aspect-ratio="1" class="image-grid" @click="onImageClick(index)">
-        <span v-if="'operationIndex' in image" class="image-text-overlay">{{ image.operationIndex }}</span>
+    <v-col
+      v-for="(image, index) in props.images"
+      :key="index"
+      :cols="columnSpan"
+    >
+      <v-img
+        v-if="image.basename in imageDetails && imageDetails[image.basename]"
+        :src="imageDetails[image.basename]"
+        :alt="image.basename"
+        cover
+        :class="{ 'selected-image': isSelected(index) }"
+        aspect-ratio="1"
+        class="image-grid"
+        @click="onImageClick(index)"
+      >
+        <span
+          v-if="'operationIndex' in image"
+          class="image-text-overlay"
+        >{{ image.operationIndex }}</span>
       </v-img>
     </v-col>
   </v-row>
