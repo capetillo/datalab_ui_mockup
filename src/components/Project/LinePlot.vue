@@ -1,0 +1,113 @@
+<script setup>
+import { onMounted, ref, computed, watch } from 'vue'
+import { useSettingsStore } from '@/stores/settings';
+import * as d3 from 'd3'
+
+const svg = ref(null)
+const store = useSettingsStore()
+
+const randomNumbers = computed(() => store.randomNumbers)
+const lineLength = computed(() => store.lineLength)
+
+// Setting dimensions and margins for the plot
+const margin = { top: 20, right: 20, bottom: 70, left: 80 },
+  svgWidth = 700,
+  svgHeight = 480,
+  width = svgWidth - margin.left - margin.right,
+  height = svgHeight - margin.top - margin.bottom
+
+// Configuring linear scales for positioning data points
+let x = d3.scaleLinear().range([0, width])
+let y = d3.scaleLinear().range([height, 0])
+let svgElement
+
+
+// Mapping an array of data points to an SVG path
+const line = d3.line()
+// index of each point for x
+  .x((d, i) => x((i / (randomNumbers.value.length - 1)) * lineLength.value))
+  // value for y
+  .y(d => y(d))
+
+
+const updateAxes = () => {
+  const maxX = lineLength.value
+  // Add 5% to the largest number from the randomNumbers array to buffer the plot
+  const maxY = d3.max(randomNumbers.value) * 1.05
+
+  x.domain([0, maxX])
+  y.domain([0, maxY])
+
+  svgElement.select('.x.axis').call(d3.axisBottom(x))
+  svgElement.select('.y.axis').call(d3.axisLeft(y))
+
+  updatePlot()
+}
+
+const updatePlot = () => {
+  // Clearing the existing line before drawing a new one
+  svgElement.selectAll('.line').remove()
+  // Getting new data points and drawing a new line
+  svgElement.append('path')
+    .datum(randomNumbers.value)
+    .attr('class', 'line')
+    .attr('d', line)
+    .attr('fill', 'none')
+    .attr('stroke', 'steelblue')
+    .attr('stroke-width', 2)
+}
+
+onMounted(() => {
+  svgElement = d3.select(svg.value)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`)
+
+  const xAxis = svgElement.append('g')
+    .attr('class', 'x axis')
+    .attr('transform', `translate(0,${height})`)
+
+  const yAxis = svgElement.append('g')
+    .attr('class', 'y axis')
+
+  updateAxes()
+
+  // Labeling and styling axes
+  xAxis.append('text')
+    .attr('class', 'axis-label')
+    .attr('x', width / 2)
+    .attr('y', margin.bottom)
+    .attr('fill', 'white')
+    .style('font-size', '16px')
+    .style('text-anchor', 'middle')
+    .text('Distance in Pixels')
+
+  yAxis.append('text')
+    .attr('class', 'axis-label')
+    .attr('transform', 'rotate(-90)')
+    .attr('y', -margin.left)
+    .attr('x', -(height / 2))
+    .attr('dy', '1em')
+    .attr('fill', 'white')
+    .style('font-size', '16px')
+    .style('text-anchor', 'middle')
+    .text('Luminosity')
+  
+})
+
+watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLength]) => {
+  if (newNumbers !== oldNumbers || newLength !== oldLength) {
+    updateAxes()
+  }
+}, { deep: true })
+
+</script>
+
+<template>
+  <div>
+    <svg
+      ref="svg"
+      :width="svgWidth"
+      :height="svgHeight"
+    />
+  </div>
+</template>
