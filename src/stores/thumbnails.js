@@ -55,6 +55,7 @@ export const useThumbnailsStore = defineStore('thumbnails', {
         return JSON.stringify(serializedValue)
       },
       deserialize: value => {
+        // De-serialize the image LRU cache from persistent storage, and invalid its stored URLs.
         let tempValue = JSON.parse(value)
         var smallThumbnailsCache2 = new LRUCache(cacheOptionsSmall)
         smallThumbnailsCache2.load(tempValue.smallThumbnailsCache)
@@ -78,7 +79,7 @@ export const useThumbnailsStore = defineStore('thumbnails', {
       },
     },
     afterRestore: async (ctx) => {
-      // Rebuild the object urls here since they are probably not valid anymore
+      // Rebuild the object urls here since they were cleared on reload
       await ctx.store.reloadCachedImagesIntoLRUCache()
     }
   },
@@ -128,6 +129,8 @@ export const useThumbnailsStore = defineStore('thumbnails', {
     },
     // This should just be called a single time when cache is reloaded fill the LRU cache with what is in the browser cache
     async reloadCachedImagesIntoLRUCache() {
+      // This takes all the keys in the browser cache, and adds them to the LRU cache. If they were already in the cache, this
+      // operation won't overwrite their TTL or order so they should keep their position and lifetime but regenerate their URL.
       var smallImageBasenames = await getAllCacheKeys('small')
       for (const key of smallImageBasenames) {
         let basename = key.url.split('/').pop()
