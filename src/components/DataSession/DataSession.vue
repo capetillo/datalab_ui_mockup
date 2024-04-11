@@ -23,7 +23,6 @@ const emit = defineEmits(['reloadSession'])
 const images = ref([...props.data.input_data])
 const filteredImages = ref([...images.value])
 
-// const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
 const dataSessionsUrl = store.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
 const operationMap = {}

@@ -19,6 +19,7 @@ async function getImageFromBasename(size, archive, url, imageBasename) {
   const cacheName = size + 'Thumbnails'
   return caches.open(cacheName).then((cache) => {
     return cache.match(imageBasename, cacheOptions).then(function (response) {
+      // If not found in cache, then fetch image thumbnail from url or from archive and cache the result and return it
       return response || cacheImageFromBasename(size, archive, url, imageBasename)
     })
   })
@@ -34,6 +35,9 @@ async function deleteCachedImageFromBasename(size, imageBasename) {
 
 async function cacheImageFromBasename(size, archive, url, imageBasename) {
   console.log('Calling cacheImageFromBasename with basename: ' + size + ' - ' + imageBasename)
+  // Right now we only have a ptr archive, but planning to maybe use this to differentiate later
+  // If url exists, it will use that to directly download and cache image. If not it will use
+  // the archive to decide how to fetch the image based on its basename and archive.
   if (archive == 'ptr') {
     if (!url) {
       const store = useSettingsStore()
