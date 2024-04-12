@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings';
 import * as d3 from 'd3'
 
 const svg = ref(null)
-const store = useStore()
+const store = useSettingsStore()
 
-const randomNumbers = computed(() => store.state.randomNumbers)
-const lineLength = computed(() => store.state.lineLength)
+const randomNumbers = computed(() => store.randomNumbers)
+const lineLength = computed(() => store.lineLength)
 
 // Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },

@@ -1,7 +1,6 @@
 <script setup>
 import { defineProps, ref, defineEmits, watch } from 'vue'
-import { useStore } from 'vuex'
-import { fetchApiCall, handleError } from '../../utils/api'
+import { useThumbnailsStore } from '@/stores/thumbnails'
 
 const props = defineProps({
   images: {
@@ -20,21 +19,9 @@ const props = defineProps({
 
 let imageDetails = ref({})
 let selectedImages = ref([])
-const store = useStore()
+const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
 
-const saveImage = (data) => {
-  const results = data.results
-  if (results.length) {
-    const imageBasename = data.results[0].basename.replace('-small', '')
-    imageDetails.value[imageBasename] = data.results[0]
-  }
-}
-
-async function loadImage(basename) {
-  const url = store.state.datalabArchiveApiUrl + 'frames/?basename_exact=' + basename + '-small'
-  await fetchApiCall({ url: url, method: 'GET', successCallback: saveImage, failCallback: handleError })
-}
 
 const isSelected = (index) => {
   return selectedImages.value.includes(index)
@@ -56,7 +43,10 @@ watch(() => props.images, () => {
   selectedImages.value = []
   props.images.forEach(image => {
     if (!(image.basename in imageDetails.value)) {
-      loadImage(image.basename)
+      imageDetails.value[image.basename] = ref('')
+      thumbnailsStore.cacheImage('small', 'ptr', '', image.basename).then((cachedUrl) => {
+        imageDetails.value[image.basename] = cachedUrl
+      })
     }
   })
 }, { immediate: true })
@@ -71,8 +61,8 @@ watch(() => props.images, () => {
       :cols="columnSpan"
     >
       <v-img
-        v-if="image.basename in imageDetails"
-        :src="imageDetails[image.basename].url"
+        v-if="image.basename in imageDetails && imageDetails[image.basename]"
+        :src="imageDetails[image.basename]"
         :alt="image.basename"
         cover
         :class="{ 'selected-image': isSelected(index) }"
