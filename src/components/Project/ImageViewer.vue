@@ -1,12 +1,11 @@
 
 <script setup>
 import { onMounted, ref, nextTick } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings';
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet/dist/leaflet.css'
-// import { fetchApiCall, handleError } from '../../utils/api'
 
 const props = defineProps({
   imageSrc: {
@@ -15,7 +14,7 @@ const props = defineProps({
   }
 })
 
-const store = useStore()
+const store = useSettingsStore()
 
 const isLoading = ref(true)
 
@@ -86,7 +85,7 @@ async function getLineProfile(startPoint, endPoint) {
 // TO DO: get rid of this code and actually implement real data
 function getRandomArrNumbers(max) {
   const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
-  store.commit('setRandomNumbers', randomNumbers)
+  store.randomNumbers = randomNumbers
 }
 
 
@@ -193,8 +192,7 @@ onMounted(() => {
     const dx = endPixel.x - startPixel.x
     const dy = endPixel.y - startPixel.y
     const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy)) 
-
-    store.commit('setLineLength', lineLengthInPixels)
+    store.lineLength = lineLengthInPixels
 
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }

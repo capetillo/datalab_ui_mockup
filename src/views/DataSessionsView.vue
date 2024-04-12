@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeMount } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
+import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession/DataSession.vue'
 import DeleteSessionDialog from '@/components/DataSession/DeleteSessionDialog.vue'
@@ -8,15 +9,16 @@ import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
-const store = useStore()
+const settingsStore = useSettingsStore()
+const userDataStore = useUserDataStore()
 const dataSessions = ref([])
 const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
-const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const dataSessionsUrl = settingsStore.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(() => {
-  if (!store.getters['userData/userIsAuthenticated']) router.push({ name: 'Registration' })
+  if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
 })
 
 onMounted(async () => {
@@ -56,10 +58,18 @@ function updateData(data) {
 }
 
 function tabColor(index) {
-  if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
+  if (tabActive(index)) {
     return 'selected'
   } else {
     return 'not-selected'
+  }
+}
+
+function tabActive(index) {
+  if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
+    return true
+  } else {
+    return false
   }
 }
 
@@ -78,8 +88,8 @@ function tabColor(index) {
         <v-btn variant="plain" icon="mdi-plus-box" class="tab_button" @click="router.push({ name: 'ProjectView' })" />
       </v-tabs>
       <v-window v-model="tab">
-        <v-window-item v-for="ds in dataSessions" :key="ds.id" :value="ds.id">
-          <data-session :data="ds" @reload-session="loadSessions()" />
+        <v-window-item v-for="(ds, index) in dataSessions" :key="ds.id" :value="ds.id">
+          <data-session :data="ds" :active="tabActive(index)" @reload-session="loadSessions()" />
         </v-window-item>
       </v-window>
     </v-card>

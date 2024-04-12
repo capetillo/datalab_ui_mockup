@@ -2,14 +2,14 @@
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import { fetchApiCall } from '../../utils/api'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
 
 const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
-const store = useStore()
+const store = useSettingsStore()
 
 let showSnackBar = ref(false)
-const datalabApiBaseUrl = store.state.datalabApiBaseUrl
+const datalabApiBaseUrl = store.datalabApiBaseUrl
 const dataSessionsUrl = datalabApiBaseUrl + 'datasessions/'
 
 function closeDialog() { 
