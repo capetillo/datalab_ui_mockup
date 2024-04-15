@@ -31,6 +31,7 @@ let lastDrawnLine = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 
+
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
   const img = new Image()
@@ -134,6 +135,7 @@ onMounted(() => {
   })
 
   const zoomedInThreshold = 1
+
   // Disable dragging until zoomed in
   image.on('zoomend', () => {
     if (image.getZoom() >= zoomedInThreshold) {
@@ -207,7 +209,10 @@ onMounted(() => {
 
 
 <template>
-  <div class="wrapper">
+  <div
+    class="wrapper"
+    :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+  >
     <div
       v-if="isLoading"
       class="image-loading-container"
@@ -245,5 +250,15 @@ onMounted(() => {
 }
 .button-container.active .leaflet-pm-actions-container {
   display: none !important;
+}
+@media (max-width: 1200px) {
+  .wrapper {
+    overflow: visible;
+  }
+  .leaflet-map-container{
+    transform: scale(0.7);
+    transform-origin: top left;
+    background-color: transparent;
+  }
 }
 </style>
