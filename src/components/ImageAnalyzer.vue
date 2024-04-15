@@ -82,6 +82,11 @@ function closeDialog() {
   margin-left: 10px;
   margin-bottom: 5%;
 }
+@media (min-width: 1201px) { 
+  .side-panel-container {
+    margin-left: 20%;
+  }
+}
 @media (max-width: 1200px) {
 .analysis-sheet {
   overflow: hidden !important;

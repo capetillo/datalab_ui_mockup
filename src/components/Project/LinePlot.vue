@@ -126,7 +126,7 @@ watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLen
 }
 @media (max-width: 1200px) {
 .svg-wrapper {
-  margin-left: -15%;
+  margin-left: -18%;
 }
 .line-plot {
   background-color: var(--dark-blue);
