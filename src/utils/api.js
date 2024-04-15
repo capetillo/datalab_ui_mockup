@@ -1,14 +1,16 @@
-import store from '../store/index'
+import { useUserDataStore } from '@/stores/userData'
 
 // handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = null }) {
+
+  const store = useUserDataStore()
 
   const defaultHeader = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   }
-  if(store.getters['userData/authToken']){
-    defaultHeader['Authorization'] = `Token ${store.getters['userData/authToken']}`
+  if(store.authToken){
+    defaultHeader['Authorization'] = `Token ${store.authToken}`
   }
 
   const config = {
@@ -43,5 +45,6 @@ async function fetchApiCall({ url, method, body = null, header, successCallback 
 const handleError = (error) => {
   console.error('API call failed with error:', error)
 }
+
 
 export { fetchApiCall, handleError }

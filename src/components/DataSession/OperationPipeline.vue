@@ -1,10 +1,10 @@
 <script setup>
 import { ref, defineEmits, defineProps, watch, onBeforeUnmount } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
 import { fetchApiCall, handleError } from '@/utils/api'
 import OperationWizard from './OperationWizard.vue'
 
-const store = useStore()
+const store = useSettingsStore()
 const emit = defineEmits(['addOperation', 'operationCompleted', 'selectOperation'])
 
 const props = defineProps({
@@ -18,6 +18,10 @@ const props = defineProps({
   },
   images: {
     type: Array,
+    required: true
+  },
+  active: {
+    type: Boolean,
     required: true
   }
 })
@@ -50,7 +54,7 @@ function operationBtnColor(index) {
 }
 
 async function pollOperationCompletion(operationID) {
-  const url = await store.state.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
+  const url = store.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
 
   const updateOperationPercentages = (response) => {
     if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
@@ -73,13 +77,23 @@ function clearPollingData(operationID) {
   delete operationPollingTimers[operationID]
 }
 
-watch(() => props.operations, () => {
-  props.operations.forEach(operation => {
-    if (!operationPollingTimers[operation.id]) {
-      operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+watch(
+  () => props.active, (active, previousActive) => {
+    if (active && !previousActive) {
+      props.operations.forEach(operation => {
+        if (!operationPollingTimers[operation.id]) {
+          operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+        }
+      })
     }
-  })
-}, { immediate: true })
+    else {
+      Object.keys(operationPollingTimers).forEach(operationID => {
+        clearInterval(operationPollingTimers[operationID])
+        clearPollingData(operationID)
+      })
+    }
+  }, { immediate: true }
+)
 
 onBeforeUnmount(() => {
   // Clean up Polling Intervals

@@ -1,7 +1,8 @@
 
 <script setup>
 import { ref, defineProps, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
+import { useThumbnailsStore } from '@/stores/thumbnails'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from '../ImageAnalyzer.vue'
@@ -13,15 +14,16 @@ const props = defineProps({
   }
 })
 
-const store = useStore()
+const store = useSettingsStore()
+const thumbnailsStore = useThumbnailsStore()
 const currentSlide = ref(0)
 const currSmallImage = ref(null)
 const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
 
 const handleThumbnailClick = (item, index) => {
-  store.dispatch('toggleImageSelection', item)
-  const lastSelectedImage = store.state.selectedImages.length > 0 ? store.state.selectedImages[store.state.selectedImages.length - 1] : null
+  store.toggleImageSelection(item)
+  const lastSelectedImage = store.selectedImages.length > 0 ? store.selectedImages[store.selectedImages.length - 1] : null
   const isLastSelectedImageInCurrentProject = lastSelectedImage && props.data.some(img => img.basename === lastSelectedImage.basename)
   if (isLastSelectedImageInCurrentProject) {
     currSmallImage.value = lastSelectedImage
@@ -29,13 +31,24 @@ const handleThumbnailClick = (item, index) => {
   } else {
     currentSlide.value = index
   }
-  currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
+  currLargeImage.value = store.getLargeImageFromBasename(currSmallImage.value.basename)
 }
+
+
+watch(currLargeImage, async (newValue) => {
+  if (newValue){
+    currLargeImage.value.cachedUrl = ref('')
+    thumbnailsStore.cacheImage('large', 'ptr', newValue.url, newValue.basename).then((cachedUrl) => {
+      currLargeImage.value.cachedUrl = cachedUrl
+    })
+  }
+})
+
 
 watch(() => props.data, (newVal) => {
   if (newVal && newVal.length > 0) {
     currSmallImage.value = newVal[0]
-    currLargeImage.value = store.getters.getLargeImageFromBasename(currSmallImage.value.basename)
+    currLargeImage.value = store.getLargeImageFromBasename(currSmallImage.value.basename)
   }
 }, {
   immediate: true
@@ -59,7 +72,8 @@ watch(() => props.data, (newVal) => {
     >
       <div class="selected__item">
         <img
-          :src="currLargeImage?.url"
+          v-if="currLargeImage"
+          :src="currLargeImage.cachedUrl"
           class="selected__image"
           :alt="item.OBJECT"
           @click="showAnalysisDialog = true"
@@ -79,11 +93,11 @@ watch(() => props.data, (newVal) => {
     >
       <!-- Use lazy-src for lazy loading -->
       <v-img
-        :src="item.url"
+        :src="item.cachedUrl"
         loading="lazy"
         cover
         class="thumbnail__item"
-        :class="{'selected-thumbnail': store.getters.isSelected(item)}"
+        :class="{'selected-thumbnail': store.isSelected(item)}"
         :alt="item.OBJECT"
       />
     </div>
