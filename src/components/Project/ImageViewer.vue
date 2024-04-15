@@ -1,6 +1,6 @@
 
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, nextTick, computed } from 'vue'
 import { useStore } from 'vuex'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
@@ -31,6 +31,8 @@ let lastDrawnLine = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 
+const scaledHeight = computed(() => imageHeight.value * 0.7)
+const scaledWidth = computed(() => imageWidth.value * 0.7)
 
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
@@ -211,7 +213,7 @@ onMounted(() => {
 <template>
   <div
     class="wrapper"
-    :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+    :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }"
   >
     <div
       v-if="isLoading"
@@ -251,9 +253,10 @@ onMounted(() => {
 .button-container.active .leaflet-pm-actions-container {
   display: none !important;
 }
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   .wrapper {
     overflow: visible;
+    margin-left: 10%;
   }
   .leaflet-map-container{
     transform: scale(0.7);
