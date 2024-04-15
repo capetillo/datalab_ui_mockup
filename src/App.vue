@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
 import NavBar from './components/Global/NavBar.vue'
 
-const store = useStore()
-const loadedConfig = computed(() => store.state.isConfigLoaded)
+const store = useSettingsStore()
+const loadedConfig = computed(() => store.isConfigLoaded)
 
 // loading config  when app first mounts
 onMounted(async () => {
@@ -15,17 +15,17 @@ onMounted(async () => {
     }
     const config = await response.json()
     if (config) {
-      store.commit('setIsConfigLoaded', true)
-      store.commit('setDatalabApiBaseUrl', config.datalabApiBaseUrl)
-      store.commit('setObservationPortalUrl', config.observationPortalUrl)
-      store.commit('setDatalabArchiveUrl', config.dataLabArchiveApiUrl)
+      store.datalabApiBaseUrl = config.datalabApiBaseUrl
+      store.observationPortalUrl = config.observationPortalUrl
+      store.datalabArchiveApiUrl = config.dataLabArchiveApiUrl
+      store.isConfigLoaded = true
     }
   } catch (error) {
     console.error('Error loading configuration:', error)
   }
 })
 
-watch(() => store.state.isColorblindMode, (newVal) => {
+watch(() => store.isColorblindMode, (newVal) => {
   if (newVal) {
     document.documentElement.setAttribute('colorblind', 'true')
   } else {

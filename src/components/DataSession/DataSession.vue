@@ -3,22 +3,27 @@ import { ref, defineEmits, defineProps, onMounted, watch } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../../utils/api'
 import { calculateColumnSpan } from '@/utils/common'
-import { useStore } from 'vuex'
+import { useSettingsStore } from '@/stores/settings'
 import ImageGrid from '../Global/ImageGrid'
 
 const props = defineProps({
   data: {
     type: Object,
     required: true
+  },
+  active: {
+    type: Boolean,
+    required: true
   }
 })
 
-const store = useStore()
+const store = useSettingsStore()
+
 const emit = defineEmits(['reloadSession'])
 const images = ref([...props.data.input_data])
 const filteredImages = ref([...images.value])
 
-const dataSessionsUrl = store.state.datalabApiBaseUrl + 'datasessions/'
+const dataSessionsUrl = store.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
 const operationMap = {}
 var selectedOperation = -1
@@ -92,7 +97,8 @@ watch(
     props.data.operations.forEach((operation, index) => {
       operationMap[operation.id] = index
     })
-  }, { immediate: true })
+  },
+  { immediate: true })
 
 
 onMounted(() => {
@@ -106,7 +112,7 @@ onMounted(() => {
     <image-grid :images="filteredImages" :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)" />
     <v-col cols="3" justify="center" align="center">
       <!-- The operations bar list goes here -->
-      <operation-pipeline :images="images" :session_id="data.id" :operations="data.operations"
+      <operation-pipeline :images="images" :session_id="data.id" :operations="data.operations" :active="props.active"
         @add-operation="addOperation" @operation-completed="addCompletedOperation" @select-operation="selectOperation" />
     </v-col>
   </v-container>
