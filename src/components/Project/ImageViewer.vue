@@ -253,6 +253,16 @@ onMounted(() => {
 .button-container.active .leaflet-pm-actions-container {
   display: none !important;
 }
+@media (max-width: 1200px) {
+  .wrapper {
+    overflow: visible;
+  }
+  .leaflet-map-container{
+    transform: scale(0.6);
+    transform-origin: top left;
+    background-color: transparent;
+  }
+}
 @media (max-width: 900px) {
   .wrapper {
     overflow: visible;
