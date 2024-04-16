@@ -1,7 +1,7 @@
 
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
-import { useSettingsStore } from '@/stores/settings';
+import { onMounted, ref, nextTick, computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -29,6 +29,9 @@ let initialZoom = 1
 let lastDrawnLine = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
+
+const scaledHeight = computed(() => imageHeight.value * 0.7)
+const scaledWidth = computed(() => imageWidth.value * 0.7)
 
 // loads image overlay and set bounds
 const loadImageOverlay = (src) => {
@@ -133,6 +136,7 @@ onMounted(() => {
   })
 
   const zoomedInThreshold = 1
+
   // Disable dragging until zoomed in
   image.on('zoomend', () => {
     if (image.getZoom() >= zoomedInThreshold) {
@@ -205,7 +209,10 @@ onMounted(() => {
 
 
 <template>
-  <div class="wrapper">
+  <div
+    class="wrapper"
+    :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }"
+  >
     <div
       v-if="isLoading"
       class="image-loading-container"
@@ -243,5 +250,26 @@ onMounted(() => {
 }
 .button-container.active .leaflet-pm-actions-container {
   display: none !important;
+}
+@media (max-width: 1200px) {
+  .wrapper {
+    overflow: visible;
+  }
+  .leaflet-map-container{
+    transform: scale(0.6);
+    transform-origin: top left;
+    background-color: transparent;
+  }
+}
+@media (max-width: 900px) {
+  .wrapper {
+    overflow: visible;
+    margin-left: 10%;
+  }
+  .leaflet-map-container{
+    transform: scale(0.7);
+    transform-origin: top left;
+    background-color: transparent;
+  }
 }
 </style>

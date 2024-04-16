@@ -72,7 +72,7 @@ function closeDialog() {
   height: 100%;
 }
 .side-panel-container {
-  margin: 2% 0 0 7%;
+  margin-top: 2%;
   display: flex;
   flex-direction: column
 }
@@ -81,6 +81,48 @@ function closeDialog() {
   color: var(--tan);
   margin-left: 10px;
   margin-bottom: 5%;
+}
+@media (min-width: 1201px) { 
+  .side-panel-container {
+    margin-left: 20%;
+  }
+}
+@media (max-width: 1200px) {
+.analysis-sheet {
+  overflow: hidden !important;
+}
+.side-panel {
+  font-size: 0.75em;
+}
+}
+@media (max-width: 900px) {
+.analysis-sheet {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+.analysis-content {
+  flex-direction: column;
+}
+.side-panel-container {
+  margin-left: 11%;
+  margin-top: 5%;
+  flex-direction: row;
+  height: 30%;
+}
+.side-panel {
+  width: 25%;
+  height: 50%;
+  margin: 0;
+}
+.line-plot {
+  flex-grow: 1;
+  height: 100%;
+}
+.image-viewer {
+  order: -1;
+  height: 70%;
+}
 }
 
 </style>
