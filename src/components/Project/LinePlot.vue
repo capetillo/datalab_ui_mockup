@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue'
-import { useSettingsStore } from '@/stores/settings';
+import { useSettingsStore } from '@/stores/settings'
 import * as d3 from 'd3'
 
 const svg = ref(null)
@@ -76,8 +76,9 @@ onMounted(() => {
     .attr('class', 'axis-label')
     .attr('x', width / 2)
     .attr('y', margin.bottom)
-    .attr('fill', 'white')
+    .attr('fill', 'tan')
     .style('font-size', '16px')
+    .style('font-family', 'Open Sans, sans-serif')
     .style('text-anchor', 'middle')
     .text('Distance in Pixels')
 
@@ -87,8 +88,9 @@ onMounted(() => {
     .attr('y', -margin.left)
     .attr('x', -(height / 2))
     .attr('dy', '1em')
-    .attr('fill', 'white')
+    .attr('fill', 'tan')
     .style('font-size', '16px')
+    .style('font-family', 'Open Sans, sans-serif')
     .style('text-anchor', 'middle')
     .text('Luminosity')
   
@@ -103,11 +105,42 @@ watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLen
 </script>
 
 <template>
-  <div>
+  <div class="svg-wrapper">
     <svg
       ref="svg"
+      class="line-plot"
       :width="svgWidth"
       :height="svgHeight"
-    />
+    >
+    </svg>
   </div>
 </template>
+
+<style scoped> 
+.line-plot {
+  color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
+}
+.axis-label {
+  color: var(--tan);
+}
+@media (max-width: 1200px) {
+.svg-wrapper {
+  margin-left: -18%;
+}
+.line-plot {
+  background-color: var(--dark-blue);
+  transform: scale(0.7);
+}
+}
+@media (max-width: 900px) {
+.svg-wrapper {
+  margin-top: -7%;
+  padding-left: 15%;
+}
+.line-plot {
+  background-color: var(--dark-blue);
+  transform: scale(0.8);
+}
+}
+</style>
