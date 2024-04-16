@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 import * as d3 from 'd3'
 
@@ -102,6 +102,11 @@ watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLen
   }
 }, { deep: true })
 
+
+onUnmounted(() => {
+  store.randomNumbers = []
+  store.lineLength = 0
+})
 </script>
 
 <template>
@@ -111,8 +116,7 @@ watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLen
       class="line-plot"
       :width="svgWidth"
       :height="svgHeight"
-    >
-    </svg>
+    />
   </div>
 </template>
 
