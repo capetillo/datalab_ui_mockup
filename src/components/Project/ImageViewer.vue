@@ -203,17 +203,14 @@ onMounted(() => {
 
     // Re-attach the edit handling logic
     newLine.on('pm:edit', handleEdit)
+    getLineLength(event.layer.getLatLngs())
   }
-  // Get coordinates of the line
-  image.on('pm:create', (e) => {
-    // Save last drawn line
-    lastDrawnLine = e.layer
-    const latLngs = e.layer.getLatLngs()
 
-    e.layer.on('pm:edit', handleEdit)
+  // Refactored code to calculate line length in pixels
+  function getLineLength(latLngs) {
+    // Check that there are two points to calculate the line length
+    if (latLngs.length < 2) return
 
-    const startPoint = latLngs[0]
-    const endPoint = latLngs[1]
     const baseZoomLevel = 1
     const currentZoomLevel = image.getZoom() + baseZoomLevel
     // Calculate scale factor
@@ -223,24 +220,33 @@ onMounted(() => {
       const point = image.latLngToContainerPoint(latLng)
       const boundsTopLeft = image.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
       // Apply zoom scale factor to adjust coordinates
-      const x = (point.x - boundsTopLeft.x) / zoomScaleFactor
-      const y = (point.y - boundsTopLeft.y) / zoomScaleFactor
+      const x = Math.min(Math.max((point.x - boundsTopLeft.x) / zoomScaleFactor, 0), imageBounds[1][1])
+      const y = Math.min(Math.max((point.y - boundsTopLeft.y) / zoomScaleFactor, 0), imageBounds[1][0])
       return { x, y }
     }
 
-    const startPixel = latLngToImagePixelAdjusted(startPoint)
-    const endPixel = latLngToImagePixelAdjusted(endPoint)
+    const startPixel = latLngToImagePixelAdjusted(latLngs[0])
+    const endPixel = latLngToImagePixelAdjusted(latLngs[1])
 
     // Calculate line length in pixels
     const dx = endPixel.x - startPixel.x
     const dy = endPixel.y - startPixel.y
-    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy)) 
+    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy))
     store.lineLength = lineLengthInPixels
 
     startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
     endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
+
     getLineProfile(startCoordinates.value, endCoordinates.value)
-    getRandomArrNumbers(65000)
+    // TO DO: Modify based on actual data requirements
+    getRandomArrNumbers(65000) 
+  }
+  // Get coordinates of the line
+  image.on('pm:create', (e) => {
+    // Save last drawn line
+    lastDrawnLine = e.layer
+    e.layer.on('pm:edit', handleEdit)
+    getLineLength(e.layer.getLatLngs())
   })
 })
 
