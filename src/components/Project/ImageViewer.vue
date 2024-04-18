@@ -1,4 +1,3 @@
-
 <script setup>
 import { onMounted, ref, nextTick, computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
@@ -91,8 +90,6 @@ function getRandomArrNumbers(max) {
   store.randomNumbers = randomNumbers
 }
 
-
-
 onMounted(() => {
   // Create leaflet map (here referred to as image)
   image = L.map(imageContainer.value, {
@@ -128,8 +125,8 @@ onMounted(() => {
     drawPolygon: false,
     drawText: false,
     drawRectangle: false,
-    editMode: false,
-    dragMode: false,
+    editMode: true,
+    dragMode: true,
     cutPolygon: false,
     rotateMode: false,
     removalMode: true
@@ -154,7 +151,7 @@ onMounted(() => {
   let pointsCount = 0
   // Finish line after 2 points (default is multiple points for a line)
   image.on('pm:drawstart', ({ workingLayer }) => {
-    // remove last drawn line when starting new one
+    // Remove last drawn line when starting new one
     if (lastDrawnLine && image.hasLayer(lastDrawnLine)) {
       image.removeLayer(lastDrawnLine)
     }
@@ -167,11 +164,57 @@ onMounted(() => {
     })
   })
 
+  // Checks if the point is within the bounds of the image
+  function isWithinBounds(point) {
+    return point.lat >= 0 && point.lat <= imageBounds[1][0] && point.lng >= 0 && point.lng <= imageBounds[1][1]
+  }
+
+  // Adjusts the point to be within the bounds of the image
+  function adjustToBounds(point) {
+    const lat = Math.max(0, Math.min(imageBounds[1][0], point.lat))
+    const lng = Math.max(0, Math.min(imageBounds[1][1], point.lng))
+    // Returns a new point with adjusted coordinates if the point is outside the bounds
+    return L.latLng(lat, lng)
+  }
+
+  // Callback function for when a line is edited and checks if it's within bounds
+  function handleEdit(event) {
+    let latLngs = event.layer.getLatLngs()
+
+    // Checking if the line is within the bounds
+    const adjustedLatLngs = latLngs.map(point => {
+      if (!isWithinBounds(point)) {
+        return adjustToBounds(point)
+      }
+      return point
+    })
+
+    // Removes the existing layer from the image
+    image.removeLayer(event.layer)
+
+    // Creates a new line with the adjusted coordinates
+    const newLine = L.polyline(adjustedLatLngs)
+    newLine.addTo(image)
+
+    // Re-enable editing and attach the edit handler
+    newLine.pm.enable({
+      allowSelfIntersection: false,
+    })
+
+    // Set this new line as the last drawn line if you're tracking that
+    lastDrawnLine = newLine
+
+    // Re-attach the edit handling logic
+    newLine.on('pm:edit', handleEdit)
+  }
+
   // Get coordinates of the line
   image.on('pm:create', (e) => {
     // Save last drawn line
     lastDrawnLine = e.layer
     const latLngs = e.layer.getLatLngs()
+
+    e.layer.on('pm:edit', handleEdit)
 
     const startPoint = latLngs[0]
     const endPoint = latLngs[1]
@@ -231,7 +274,11 @@ onMounted(() => {
     />
   </div>
 </template>
-
+<style>
+.leaflet-map-container .marker-icon-middle {
+  display: none !important;
+}
+</style>
 <style scoped>
 .wrapper{
   background-color: var(--dark-blue);
