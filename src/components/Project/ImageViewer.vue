@@ -107,7 +107,7 @@ onMounted(() => {
     name: 'resetView',
     block: 'custom',
     title: 'Reset View',
-    className: 'leaflet-pm-icon-drag',
+    className: 'custom-reset-zoom-icon',
     onClick: () => {
       image.setView(initialCenter, initialZoom)
     },
@@ -219,7 +219,7 @@ onMounted(() => {
     const latLngToImagePixelAdjusted = (latLng) => {
       const point = image.latLngToContainerPoint(latLng)
       const boundsTopLeft = image.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
-      // Apply zoom scale factor to adjust coordinates
+      // Apply zoom scale factor to adjust coordinates and ensure they are within the bounds
       const x = Math.min(Math.max((point.x - boundsTopLeft.x) / zoomScaleFactor, 0), imageBounds[1][1])
       const y = Math.min(Math.max((point.y - boundsTopLeft.y) / zoomScaleFactor, 0), imageBounds[1][0])
       return { x, y }
@@ -279,6 +279,14 @@ onMounted(() => {
 <style>
 .leaflet-map-container .marker-icon-middle {
   display: none !important;
+}
+.custom-reset-zoom-icon {
+  background-image: url('../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 24px;
+  height: 24px;
 }
 </style>
 <style scoped>
