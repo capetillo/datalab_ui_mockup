@@ -183,10 +183,7 @@ onMounted(() => {
 
     // Checking if the line is within the bounds
     const adjustedLatLngs = latLngs.map(point => {
-      if (!isWithinBounds(point)) {
-        return adjustToBounds(point)
-      }
-      return point
+      return isWithinBounds(point) ? point : adjustToBounds(point)
     })
 
     // Removes the existing layer from the image
@@ -207,7 +204,6 @@ onMounted(() => {
     // Re-attach the edit handling logic
     newLine.on('pm:edit', handleEdit)
   }
-
   // Get coordinates of the line
   image.on('pm:create', (e) => {
     // Save last drawn line
