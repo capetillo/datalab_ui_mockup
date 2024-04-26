@@ -77,6 +77,16 @@ function clearPollingData(operationID) {
   delete operationPollingTimers[operationID]
 }
 
+watch(() => props.operations, () => {
+  if (props.active) {
+    props.operations.forEach(operation => {
+      if (!operationPollingTimers[operation.id]) {
+        operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+      }
+    })
+  }
+})
+
 watch(
   () => props.active, (active, previousActive) => {
     if (active && !previousActive) {
