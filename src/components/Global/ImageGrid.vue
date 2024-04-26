@@ -42,14 +42,15 @@ const onImageClick = (index) => {
 watch(() => props.images, () => {
   selectedImages.value = []
   props.images.forEach(image => {
-    if (!(image.basename in imageDetails.value)) {
+    if (image.basename && !(image.basename in imageDetails.value)) {
       imageDetails.value[image.basename] = ref('')
-      thumbnailsStore.cacheImage('small', 'ptr', '', image.basename).then((cachedUrl) => {
+      const url = image.thumbnail_url || ''
+      thumbnailsStore.cacheImage('small', 'ptr', url, image.basename).then((cachedUrl) => {
         imageDetails.value[image.basename] = cachedUrl
       })
     }
   })
-}, { immediate: true })
+}, { deep: true, immediate: true })
 
 </script>
 
