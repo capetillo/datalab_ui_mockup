@@ -1,14 +1,43 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
+import { fetchApiCall } from '../utils/api'
+import { useSettingsStore } from '@/stores/settings'
 import ImageViewer from './Project/ImageViewer.vue'
 import LinePlot from './Project/LinePlot.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
+const settingsStore = useSettingsStore()
+
+const lineProfile = ref([])
+const lineProfileLength = ref(0)
 
 function closeDialog() { 
+  lineProfile.value = []
+  lineProfileLength.value = 0
   emit('update:modelValue', false)
+}
+
+function requestAnalysis(action, input){
+  const url = settingsStore.datalabApiBaseUrl + 'analysis/' + action + '/'
+  const body = {
+    'basename': props.image.basename,
+    ...input
+  }
+  fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action)}})
+}
+
+function handleAnalysisOutput(response, action){
+  switch (action) {
+  case 'line-profile':
+    lineProfile.value = response.line_profile
+    lineProfileLength.value = response.arcsec
+    break
+  default:
+    console.error('Invalid action:', action)
+    break
+  }
 }
 
 </script>
@@ -40,6 +69,7 @@ function closeDialog() {
       <div class="analysis-content">
         <image-viewer
           :image-src="image.url"
+          @analysis-action="requestAnalysis"
         />
         <div class="side-panel-container">
           <v-sheet class="side-panel">
@@ -50,7 +80,10 @@ function closeDialog() {
             <p>Telescope: {{ image.telescope_id }}</p>
             <p>Instrument: {{ image.instrument_id }}</p>
           </v-sheet>
-          <line-plot />
+          <line-plot
+            :y-axis-data="lineProfile"
+            :x-axis-size="lineProfileLength"
+          />
         </div>
       </div>
     </v-sheet>
