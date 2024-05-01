@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref, nextTick, computed } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -13,13 +12,11 @@ const props = defineProps({
   }
 })
 
-const store = useSettingsStore()
+const emit = defineEmits(['analysisAction'])
 
 const isLoading = ref(true)
 
 const imageContainer = ref(null)
-const startCoordinates = ref({x1: 0, y1: 0})
-const endCoordinates = ref({x2: 0, y2: 0})
 let image = null
 let imageOverlay = null
 let imageBounds
@@ -33,7 +30,16 @@ const scaledHeight = computed(() => imageHeight.value * 0.7)
 const scaledWidth = computed(() => imageWidth.value * 0.7)
 
 // loads image overlay and set bounds
-const loadImageOverlay = (src) => {
+const loadImageOverlay = () => {
+  // Create leaflet map (here referred to as image)
+  image = L.map(imageContainer.value, {
+    center: [0, 0],
+    zoom: 1,
+    crs: L.CRS.Simple,
+    minZoom: 0,
+    dragging: false,
+  })
+  
   const img = new Image()
   img.onload = () => {
     // Getting image bounds based on img's size
@@ -44,7 +50,7 @@ const loadImageOverlay = (src) => {
     imageWidth.value = img.width
     imageHeight.value = img.height
     // Add new overlay with correct bounds
-    imageOverlay = L.imageOverlay(src, imageBounds).addTo(image)
+    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(image)
     // Fit image view to the bounds of the image
     image.fitBounds(imageBounds)
     image.setMaxBounds(imageBounds)
@@ -58,50 +64,10 @@ const loadImageOverlay = (src) => {
     initialZoom = image.getZoom()
     isLoading.value = false
   }
-  img.src = src
+  img.src = props.imageSrc
 }
 
-// TO DO: Implement success callback to display line profile
-const displayLineProfile = (data) =>{
-  if (data) {
-    console.log(data)
-  }
-}
-
-// TO DO: Implement API call to get line profile
-async function getLineProfile(startPoint, endPoint) {
-  // const url = 'http://localhost:8000/api/line-profile/'
-  // await fetchApiCall({ 
-  //   url: url,
-  //   method: 'GET', 
-  //   data: {startPoint, endPoint}, 
-  //   successCallback: displayLineProfile, 
-  //   failCallback: handleError 
-  // })
-  if (startPoint && endPoint) {
-    displayLineProfile({startPoint, endPoint})
-  }
-}
-
-// Create random numbers for the plot to display
-// TO DO: get rid of this code and actually implement real data
-function getRandomArrNumbers(max) {
-  const randomNumbers = Array.from({length: 10}, () => Math.floor(Math.random() * max))
-  store.randomNumbers = randomNumbers
-}
-
-onMounted(() => {
-  // Create leaflet map (here referred to as image)
-  image = L.map(imageContainer.value, {
-    center: [0, 0],
-    zoom: 1,
-    crs: L.CRS.Simple,
-    minZoom: 0,
-    dragging: false,
-  })
-
-  loadImageOverlay(props.imageSrc)
-
+function leafletSetup(){
   // Create custom control to reset view after zooming in
   image.pm.Toolbar.createCustomControl({
     name: 'resetView',
@@ -164,6 +130,17 @@ onMounted(() => {
     })
   })
 
+  // Get coordinates of the line
+  image.on('pm:create', (e) => {
+    // Save last drawn line
+    lastDrawnLine = e.layer
+    e.layer.on('pm:edit', handleEdit)
+    findPixelCoords(e.layer.getLatLngs())
+  })
+}
+
+// Callback function for when a line is edited and checks if it's within bounds
+function handleEdit(event) {
   // Checks if the point is within the bounds of the image
   function isWithinBounds(point) {
     return point.lat >= 0 && point.lat <= imageBounds[1][0] && point.lng >= 0 && point.lng <= imageBounds[1][1]
@@ -176,78 +153,73 @@ onMounted(() => {
     // Returns a new point with adjusted coordinates if the point is outside the bounds
     return L.latLng(lat, lng)
   }
+  
+  let latLngs = event.layer.getLatLngs()
 
-  // Callback function for when a line is edited and checks if it's within bounds
-  function handleEdit(event) {
-    let latLngs = event.layer.getLatLngs()
-
-    // Checking if the line is within the bounds
-    const adjustedLatLngs = latLngs.map(point => {
-      return isWithinBounds(point) ? point : adjustToBounds(point)
-    })
-
-    // Removes the existing layer from the image
-    image.removeLayer(event.layer)
-
-    // Creates a new line with the adjusted coordinates
-    const newLine = L.polyline(adjustedLatLngs)
-    newLine.addTo(image)
-
-    // Re-enable editing and attach the edit handler
-    newLine.pm.enable({
-      allowSelfIntersection: false,
-    })
-
-    // Set this new line as the last drawn line if you're tracking that
-    lastDrawnLine = newLine
-
-    // Re-attach the edit handling logic
-    newLine.on('pm:edit', handleEdit)
-    getLineLength(event.layer.getLatLngs())
-  }
-
-  // Refactored code to calculate line length in pixels
-  function getLineLength(latLngs) {
-    // Check that there are two points to calculate the line length
-    if (latLngs.length < 2) return
-
-    const baseZoomLevel = 1
-    const currentZoomLevel = image.getZoom() + baseZoomLevel
-    // Calculate scale factor
-    const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel)
-    // Adjust coordinates based on zoom level
-    const latLngToImagePixelAdjusted = (latLng) => {
-      const point = image.latLngToContainerPoint(latLng)
-      const boundsTopLeft = image.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
-      // Apply zoom scale factor to adjust coordinates and ensure they are within the bounds
-      const x = Math.min(Math.max((point.x - boundsTopLeft.x) / zoomScaleFactor, 0), imageBounds[1][1])
-      const y = Math.min(Math.max((point.y - boundsTopLeft.y) / zoomScaleFactor, 0), imageBounds[1][0])
-      return { x, y }
-    }
-
-    const startPixel = latLngToImagePixelAdjusted(latLngs[0])
-    const endPixel = latLngToImagePixelAdjusted(latLngs[1])
-
-    // Calculate line length in pixels
-    const dx = endPixel.x - startPixel.x
-    const dy = endPixel.y - startPixel.y
-    const lineLengthInPixels = Math.round(Math.sqrt(dx * dx + dy * dy))
-    store.lineLength = lineLengthInPixels
-
-    startCoordinates.value = { x1: startPixel.x, y1: startPixel.y }
-    endCoordinates.value = { x2: endPixel.x, y2: endPixel.y }
-
-    getLineProfile(startCoordinates.value, endCoordinates.value)
-    // TO DO: Modify based on actual data requirements
-    getRandomArrNumbers(65000) 
-  }
-  // Get coordinates of the line
-  image.on('pm:create', (e) => {
-    // Save last drawn line
-    lastDrawnLine = e.layer
-    e.layer.on('pm:edit', handleEdit)
-    getLineLength(e.layer.getLatLngs())
+  // Checking if the line is within the bounds
+  const adjustedLatLngs = latLngs.map(point => {
+    return isWithinBounds(point) ? point : adjustToBounds(point)
   })
+
+  // Removes the existing layer from the image
+  image.removeLayer(event.layer)
+
+  // Creates a new line with the adjusted coordinates
+  const newLine = L.polyline(adjustedLatLngs)
+  newLine.addTo(image)
+
+  // Re-enable editing and attach the edit handler
+  newLine.pm.enable({
+    allowSelfIntersection: false,
+  })
+
+  // Set this new line as the last drawn line if you're tracking that
+  lastDrawnLine = newLine
+
+  // Re-attach the edit handling logic
+  newLine.on('pm:edit', handleEdit)
+
+  findPixelCoords(event.layer.getLatLngs())
+}
+
+// Refactored code to calculate line length in pixels
+function findPixelCoords(latLngs) {
+  // Check that there are two points to calculate the line length
+  if (latLngs.length < 2) return
+
+  const baseZoomLevel = 1
+  const currentZoomLevel = image.getZoom() + baseZoomLevel
+  // Calculate scale factor
+  const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel)
+  // Adjust coordinates based on zoom level
+  const latLngToImagePixelAdjusted = (latLng) => {
+    const point = image.latLngToContainerPoint(latLng)
+    const boundsTopLeft = image.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
+    // Apply zoom scale factor to adjust coordinates and ensure they are within the bounds
+    const x = Math.min(Math.max((point.x - boundsTopLeft.x) / zoomScaleFactor, 0), imageBounds[1][1])
+    const y = Math.min(Math.max((point.y - boundsTopLeft.y) / zoomScaleFactor, 0), imageBounds[1][0])
+    return { x, y }
+  }
+
+  const startPixel = latLngToImagePixelAdjusted(latLngs[0])
+  const endPixel = latLngToImagePixelAdjusted(latLngs[1])
+
+  const startCoordinates = { x1: startPixel.x, y1: startPixel.y }
+  const endCoordinates = { x2: endPixel.x, y2: endPixel.y }
+  const imageSize = {width: imageWidth.value, height: imageHeight.value}
+
+  const lineProfileInput = {
+    ...startCoordinates,
+    ...endCoordinates,
+    ...imageSize
+  }
+
+  emit('analysisAction', 'line-profile', lineProfileInput)
+}
+
+onMounted(() => {
+  loadImageOverlay()
+  leafletSetup()
 })
 
 </script>
