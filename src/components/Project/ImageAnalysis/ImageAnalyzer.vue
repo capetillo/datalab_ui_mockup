@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { fetchApiCall } from '../utils/api'
+import { fetchApiCall } from '../../../utils/api'
 import { useSettingsStore } from '@/stores/settings'
-import ImageViewer from './Project/ImageViewer.vue'
-import LinePlot from './Project/LinePlot.vue'
+import ImageViewer from './ImageViewer.vue'
+import LinePlot from './LinePlot.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
