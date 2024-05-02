@@ -253,7 +253,7 @@ onMounted(() => {
   display: none !important;
 }
 .custom-reset-zoom-icon {
-  background-image: url('../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
+  background-image: url('../../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
   background-size: 24px 24px;
   background-repeat: no-repeat;
   background-position: center;
