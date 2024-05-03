@@ -3,7 +3,7 @@ import { ref, onMounted, computed, defineEmits, defineProps} from 'vue'
 import { fetchApiCall, handleError } from '@/utils/api'
 import { calculateColumnSpan } from '@/utils/common'
 import ImageGrid from '../Global/ImageGrid'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 
 const props = defineProps({
   images: {
@@ -12,7 +12,7 @@ const props = defineProps({
   }
 })
 
-const store = useSettingsStore()
+const store = useConfigurationStore()
 const emit = defineEmits(['closeWizard', 'addOperation'])
 const dataSessionsUrl = store.datalabApiBaseUrl
 

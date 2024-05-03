@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 
 defineProps({
   project: {
-    type: Array,
+    type: Object,
     required: true
   }
 })
@@ -16,11 +16,11 @@ defineProps({
       icon="chevron-down"
       class="projects_title"
     >
-      {{ project[0].proposal_id }}
+      {{ project.id }}
     </v-expansion-panel-title>
     <v-expansion-panel-text>
       <p class="project_description">
-        Project ID: {{ project[0].id }}
+        {{ project.title }}
       </p>
     </v-expansion-panel-text>
   </v-expansion-panel>

@@ -39,7 +39,7 @@ function closeDialog() {
       </v-toolbar>
       <div class="analysis-content">
         <image-viewer
-          :image-src="image.url"
+          :image-src="image.largeCachedUrl"
         />
         <div class="side-panel-container">
           <v-sheet class="side-panel">
