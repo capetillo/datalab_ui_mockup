@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { fetchApiCall } from '@/utils/api'
 import { useThumbnailsStore } from './thumbnails'
+import { useConfigurationStore } from './configuration'
 import { ref } from 'vue'
 
 export const useSettingsStore = defineStore('settings', {
@@ -8,32 +9,16 @@ export const useSettingsStore = defineStore('settings', {
     return {
       isColorblindMode: false,
       selectedImages: [],
-      isConfigLoaded: false,
-      datalabApiBaseUrl: '',
-      datalabArchiveApiUrl: '',
-      observationPortalUrl: '',
       randomNumbers: [],
       lineLength: 1,
-      projects: [],
-      largeImageCache: [],
-      smallImageCache: []
+      imagesByProposal: {},
+      startDate: new Date(Date.now() - 24 * 3600 * 1000),
+      endDate: new Date(Date.now())
     }
   },
   getters: {
     isSelected: (state) => (image) => {
       return state.selectedImages.some(selectedImage => selectedImage.basename === image.basename)
-    },
-    // given an image basename, fetches the large res of that image
-    getLargeImageFromBasename: (state) => (imageBasename) => {
-      imageBasename = imageBasename.replace('-small', '')
-      const largeImage = state.largeImageCache.find(obj => obj.basename.replace('-large', '') == imageBasename)
-      if(largeImage){
-        return largeImage
-      }
-      else{
-        console.warn('warn: no large image found with basename:', imageBasename)
-        return null
-      }
     }
   },
   actions: {
@@ -48,28 +33,25 @@ export const useSettingsStore = defineStore('settings', {
         this.selectedImages.push(image)
       }
     },
-    async loadAndCacheImages(option) {
+    async loadAndCacheImages(proposal, option) {
       const thumbnailsStore = useThumbnailsStore()
-      const baseUrl = this.datalabArchiveApiUrl + 'frames/'
+      const configurationStore = useConfigurationStore()
+      const baseUrl = configurationStore.datalabArchiveApiUrl + 'frames/'
+      const timeStr = `start=${this.startDate.toISOString()}&end=${this.endDate.toISOString()}`
+      option = option ? `${option}&${timeStr}` : timeStr
+      option += '&proposal_id=' + proposal
       const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
-	
+      console.log('Getting frames from: ' + imageUrl)
       const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
       if (responseData && responseData.results) {
         // Preload all the small thumbnails into the cache. The large thumbnails will be loaded on demand
         responseData.results.forEach((frame) => {
-          if (option === 'reduction_level=95'){
-            frame.cachedUrl = ref('')
-            thumbnailsStore.cacheImage('small', 'ptr', frame.url, frame.basename).then((cachedUrl) => {
-              frame.cachedUrl.value = cachedUrl
-            })
-          }
+          frame.smallCachedUrl = ref('')
+          thumbnailsStore.cacheImage('small', configurationStore.archiveType, '', frame.basename).then((cachedUrl) => {
+            frame.smallCachedUrl.value = cachedUrl
+          })
         })
-        if (option === 'reduction_level=95') {
-          this.smallImageCache = responseData.results
-        }
-        else {
-          this.largeImageCache = responseData.results
-        }
+        this.imagesByProposal[proposal] = responseData.results
       }
     }
   },

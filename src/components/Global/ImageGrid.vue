@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, ref, defineEmits, watch } from 'vue'
 import { useThumbnailsStore } from '@/stores/thumbnails'
+import { useConfigurationStore } from '@/stores/configuration'
 
 const props = defineProps({
   images: {
@@ -19,6 +20,7 @@ const props = defineProps({
 
 let imageDetails = ref({})
 let selectedImages = ref([])
+const configurationStore = useConfigurationStore()
 const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
 
@@ -44,7 +46,7 @@ watch(() => props.images, () => {
   props.images.forEach(image => {
     if (!(image.basename in imageDetails.value)) {
       imageDetails.value[image.basename] = ref('')
-      thumbnailsStore.cacheImage('small', 'ptr', '', image.basename).then((cachedUrl) => {
+      thumbnailsStore.cacheImage('small', configurationStore.archiveType, '', image.basename).then((cachedUrl) => {
         imageDetails.value[image.basename] = cachedUrl
       })
     }

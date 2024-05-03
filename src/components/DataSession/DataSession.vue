@@ -3,7 +3,7 @@ import { ref, defineEmits, defineProps, onMounted, watch } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
 import { fetchApiCall, handleError } from '../../utils/api'
 import { calculateColumnSpan } from '@/utils/common'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 import ImageGrid from '../Global/ImageGrid'
 
 const props = defineProps({
@@ -17,7 +17,7 @@ const props = defineProps({
   }
 })
 
-const store = useSettingsStore()
+const store = useConfigurationStore()
 
 const emit = defineEmits(['reloadSession'])
 const images = ref([...props.data.input_data])

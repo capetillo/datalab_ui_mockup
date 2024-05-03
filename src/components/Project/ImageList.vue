@@ -45,7 +45,7 @@ onMounted ( () => {
   >
     <template #[`item.url`]="{ item }">
       <v-img
-        :src="item.cachedUrl"
+        :src="item.smallCachedUrl"
         :alt="item.OBJECT"
         class="list_image"
         cover

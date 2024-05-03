@@ -1,10 +1,10 @@
 <script setup>
 import { ref, defineEmits, defineProps, watch, onBeforeUnmount } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 import { fetchApiCall, handleError } from '@/utils/api'
 import OperationWizard from './OperationWizard.vue'
 
-const store = useSettingsStore()
+const store = useConfigurationStore()
 const emit = defineEmits(['addOperation', 'operationCompleted', 'selectOperation'])
 
 const props = defineProps({

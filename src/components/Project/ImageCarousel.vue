@@ -1,9 +1,10 @@
 
 <script setup>
 import { ref, defineProps, watch } from 'vue'
+import { useConfigurationStore } from '@/stores/configuration'
 import { useSettingsStore } from '@/stores/settings'
 import { useThumbnailsStore } from '@/stores/thumbnails'
-import { Carousel, Slide  } from 'vue3-carousel'
+import { Carousel, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from '../ImageAnalyzer.vue'
 
@@ -15,11 +16,37 @@ const props = defineProps({
 })
 
 const store = useSettingsStore()
+const configurationStore = useConfigurationStore()
 const thumbnailsStore = useThumbnailsStore()
 const currentSlide = ref(0)
 const currSmallImage = ref(null)
 const currLargeImage = ref(null)
 const showAnalysisDialog = ref(false)
+const carousel = ref(null)
+const breakpoints = {
+  700: {
+    itemsToShow: 3.5,
+    snapAlign: 'center'
+  },
+  1024: {
+    itemsToShow: 5
+  },
+  1600: {
+    itemsToShow: 6
+  },
+  2000: {
+    itemsToShow: 7
+  },
+  2400: {
+    itemsToShow: 8
+  },
+  2800: {
+    itemsToShow: 9
+  },
+  3200: {
+    itemsToShow: 10
+  },
+}
 
 const handleThumbnailClick = (item, index) => {
   store.toggleImageSelection(item)
@@ -31,15 +58,15 @@ const handleThumbnailClick = (item, index) => {
   } else {
     currentSlide.value = index
   }
-  currLargeImage.value = store.getLargeImageFromBasename(currSmallImage.value.basename)
+  currLargeImage.value = currSmallImage.value
 }
 
 
 watch(currLargeImage, async (newValue) => {
   if (newValue){
-    currLargeImage.value.cachedUrl = ref('')
-    thumbnailsStore.cacheImage('large', 'ptr', newValue.url, newValue.basename).then((cachedUrl) => {
-      currLargeImage.value.cachedUrl = cachedUrl
+    currLargeImage.value.largeCachedUrl = ref('')
+    thumbnailsStore.cacheImage('large', configurationStore.archiveType, '', newValue.basename).then((cachedUrl) => {
+      currLargeImage.value.largeCachedUrl = cachedUrl
     })
   }
 })
@@ -48,7 +75,7 @@ watch(currLargeImage, async (newValue) => {
 watch(() => props.data, (newVal) => {
   if (newVal && newVal.length > 0) {
     currSmallImage.value = newVal[0]
-    currLargeImage.value = store.getLargeImageFromBasename(currSmallImage.value.basename)
+    currLargeImage.value = currSmallImage.value
   }
 }, {
   immediate: true
@@ -73,7 +100,7 @@ watch(() => props.data, (newVal) => {
       <div class="selected__item">
         <img
           v-if="currLargeImage"
-          :src="currLargeImage.cachedUrl"
+          :src="currLargeImage.largeCachedUrl"
           class="selected__image"
           :alt="item.OBJECT"
           @click="showAnalysisDialog = true"
@@ -81,27 +108,26 @@ watch(() => props.data, (newVal) => {
       </div>
     </Slide>
   </Carousel>
-  <div
+  <Carousel
+    class="mt-4"
     id="thumbnails"
-    class="thumbnail__carousel__container"
-  >
-    <div
-      v-for="(item, index) in data"
-      :key="index"
-      class="thumbnail__container"
-      @click="handleThumbnailClick(item, index)"
-    >
-      <!-- Use lazy-src for lazy loading -->
-      <v-img
-        :src="item.cachedUrl"
-        loading="lazy"
-        cover
-        class="thumbnail__item"
-        :class="{'selected-thumbnail': store.isSelected(item)}"
-        :alt="item.OBJECT"
-      />
-    </div>
-  </div>
+    :wrap-around="false"
+    :breakpoints="breakpoints"
+    v-model="currentSlide"
+    ref="carousel">
+    <Slide v-for="(item, index) in data" :key="index">
+      <div class="carousel__item" @click="handleThumbnailClick(item, index)">
+        <v-img
+          :src="item.smallCachedUrl"
+          loading="lazy"
+          cover
+          class="thumbnail__item"
+          :class="{'selected-thumbnail': store.isSelected(item)}"
+          :alt="item.OBJECT"
+        />
+      </div>
+    </Slide>
+  </Carousel>
   <image-analyzer
     v-model="showAnalysisDialog"
     :image="currLargeImage"
@@ -111,6 +137,10 @@ watch(() => props.data, (newVal) => {
 <style scoped>
 #gallery {
   height: auto;
+}
+.carousel__item {
+  height: 200px;
+  width:200px;
 }
 .big-image {
   margin-top: 2%;
@@ -126,34 +156,12 @@ watch(() => props.data, (newVal) => {
   transform: scale(0.8);
   object-fit: contain;
 }
-.thumbnail__carousel__container {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  align-items: center;
-  padding: 0.3rem 0;
-}
-.thumbnail__container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: calc(20% - 20px)
-}
 .thumbnail__item {
-  transform: scale(0.7);
+  /* transform: scale(0.7); */
   object-fit: cover;
 }
 .selected-thumbnail {
   border: 0.5rem solid var(--dark-green);
-}
-.thumbnail__carousel__container::-webkit-scrollbar {
-  display: none;
-}
-.thumbnail__carousel__container {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 @media (max-width: 1200px) {
   .selected__image {
@@ -161,46 +169,18 @@ watch(() => props.data, (newVal) => {
     object-fit: contain; 
     transform: scale(0.95); 
   }
-  .thumbnail__carousel__container {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    padding: 0;
-  }
-  .thumbnail__container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: calc(25% - 20px)
-  }
-
   .thumbnail__item {
     transform: scale(0.75);
     object-fit: cover;
   }
-
   .selected-thumbnail {
     border: 0.3rem solid var(--dark-green);
-  }
-  .thumbnail__carousel__container::-webkit-scrollbar {
-    display: none;
-  }
-  .thumbnail__carousel__container {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .thumbnail__carousel__container {
-    overflow-x: auto;
   }
 }
 @media (max-width: 900px) {
   .selected__image {
     transform: scale(0.7);
     margin: -8rem 5rem 0 0;
-  }
-  .thumbnail__container {
-    margin: 0;
   }
 }
 </style>
