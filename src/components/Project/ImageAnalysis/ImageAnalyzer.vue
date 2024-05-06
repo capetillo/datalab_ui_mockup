@@ -81,8 +81,8 @@ function handleAnalysisOutput(response, action){
             <p>Instrument: {{ image.instrument_id }}</p>
           </v-sheet>
           <line-plot
-            :y-axis-data="lineProfile"
-            :x-axis-size="lineProfileLength"
+            :y-axis-luminosity="lineProfile"
+            :x-axis-arcsecs="lineProfileLength"
           />
         </div>
       </div>
