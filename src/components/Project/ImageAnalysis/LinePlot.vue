@@ -46,7 +46,7 @@ const updatePlot = () => {
   svgElement.selectAll('.line').remove()
   // Getting new data points and drawing a new line
   svgElement.append('path')
-    .datum(props.yAxisData)
+    .datum(props.yAxisLuminosity)
     .attr('class', 'line')
     .attr('d', line)
     .attr('fill', 'none')
