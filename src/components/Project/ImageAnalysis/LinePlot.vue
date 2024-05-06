@@ -4,7 +4,7 @@ import * as d3 from 'd3'
 
 const svg = ref(null)
 
-const props = defineProps(['yAxisData', 'xAxisSize'])
+const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs'])
 
 // Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
@@ -22,15 +22,15 @@ let svgElement
 // Mapping an array of data points to an SVG path
 const line = d3.line()
 // index of each point for x
-  .x((d, i) => x((i / (props.yAxisData.length - 1)) * props.xAxisSize))
+  .x((d, i) => x((i / (props.yAxisLuminosity.length - 1)) * props.xAxisArcsecs))
   // value for y
   .y(d => y(d))
 
 
 const updateAxes = () => {
-  const maxX = props.xAxisSize
+  const maxX = props.xAxisArcsecs
   // Add 5% to the largest number from the randomNumbers array to buffer the plot
-  const maxY = d3.max(props.yAxisData) * 1.05
+  const maxY = d3.max(props.yAxisLuminosity) * 1.05
 
   x.domain([0, maxX])
   y.domain([0, maxY])
@@ -54,7 +54,7 @@ const updatePlot = () => {
     .attr('stroke-width', 2)
 }
 
-watch(() => [props.yAxisData, props.xAxisSize], () => {
+watch(() => [props.yAxisLuminosity, props.xAxisArcsecs], () => {
   updateAxes()
 })
 
