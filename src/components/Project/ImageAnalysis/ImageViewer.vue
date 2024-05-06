@@ -139,21 +139,21 @@ function leafletSetup(){
   })
 }
 
+// Checks if the point is within the bounds of the image
+function isWithinBounds(point) {
+  return point.lat >= 0 && point.lat <= imageBounds[1][0] && point.lng >= 0 && point.lng <= imageBounds[1][1]
+}
+
+// Adjusts the point to be within the bounds of the image
+function adjustToBounds(point) {
+  const lat = Math.max(0, Math.min(imageBounds[1][0], point.lat))
+  const lng = Math.max(0, Math.min(imageBounds[1][1], point.lng))
+  // Returns a new point with adjusted coordinates if the point is outside the bounds
+  return L.latLng(lat, lng)
+}
+
 // Callback function for when a line is edited and checks if it's within bounds
 function handleEdit(event) {
-  // Checks if the point is within the bounds of the image
-  function isWithinBounds(point) {
-    return point.lat >= 0 && point.lat <= imageBounds[1][0] && point.lng >= 0 && point.lng <= imageBounds[1][1]
-  }
-
-  // Adjusts the point to be within the bounds of the image
-  function adjustToBounds(point) {
-    const lat = Math.max(0, Math.min(imageBounds[1][0], point.lat))
-    const lng = Math.max(0, Math.min(imageBounds[1][1], point.lng))
-    // Returns a new point with adjusted coordinates if the point is outside the bounds
-    return L.latLng(lat, lng)
-  }
-  
   let latLngs = event.layer.getLatLngs()
 
   // Checking if the line is within the bounds
