@@ -12,8 +12,6 @@ export const useSettingsStore = defineStore('settings', {
       datalabApiBaseUrl: '',
       datalabArchiveApiUrl: '',
       observationPortalUrl: '',
-      randomNumbers: [],
-      lineLength: 1,
       projects: [],
       largeImageCache: [],
       smallImageCache: []
