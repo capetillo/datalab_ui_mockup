@@ -5,7 +5,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { Carousel, Slide  } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-import ImageAnalyzer from '../ImageAnalyzer.vue'
+import ImageAnalyzer from './ImageAnalysis/ImageAnalyzer.vue'
 
 const props = defineProps({
   data: {
