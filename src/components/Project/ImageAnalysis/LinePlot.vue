@@ -1,13 +1,10 @@
 <script setup>
-import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { onMounted, ref, watch } from 'vue'
 import * as d3 from 'd3'
 
 const svg = ref(null)
-const store = useSettingsStore()
 
-const randomNumbers = computed(() => store.randomNumbers)
-const lineLength = computed(() => store.lineLength)
+const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs'])
 
 // Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
@@ -25,15 +22,15 @@ let svgElement
 // Mapping an array of data points to an SVG path
 const line = d3.line()
 // index of each point for x
-  .x((d, i) => x((i / (randomNumbers.value.length - 1)) * lineLength.value))
+  .x((d, i) => x((i / (props.yAxisLuminosity.length - 1)) * props.xAxisArcsecs))
   // value for y
   .y(d => y(d))
 
 
 const updateAxes = () => {
-  const maxX = lineLength.value
+  const maxX = props.xAxisArcsecs
   // Add 5% to the largest number from the randomNumbers array to buffer the plot
-  const maxY = d3.max(randomNumbers.value) * 1.05
+  const maxY = d3.max(props.yAxisLuminosity) * 1.05
 
   x.domain([0, maxX])
   y.domain([0, maxY])
@@ -49,13 +46,17 @@ const updatePlot = () => {
   svgElement.selectAll('.line').remove()
   // Getting new data points and drawing a new line
   svgElement.append('path')
-    .datum(randomNumbers.value)
+    .datum(props.yAxisLuminosity)
     .attr('class', 'line')
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', 'steelblue')
     .attr('stroke-width', 2)
 }
+
+watch(() => [props.yAxisLuminosity, props.xAxisArcsecs], () => {
+  updateAxes()
+})
 
 onMounted(() => {
   svgElement = d3.select(svg.value)
@@ -80,7 +81,7 @@ onMounted(() => {
     .style('font-size', '16px')
     .style('font-family', 'Open Sans, sans-serif')
     .style('text-anchor', 'middle')
-    .text('Distance in Pixels')
+    .text('Arcseconds')
 
   yAxis.append('text')
     .attr('class', 'axis-label')
@@ -94,18 +95,6 @@ onMounted(() => {
     .style('text-anchor', 'middle')
     .text('Luminosity')
   
-})
-
-watch([randomNumbers, lineLength], ([newNumbers, newLength], [oldNumbers, oldLength]) => {
-  if (newNumbers !== oldNumbers || newLength !== oldLength) {
-    updateAxes()
-  }
-}, { deep: true })
-
-
-onUnmounted(() => {
-  store.randomNumbers = []
-  store.lineLength = 0
 })
 </script>
 
