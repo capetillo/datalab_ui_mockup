@@ -41,7 +41,6 @@ export const useSettingsStore = defineStore('settings', {
       option = option ? `${option}&${timeStr}` : timeStr
       option += '&proposal_id=' + proposal
       const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
-      console.log('Getting frames from: ' + imageUrl)
       const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
       if (responseData && responseData.results) {
         // Preload all the small thumbnails into the cache. The large thumbnails will be loaded on demand
