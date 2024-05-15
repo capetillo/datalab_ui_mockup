@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
 import { useRouter } from 'vue-router'
 import { fetchApiCall } from '@/utils/api'
 import lambdaLogo from '../assets/PTR-lambda.png'
 
-const settingsStore = useSettingsStore()
+const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
 const router = useRouter()
 const username = ref('')
@@ -28,7 +28,7 @@ const storeToken = async (data) => {
   const authToken = data.token
   if (authToken) {
     userDataStore.authToken = authToken
-    await fetchApiCall({ url: settingsStore.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
+    await fetchApiCall({ url: configurationStore.observationPortalUrl + 'profile/', method: 'GET', successCallback: storeUser, failCallback: handleError })
   }
 }
 
@@ -40,7 +40,7 @@ const handleError = (error) => {
 const storeUser = (user) => {
   userDataStore.username = username.value
   userDataStore.profile = user
-  settingsStore.projects = user.proposals
+  userDataStore.storeProposals(user.proposals)
   router.push({ name: 'ProjectView' })
 }
 
@@ -50,7 +50,7 @@ const Login = async () => {
     password: password.value
   }
   // store an auth token from login credentials
-  await fetchApiCall({ url: settingsStore.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
+  await fetchApiCall({ url: configurationStore.observationPortalUrl + 'api-token-auth/', method: 'POST', body: requestBody, successCallback: storeToken, failCallback: handleError })
 }
 
 </script>

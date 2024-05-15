@@ -1,14 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 import { fetchApiCall } from '../../../utils/api'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
-const settingsStore = useSettingsStore()
+const configStore = useConfigurationStore()
 
 const lineProfile = ref([])
 const lineProfileLength = ref(0)
@@ -20,7 +20,7 @@ function closeDialog() {
 }
 
 function requestAnalysis(action, input){
-  const url = settingsStore.datalabApiBaseUrl + 'analysis/' + action + '/'
+  const url = configStore.datalabApiBaseUrl + 'analysis/' + action + '/'
   const body = {
     'basename': props.image.basename,
     ...input
@@ -68,7 +68,7 @@ function handleAnalysisOutput(response, action){
       </v-toolbar>
       <div class="analysis-content">
         <image-viewer
-          :image-src="image.url"
+          :image-src="image.largeCachedUrl"
           @analysis-action="requestAnalysis"
         />
         <div class="side-panel-container">

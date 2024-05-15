@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { LRUCache } from 'lru-cache'
 import { deleteCachedImageFromBasename, getImageFromBasename, getAllCacheKeys } from '@/utils/imageLoader'
+import { useConfigurationStore } from './configuration'
 
 
 const cacheOptionsSmall = {
@@ -129,17 +130,18 @@ export const useThumbnailsStore = defineStore('thumbnails', {
     },
     // This should just be called a single time when cache is reloaded fill the LRU cache with what is in the browser cache
     async reloadCachedImagesIntoLRUCache() {
+      const configurationStore = useConfigurationStore()
       // This takes all the keys in the browser cache, and adds them to the LRU cache. If they were already in the cache, this
       // operation won't overwrite their TTL or order so they should keep their position and lifetime but regenerate their URL.
       var smallImageBasenames = await getAllCacheKeys('small')
       for (const key of smallImageBasenames) {
         let basename = key.url.split('/').pop()
-        await this.cacheImage('small', 'ptr', '', basename, false)
+        await this.cacheImage('small', configurationStore.archiveType, '', basename, false)
       }
       var largeImageBasenames = await getAllCacheKeys('large')
       for (const key of largeImageBasenames){
         let basename = key.url.split('/').pop()
-        await this.cacheImage('large', 'ptr', '', basename, false)
+        await this.cacheImage('large', configurationStore.archiveType, '', basename, false)
       }
     }
   },

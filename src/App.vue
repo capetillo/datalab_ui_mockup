@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from './stores/configuration'
 import NavBar from './components/Global/NavBar.vue'
 
-const store = useSettingsStore()
-const loadedConfig = computed(() => store.isConfigLoaded)
+const configurationStore = useConfigurationStore()
+const settingsStore = useSettingsStore()
+const loadedConfig = computed(() => configurationStore.isConfigLoaded)
 
 // loading config  when app first mounts
 onMounted(async () => {
@@ -15,17 +17,19 @@ onMounted(async () => {
     }
     const config = await response.json()
     if (config) {
-      store.datalabApiBaseUrl = config.datalabApiBaseUrl
-      store.observationPortalUrl = config.observationPortalUrl
-      store.datalabArchiveApiUrl = config.dataLabArchiveApiUrl
-      store.isConfigLoaded = true
+      configurationStore.datalabApiBaseUrl = config.datalabApiBaseUrl
+      configurationStore.observationPortalUrl = config.observationPortalUrl
+      configurationStore.datalabArchiveApiUrl = config.datalabArchiveApiUrl
+      configurationStore.thumbnailServiceUrl = config.thumbnailServiceUrl || ''
+      configurationStore.archiveType = config.archiveType || 'ptr'
+      configurationStore.isConfigLoaded = true
     }
   } catch (error) {
     console.error('Error loading configuration:', error)
   }
 })
 
-watch(() => store.isColorblindMode, (newVal) => {
+watch(() => settingsStore.isColorblindMode, (newVal) => {
   if (newVal) {
     document.documentElement.setAttribute('colorblind', 'true')
   } else {

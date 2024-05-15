@@ -2,11 +2,11 @@
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import { fetchApiCall } from '../../utils/api'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 
 const props = defineProps([ 'modelValue', 'deleteId'])
 const emit = defineEmits(['update:modelValue', 'reloadSession'])
-const store = useSettingsStore()
+const store = useConfigurationStore()
 
 let showSnackBar = ref(false)
 const datalabApiBaseUrl = store.datalabApiBaseUrl
