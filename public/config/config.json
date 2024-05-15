@@ -1,5 +1,7 @@
 {
-  "datalabApiBaseUrl": "https://datalab-server.photonranch.org/api/",
-  "dataLabArchiveApiUrl": "https://datalab-archive.photonranch.org/",
-  "observationPortalUrl": "https://observe.photonranch.org/api/"
+  "datalabApiBaseUrl": "https://datalab.lco.earth/api/",
+  "datalabArchiveApiUrl": "https://archive-api.lco.global/",
+  "observationPortalUrl": "https://observe.lco.global/api/",
+  "thumbnailServiceUrl": "https://thumbnails.lco.global/",
+  "archiveType": "lco"
 }

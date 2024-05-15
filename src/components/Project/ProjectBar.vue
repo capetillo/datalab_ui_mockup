@@ -1,13 +1,21 @@
 <script setup>
-import { defineEmits, defineProps, ref, computed } from 'vue'
+import { defineEmits, defineProps, ref, computed, watch } from 'vue'
 import ProjectSelector from './ProjectSelector.vue'
+import { useSettingsStore } from '@/stores/settings'
 
+
+const settingsStore = useSettingsStore()
 const searchQuery = ref('')
+const selectedProjectIndex = ref(0)
+const dateNumber = ref(1)
+const dateUnits = ref('Days')
 const emit = defineEmits(['selectedProject'])
 
+// Projects is an array of Objects containing 'id', 'title', and 'current' (boolean)
+// This comes directly from the users profile
 const props = defineProps({
   projects: {
-    type: Object,
+    type: Array,
     required: true
   }
 })
@@ -15,28 +23,59 @@ const props = defineProps({
 // filtering projects by proposal_id
 const filteredProjects = computed(() => {
   if (searchQuery.value) {
-    const filtered = Object.entries(props.projects).reduce((acc, [key, projects]) => {
-      const match = projects.some(project => project.proposal_id.toLowerCase().includes(searchQuery.value.toLowerCase()))
-      if (match) {
-        acc[key] = projects
-      }
-      return acc
-    }, {})
-    return filtered
+    return props.projects.filter(project => project.id.includes(searchQuery.value))
   }
   return props.projects
 })
 
-const selectProject = (projects) => {
-  const proposalId = projects.map(p => p.proposal_id)
-  emit('selectedProject', proposalId)
+const selectProject = (project) => {
+  emit('selectedProject', project.id)
 }
+
+function dateMultiplier(units){
+  switch (units) {
+  case 'Days':
+    return 1
+  case 'Weeks':
+    return 7
+  case 'Months':
+    return 31
+  }
+  return 1
+}
+
+function setDateRange(number, units) {
+  let daysEnd = (number - 1) * dateMultiplier(units)
+  let daysStart = number * dateMultiplier(units)
+  settingsStore.endDate = new Date(Date.now() - 24 * 3600 * 1000 * daysEnd)
+  settingsStore.startDate = new Date(Date.now() - 24 * 3600 * 1000 * daysStart)
+}
+
+watch(dateNumber, (newNumber) => {
+  setDateRange(newNumber, dateUnits.value)
+})
+
+watch(dateUnits, (newUnits) => {
+  setDateRange(dateNumber.value, newUnits)
+})
 
 </script>
 
 <template>
   <div class="project_bar">
     <v-card class="h-auto w-20 ma-1 project_card">
+      <!-- This should be done in a more flexible way so it can collapse better on smaller screens -->
+      <v-row class="mt-1">
+        <v-col cols="4" class="ml-1">
+          <v-select :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" v-model="dateNumber" density="compact"></v-select>
+        </v-col>
+        <v-col cols="5">
+          <v-select :items="['Days', 'Weeks', 'Months']" v-model="dateUnits" density="compact"></v-select>
+        </v-col>
+        <v-col class="mb-4" style="align-self: center;">
+          <b>Ago</b>
+        </v-col>
+      </v-row>
       <p class="project_header">
         PROJECTS
       </p>
@@ -52,6 +91,7 @@ const selectProject = (projects) => {
       <v-expansion-panels
         variant="accordion"
         class="accordion"
+        v-model="selectedProjectIndex"
       >
         <ProjectSelector
           v-for="(project, index) in filteredProjects"

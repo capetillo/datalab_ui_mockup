@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeMount } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession/DataSession.vue'
@@ -9,13 +9,13 @@ import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
-const settingsStore = useSettingsStore()
+const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
 const dataSessions = ref([])
 const tab = ref()
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
-const dataSessionsUrl = settingsStore.datalabApiBaseUrl + 'datasessions/'
+const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(() => {
   if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })

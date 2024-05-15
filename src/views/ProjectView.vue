@@ -1,14 +1,16 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeMount, onUnmounted } from 'vue'
+import { ref, computed, onBeforeMount, onUnmounted, watch } from 'vue'
 import ProjectBar from '@/components/Project/ProjectBar.vue'
 import ImageCarousel from '@/components/Project/ImageCarousel.vue'
 import ImageList from '@/components/Project/ImageList.vue'
 import { useRouter } from 'vue-router'
+import { useConfigurationStore } from '@/stores/configuration'
 import { useSettingsStore } from '@/stores/settings'
 import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall } from '../utils/api'
 
 const router = useRouter()
+const configurationStore = useConfigurationStore()
 const settingsStore = useSettingsStore()
 const userDataStore = useUserDataStore()
 const isPopupVisible = ref(false)
@@ -16,7 +18,8 @@ const uniqueDataSessions = ref([])
 const newSessionName = ref('')
 const errorMessage = ref('')
 const isLoading = ref(true)
-const dataSessionsUrl = settingsStore.datalabApiBaseUrl + 'datasessions/'
+const selectedProject = ref(null)
+const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
 
 onBeforeMount(() => {
   if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
@@ -25,45 +28,18 @@ onBeforeMount(() => {
 // toggle for optional data viewing, controlled by a v-switch
 let imageDisplayToggle = ref(true)
 
-let smallImageCache = ref([])
-const projects = ref({})
 const selectedProjectImages = ref([])
 
-// Loads the user's Images from their profile into userImages ( currently just fetches all frames from archive regardless of proposal )
-const loadUserImages = async (option) => {
-  isLoading.value = true
-  await settingsStore.loadAndCacheImages(option)
-  isLoading.value = false
-  smallImageCache.value = settingsStore.smallImageCache
-  updateGroupedProjects()
-}
-
-// groups all projects by proposal id
-function groupByProposalId() {
-  if (smallImageCache.value) {
-    return smallImageCache.value.reduce((acc, project) => {
-      if (!acc[project.proposal_id]) {
-        acc[project.proposal_id] = []
-      }
-      acc[project.proposal_id].push(project)
-      return acc
-    }, {})
-  }
-}
-
-// sorts projects by group id and handles selectedproject as the first one for when the page first loads 
-function updateGroupedProjects() {
-  projects.value = groupByProposalId(smallImageCache.value)
-  const firstProjectKey = Object.keys(projects.value)[0]
-  if (firstProjectKey) {
-    const firstProjectProposalIds = [firstProjectKey]
-    filterImagesByProposalId(firstProjectProposalIds)
-  }
-}
-
 // handles the selected project to filter images that only have the selected proposal_id
-const filterImagesByProposalId = (proposalId) => {
-  selectedProjectImages.value = smallImageCache.value.filter(image => proposalId.includes(image.proposal_id))
+async function filterImagesByProposalId(proposalId) {
+  // selectedProjectImages.value = imageCache.value.filter(image => proposalId.includes(image.proposal_id))
+  selectedProject.value = proposalId
+  if (!settingsStore.imagesByProposal[proposalId]) {
+    isLoading.value = true
+    await settingsStore.loadAndCacheImages(proposalId, 'reduction_level=91')
+  }
+  isLoading.value = false
+  selectedProjectImages.value = settingsStore.imagesByProposal[proposalId]
 }
 
 // boolean computed property used to disable the add to session button
@@ -182,9 +158,17 @@ const sessionNameExists = (name) => {
   return uniqueDataSessions.value.some(session => session.name === name)
 }
 
-onMounted(() => {
-  loadUserImages('reduction_level=95')
-  loadUserImages('reduction_level=96')
+watch(() => userDataStore.proposals, async () => {
+  if (userDataStore.proposals.length > 0) {
+    filterImagesByProposalId(userDataStore.proposals[0].id)
+  }
+}, { immediate: true })
+
+watch(() => settingsStore.startDate, async () => {
+  settingsStore.imagesByProposal = {}
+  if (selectedProject.value){
+    filterImagesByProposalId(selectedProject.value)
+  }
 })
 
 onUnmounted(() => {
@@ -198,7 +182,7 @@ onUnmounted(() => {
   <div class="container">
     <ProjectBar
       class="project-bar"
-      :projects="projects"
+      :projects="userDataStore.proposals"
       @selected-project="filterImagesByProposalId"
     />
     <div class="image-area h-screen">
@@ -222,14 +206,13 @@ onUnmounted(() => {
           v-if="!imageDisplayToggle && selectedProjectImages.length"
           :data="selectedProjectImages"
         />
-        <p v-if="!selectedProjectImages.length">
-          Please create a project to use Datalab
-        </p>
+        <v-banner v-if="!selectedProjectImages.length"
+          class="d-flex align-center justify-center mt-10"
+          icon="$vuetify"
+          color="warning"
+          text="This project has no images in the specified time period">
+        </v-banner>
       </div>
-      <v-skeleton-loader
-        v-if="!settingsStore.smallImageCache"
-        type="card"
-      />
       <div class="control-buttons">
         <v-switch
           v-model="imageDisplayToggle"
@@ -329,7 +312,7 @@ onUnmounted(() => {
   grid-column-end: col1-end;
   grid-row-start: row-start;
   grid-row-end: row-end;
-  height: 50%;
+  height: 95%;
 }
 .image-area {
   grid-column-start: col2-start;
