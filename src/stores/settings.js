@@ -7,10 +7,7 @@ import { ref } from 'vue'
 export const useSettingsStore = defineStore('settings', {
   state() {
     return {
-      isColorblindMode: false,
       selectedImages: [],
-      randomNumbers: [],
-      lineLength: 1,
       imagesByProposal: {},
       startDate: new Date(Date.now() - 24 * 3600 * 1000),
       endDate: new Date(Date.now())
@@ -22,9 +19,6 @@ export const useSettingsStore = defineStore('settings', {
     }
   },
   actions: {
-    toggleColorblindMode() {
-      this.isColorblindMode = !this.isColorblindMode
-    },
     toggleImageSelection(image) {
       const index = this.selectedImages.findIndex(img => img.basename === image.basename)
       if (index >= 0) {

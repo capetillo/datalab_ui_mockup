@@ -25,9 +25,6 @@ onBeforeMount(() => {
   if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
 })
 
-// toggle for optional data viewing, controlled by a v-switch
-let imageDisplayToggle = ref(true)
-
 const selectedProjectImages = ref([])
 
 // handles the selected project to filter images that only have the selected proposal_id
@@ -199,28 +196,22 @@ onUnmounted(() => {
       </div>
       <div v-else>
         <ImageCarousel
-          v-if="imageDisplayToggle && selectedProjectImages.length"
+          v-if="userDataStore.carouselGridToggle && selectedProjectImages.length"
           :data="selectedProjectImages"
         />
         <ImageList
-          v-if="!imageDisplayToggle && selectedProjectImages.length"
+          v-if="!userDataStore.carouselGridToggle && selectedProjectImages.length"
           :data="selectedProjectImages"
         />
-        <v-banner v-if="!selectedProjectImages.length"
+        <v-banner
+          v-if="!selectedProjectImages.length"
           class="d-flex align-center justify-center mt-10"
-          icon="$vuetify"
+          icon="mdi-image-off"
           color="warning"
-          text="This project has no images in the specified time period">
-        </v-banner>
+          text="This project has no images in the specified time period"
+        />
       </div>
       <div class="control-buttons">
-        <v-switch
-          v-model="imageDisplayToggle"
-          class="d-flex mr-4"
-          inset
-          prepend-icon="mdi-view-list"
-          append-icon="mdi-image"
-        />
         <v-btn
           :disabled="noSelectedImages"
           class="add_button"

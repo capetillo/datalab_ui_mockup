@@ -7,7 +7,9 @@ export const useUserDataStore = defineStore('userData', {
       username: '',
       authToken: '',
       profile: {},
-      proposals: []
+      proposals: [],
+      isColorblindMode: false,
+      carouselGridToggle: true
     }
   },
   persist: true,
