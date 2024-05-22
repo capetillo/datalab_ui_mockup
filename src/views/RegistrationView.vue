@@ -57,21 +57,49 @@ const Login = async () => {
 
 <template>
   <v-container class="registration-container">
-    <v-card class="login-card pa-10">
+    <v-card
+      color="var(--metal)"
+      class="login-card pa-10"
+    >
       <div class="login-title">
-        <img class="lambdaLogo" :src="lambdaLogo">
+        <img
+          class="lambdaLogo"
+          :src="lambdaLogo"
+        >
         <h1>Datalab</h1>
       </div>
-      <v-form class="pt-7" @submit.prevent="Login">
-        <v-text-field v-model="username" autocomplete="username" label="Username" :rules="[rules.required]" required />
+      <v-form
+        class="pt-7"
+        @submit.prevent="Login"
+      >
+        <v-text-field
+          v-model="username"
+          autocomplete="username"
+          label="Username"
+          :rules="[rules.required]"
+          required
+        />
 
-        <v-text-field v-model="password" autocomplete="current-password" label="Password"
-          :type="showPassword ? 'text' : 'password'" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="[rules.required]" required @click:append="showPassword = !showPassword" />
-        <v-btn type="submit" color="primary">
+        <v-text-field
+          v-model="password"
+          autocomplete="current-password"
+          label="Password"
+          :type="showPassword ? 'text' : 'password'"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :rules="[rules.required]"
+          required
+          @click:append="showPassword = !showPassword"
+        />
+        <v-btn
+          type="submit"
+          color="primary"
+        >
           Login
         </v-btn>
-        <div v-if="errorMessage" class="error-message">
+        <div
+          v-if="errorMessage"
+          class="error-message"
+        >
           {{ errorMessage }}
         </div>
       </v-form>
