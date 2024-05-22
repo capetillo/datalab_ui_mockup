@@ -1,11 +1,11 @@
 <script setup>
 import { onMounted, computed, watch } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { useUserDataStore } from '@/stores/userData'
 import { useConfigurationStore } from './stores/configuration'
 import NavBar from './components/Global/NavBar.vue'
 
 const configurationStore = useConfigurationStore()
-const settingsStore = useSettingsStore()
+const userDataStore = useUserDataStore()
 const loadedConfig = computed(() => configurationStore.isConfigLoaded)
 
 // loading config  when app first mounts
@@ -29,12 +29,8 @@ onMounted(async () => {
   }
 })
 
-watch(() => settingsStore.isColorblindMode, (newVal) => {
-  if (newVal) {
-    document.documentElement.setAttribute('colorblind', 'true')
-  } else {
-    document.documentElement.removeAttribute('colorblind')
-  }
+watch(() => userDataStore.isColorblindMode, (newVal) => {
+  document.documentElement.setAttribute('colorblind', newVal)
 }, { immediate: true })
 
 </script>
