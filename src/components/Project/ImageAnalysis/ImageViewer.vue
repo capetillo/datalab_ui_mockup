@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick, computed } from 'vue'
+import { onMounted, ref, nextTick, computed, watch } from 'vue'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -9,6 +9,11 @@ const props = defineProps({
   imageSrc: {
     type: String,
     required: true,
+  },
+  catalog: {
+    type: Array,
+    required: false,
+    default: null,
   }
 })
 
@@ -23,6 +28,7 @@ let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
 let lastDrawnLine = null
+let LayerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 
@@ -39,16 +45,23 @@ const loadImageOverlay = () => {
     minZoom: 0,
     dragging: false,
   })
-  
+
+  // Can add new layers to this control and they will be able to be turned on and off in the top right corner of the map
+  LayerControl = L.control.layers().addTo(image)
+
   const img = new Image()
   img.onload = () => {
+    imageWidth.value = img.width
+    imageHeight.value = img.height
+    
     // Getting image bounds based on img's size
-    imageBounds = [[0, 0], [img.height, img.width]] 
+    imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]] 
     if (imageOverlay) {
       image.removeLayer(imageOverlay)
     }
-    imageWidth.value = img.width
-    imageHeight.value = img.height
+
+    fetchCatalog()
+
     // Add new overlay with correct bounds
     imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(image)
     // Fit image view to the bounds of the image
@@ -107,21 +120,15 @@ function leafletSetup(){
     } else {
       image.dragging.disable()
     }
-    // Pan to the center of the image when zoomed out
-    if (image.getZoom() === image.getMinZoom() && imageBounds) {
-      const centerOfImage = [(imageBounds[0][0] + imageBounds[1][0]) / 2, (imageBounds[0][1] + imageBounds[1][1]) / 2]
-      image.panTo(new L.LatLng(centerOfImage[0], centerOfImage[1]))
-    }
   })
 
-  let pointsCount = 0
   // Finish line after 2 points (default is multiple points for a line)
   image.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
     if (lastDrawnLine && image.hasLayer(lastDrawnLine)) {
       image.removeLayer(lastDrawnLine)
     }
-    pointsCount = 0
+    let pointsCount = 0
     workingLayer.on('pm:vertexadded', () => {
       pointsCount++
       if (pointsCount === 2) {
@@ -135,13 +142,15 @@ function leafletSetup(){
     // Save last drawn line
     lastDrawnLine = e.layer
     e.layer.on('pm:edit', handleEdit)
-    findPixelCoords(e.layer.getLatLngs())
+    requestLineProfile(e.layer.getLatLngs())
   })
 }
 
 // Checks if the point is within the bounds of the image
 function isWithinBounds(point) {
-  return point.lat >= 0 && point.lat <= imageBounds[1][0] && point.lng >= 0 && point.lng <= imageBounds[1][1]
+  const latWithinBounds = point.lat >= 0 && point.lat <= imageBounds[1][0]
+  const lngWithinBounds = point.lng >= 0 && point.lng <= imageBounds[1][1]
+  return latWithinBounds && lngWithinBounds
 }
 
 // Adjusts the point to be within the bounds of the image
@@ -179,33 +188,15 @@ function handleEdit(event) {
   // Re-attach the edit handling logic
   newLine.on('pm:edit', handleEdit)
 
-  findPixelCoords(event.layer.getLatLngs())
+  requestLineProfile(event.layer.getLatLngs())
 }
 
-// Refactored code to calculate line length in pixels
-function findPixelCoords(latLngs) {
+function requestLineProfile(latLngs) {
   // Check that there are two points to calculate the line length
   if (latLngs.length < 2) return
 
-  const baseZoomLevel = 1
-  const currentZoomLevel = image.getZoom() + baseZoomLevel
-  // Calculate scale factor
-  const zoomScaleFactor = Math.pow(2, currentZoomLevel - baseZoomLevel)
-  // Adjust coordinates based on zoom level
-  const latLngToImagePixelAdjusted = (latLng) => {
-    const point = image.latLngToContainerPoint(latLng)
-    const boundsTopLeft = image.latLngToContainerPoint(L.latLng(imageBounds[1][0], imageBounds[0][1]))
-    // Apply zoom scale factor to adjust coordinates and ensure they are within the bounds
-    const x = Math.min(Math.max((point.x - boundsTopLeft.x) / zoomScaleFactor, 0), imageBounds[1][1])
-    const y = Math.min(Math.max((point.y - boundsTopLeft.y) / zoomScaleFactor, 0), imageBounds[1][0])
-    return { x, y }
-  }
-
-  const startPixel = latLngToImagePixelAdjusted(latLngs[0])
-  const endPixel = latLngToImagePixelAdjusted(latLngs[1])
-
-  const startCoordinates = { x1: startPixel.x, y1: startPixel.y }
-  const endCoordinates = { x2: endPixel.x, y2: endPixel.y }
+  const startCoordinates = { x1: latLngs[0].lat, y1: latLngs[0].lng }
+  const endCoordinates = { x2: latLngs[1].lat, y2: latLngs[1].lng }
   const imageSize = {width: imageWidth.value, height: imageHeight.value}
 
   const lineProfileInput = {
@@ -216,6 +207,39 @@ function findPixelCoords(latLngs) {
 
   emit('analysisAction', 'line-profile', lineProfileInput)
 }
+
+function createCatalogLayer(){
+  let catalogMarkers = []
+
+  props.catalog.forEach((source) => {
+    let sourceMarker = L.circle([source.y, source.x], {
+      color: 'var(--tan)',
+      fillColor: 'var(--tan)',
+      fillOpacity: 0.2,
+      radius: 10
+    })
+
+    sourceMarker.bindPopup(`Flux: ${source.flux}<br>X: ${source.x}<br>Y: ${source.y}`)
+    catalogMarkers.push(sourceMarker)
+  })
+
+  console.log(catalogMarkers)
+
+  let catalogLayerGroup = L.layerGroup(catalogMarkers)
+  LayerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
+}
+
+function fetchCatalog(){
+  const catalogInput = {
+    width: imageWidth.value,
+    height: imageHeight.value
+  }
+  emit('analysisAction', 'source-catalog', catalogInput)
+}
+
+watch(() => props.catalog, () => {
+  createCatalogLayer()
+})
 
 onMounted(() => {
   loadImageOverlay()
