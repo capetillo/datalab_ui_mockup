@@ -28,7 +28,7 @@ let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
 let lastDrawnLine = null
-let LayerControl = null
+let layerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 
@@ -47,7 +47,7 @@ const loadImageOverlay = () => {
   })
 
   // Can add new layers to this control and they will be able to be turned on and off in the top right corner of the map
-  LayerControl = L.control.layers().addTo(image)
+  layerControl = L.control.layers().addTo(image)
 
   const img = new Image()
   img.onload = () => {
@@ -209,6 +209,8 @@ function requestLineProfile(latLngs) {
 }
 
 function createCatalogLayer(){
+  if (!props.catalog) return
+  
   let catalogMarkers = []
 
   props.catalog.forEach((source) => {
@@ -224,7 +226,7 @@ function createCatalogLayer(){
   })
 
   let catalogLayerGroup = L.layerGroup(catalogMarkers)
-  LayerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
+  layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
 
 function fetchCatalog(){
