@@ -223,8 +223,6 @@ function createCatalogLayer(){
     catalogMarkers.push(sourceMarker)
   })
 
-  console.log(catalogMarkers)
-
   let catalogLayerGroup = L.layerGroup(catalogMarkers)
   LayerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
