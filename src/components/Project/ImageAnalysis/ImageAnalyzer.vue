@@ -12,6 +12,7 @@ const configStore = useConfigurationStore()
 
 const lineProfile = ref([])
 const lineProfileLength = ref(0)
+const catalog = ref([])
 
 function closeDialog() { 
   lineProfile.value = []
@@ -19,6 +20,7 @@ function closeDialog() {
   emit('update:modelValue', false)
 }
 
+// This function runs when imageViewer emits an analysis-action event and should be extended to handle other analysis types
 function requestAnalysis(action, input){
   const url = configStore.datalabApiBaseUrl + 'analysis/' + action + '/'
   const body = {
@@ -28,11 +30,15 @@ function requestAnalysis(action, input){
   fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action)}})
 }
 
+// The successCallback function for the fetchApiCall in requestAnalysis new operations can be added here as an additional case
 function handleAnalysisOutput(response, action){
   switch (action) {
   case 'line-profile':
     lineProfile.value = response.line_profile
     lineProfileLength.value = response.arcsec
+    break
+  case 'source-catalog':
+    catalog.value = response
     break
   default:
     console.error('Invalid action:', action)
@@ -69,6 +75,7 @@ function handleAnalysisOutput(response, action){
       <div class="analysis-content">
         <image-viewer
           :image-src="image.largeCachedUrl"
+          :catalog="catalog"
           @analysis-action="requestAnalysis"
         />
         <div class="side-panel-container">
