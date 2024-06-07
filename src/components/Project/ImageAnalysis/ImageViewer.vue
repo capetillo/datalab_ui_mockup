@@ -210,7 +210,7 @@ function requestLineProfile(latLngs) {
 
 function createCatalogLayer(){
   if (!props.catalog) return
-  
+
   let catalogMarkers = []
 
   props.catalog.forEach((source) => {
@@ -221,7 +221,7 @@ function createCatalogLayer(){
       radius: 10
     })
 
-    sourceMarker.bindPopup(`Flux: ${source.flux}<br>X: ${source.x}<br>Y: ${source.y}`)
+    sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
     catalogMarkers.push(sourceMarker)
   })
 
