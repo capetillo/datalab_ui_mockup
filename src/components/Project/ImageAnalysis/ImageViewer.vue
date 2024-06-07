@@ -215,8 +215,8 @@ function createCatalogLayer(){
 
   props.catalog.forEach((source) => {
     let sourceMarker = L.circle([source.y, source.x], {
-      color: 'var(--tan)',
-      fillColor: 'var(--tan)',
+      color: 'var(--tangerine)',
+      fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10
     })
