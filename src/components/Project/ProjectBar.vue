@@ -64,21 +64,35 @@ watch(dateUnits, (newUnits) => {
 <template>
   <div class="project_bar">
     <v-card class="h-auto w-20 ma-1 project_card">
-      <!-- This should be done in a more flexible way so it can collapse better on smaller screens -->
-      <v-row class="mt-1">
-        <v-col cols="4" class="ml-1">
-          <v-select :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" v-model="dateNumber" density="compact"></v-select>
-        </v-col>
-        <v-col cols="5">
-          <v-select :items="['Days', 'Weeks', 'Months']" v-model="dateUnits" density="compact"></v-select>
-        </v-col>
-        <v-col class="mb-4" style="align-self: center;">
-          <b>Ago</b>
-        </v-col>
-      </v-row>
       <p class="project_header">
         PROJECTS
       </p>
+      <!-- This should be done in a more flexible way so it can collapse better on smaller screens -->
+      <v-row class="mt-1">
+        <v-col
+          cols="4"
+          class="ml-1"
+        >
+          <v-select
+            v-model="dateNumber"
+            :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+            density="compact"
+          />
+        </v-col>
+        <v-col cols="5">
+          <v-select
+            v-model="dateUnits"
+            :items="['Days', 'Weeks', 'Months']"
+            density="compact"
+          />
+        </v-col>
+        <v-col
+          class="mb-4"
+          style="align-self: center;"
+        >
+          <b>Ago</b>
+        </v-col>
+      </v-row>
       <v-text-field
         v-model="searchQuery"
         append-inner-icon="mdi-magnify"
@@ -89,9 +103,9 @@ watch(dateUnits, (newUnits) => {
         single-line
       />
       <v-expansion-panels
+        v-model="selectedProjectIndex"
         variant="accordion"
         class="accordion"
-        v-model="selectedProjectIndex"
       >
         <ProjectSelector
           v-for="(project, index) in filteredProjects"

@@ -2,17 +2,18 @@
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
+import { useSettingsStore } from '@/stores/settings'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession/DataSession.vue'
 import DeleteSessionDialog from '@/components/DataSession/DeleteSessionDialog.vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
+const settingsStore = useSettingsStore()
 const dataSessions = ref([])
-const tab = ref()
+const tab = ref(settingsStore.recentSessionId)
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
@@ -23,21 +24,18 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   await loadSessions()
-  // if user created or selected a specific datasession, load that tab
-  if (route.params.sessionId && dataSessions.value.some(ds => ds.id == route.params.sessionId)) {
-    tab.value = Number(route.params.sessionId)
+  if (dataSessions.value.length > 0 && !settingsStore.recentSessionId) {
+    const firstSessionId = dataSessions.value[0].id
+    tab.value = firstSessionId
+    settingsStore.recentSessionId = firstSessionId
   } else {
-    if (dataSessions.value.length > 0) {
-      const firstSessionId = dataSessions.value[0].id
-      tab.value = firstSessionId
-    } else {
-      console.log('no data sessions available to display')
-    }
+    console.log('no data sessions available to display')
   }
 })
 
 function onTabChange(newSessionId) {
   tab.value = newSessionId
+  settingsStore.recentSessionId = newSessionId
 }
 
 function openDeleteDialog(id) {
@@ -78,22 +76,56 @@ function tabActive(index) {
 <template>
   <v-container class="d-lg datasession-container">
     <v-card>
-      <v-tabs v-model="tab" class="tabs" next-icon="mdi-arrow-right-bold-box-outline"
-        prev-icon="mdi-arrow-left-bold-box-outline" show-arrows @update:model-value="onTabChange">
-        <v-tab v-for="(ds, index) in dataSessions" :key="ds.id" :value="ds.id" :class="tabColor(index)" class="pr-0 tab">
+      <v-tabs
+        v-model="tab"
+        class="tabs"
+        next-icon="mdi-arrow-right-bold-box-outline"
+        prev-icon="mdi-arrow-left-bold-box-outline"
+        show-arrows
+        @update:model-value="onTabChange"
+      >
+        <v-tab
+          v-for="(ds, index) in dataSessions"
+          :key="ds.id"
+          :value="ds.id"
+          :class="tabColor(index)"
+          class="pr-0 tab"
+        >
           {{ ds.name }}
-          <v-btn variant="text" icon="mdi-close" class="tab_button" :class="tabColor(index)"
-            @click="openDeleteDialog(ds.id)" />
+          <v-btn
+            variant="text"
+            icon="mdi-close"
+            class="tab_button"
+            :class="tabColor(index)"
+            @click="openDeleteDialog(ds.id)"
+          />
         </v-tab>
-        <v-btn variant="plain" icon="mdi-plus-box" class="tab_button" @click="router.push({ name: 'ProjectView' })" />
+        <v-btn
+          variant="plain"
+          icon="mdi-plus-box"
+          class="tab_button"
+          @click="router.push({ name: 'ProjectView' })"
+        />
       </v-tabs>
       <v-window v-model="tab">
-        <v-window-item v-for="(ds, index) in dataSessions" :key="ds.id" :value="ds.id">
-          <data-session :data="ds" :active="tabActive(index)" @reload-session="loadSessions()" />
+        <v-window-item
+          v-for="(ds, index) in dataSessions"
+          :key="ds.id"
+          :value="ds.id"
+        >
+          <data-session
+            :data="ds"
+            :active="tabActive(index)"
+            @reload-session="loadSessions()"
+          />
         </v-window-item>
       </v-window>
     </v-card>
-    <delete-session-dialog v-model="showDeleteDialog" :delete-id="deleteSessionId" @reload-session="loadSessions()" />
+    <delete-session-dialog
+      v-model="showDeleteDialog"
+      :delete-id="deleteSessionId"
+      @reload-session="loadSessions()"
+    />
   </v-container>
 </template>
 
