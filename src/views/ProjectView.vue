@@ -102,7 +102,7 @@ const addImagesToExistingSession = async (session) => {
 const selectDataSession = async (session) => {
   isPopupVisible.value = false
   await addImagesToExistingSession(session)
-  router.push({ name: 'DataSessionDetails', params: { sessionId: session.id } })
+  router.push({ name: 'DataSessionView' })
 
 }
 
@@ -145,7 +145,8 @@ const createNewDataSession = async () => {
     isPopupVisible.value = false
     newSessionName.value = ''
     errorMessage.value = ''
-    router.push({ name: 'DataSessionDetails', params: { sessionId: response.id } })
+    settingsStore.recentSessionId = response.id
+    router.push({ name: 'DataSessionView' })
   } else {
     errorMessage.value = 'Error creating new data session'
   }
@@ -182,7 +183,7 @@ onUnmounted(() => {
       :projects="userDataStore.proposals"
       @selected-project="filterImagesByProposalId"
     />
-    <div class="image-area h-screen">
+    <div class="image-area">
       <div
         v-if="isLoading"
         class="loading-indicator-container"
@@ -214,22 +215,26 @@ onUnmounted(() => {
       <div class="control-buttons">
         <v-btn
           :disabled="noSelectedImages"
-          class="add_button"
-          @click="getDataSessions"
+          class="unselect_images"
+          prepend-icon="mdi-trash-can-outline"
+          @click="unselectImages"
         >
-          <template v-if="imageCounter === 0">
-            Select images
-          </template>
-          <template v-else>
-            Add {{ imageCounter }} image<span v-if="imageCounter > 1">s</span>
-          </template>
+          Clear
         </v-btn>
         <v-btn
           :disabled="noSelectedImages"
-          class="unselect_images"
-          @click="unselectImages"
+          class="add_button"
+          prepend-icon="mdi-plus"
+          @click="getDataSessions"
         >
-          Unselect All Images
+          <template v-if="imageCounter === 0">
+            Select
+          </template>
+          <template v-else>
+            Add {{ imageCounter }} image<span v-if="imageCounter > 1">
+              s
+            </span>
+          </template>
         </v-btn>
       </div>
     </div>
@@ -295,7 +300,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: [col1-start] 1fr [col1-end col2-start] 80% [col2-end];
   grid-template-rows: [row-start] 100% [row-end];
-  height: 100vh;
+  height: 94vh;
 }
 .project-bar{
   display: flex;
@@ -303,9 +308,10 @@ onUnmounted(() => {
   grid-column-end: col1-end;
   grid-row-start: row-start;
   grid-row-end: row-end;
-  height: 95%;
+  height: 100%;
 }
 .image-area {
+  position: relative;
   grid-column-start: col2-start;
   grid-column-end: col2-end;
 }
@@ -316,45 +322,34 @@ onUnmounted(() => {
   height: 100%;
 }
 .control-buttons {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  float: right;
-  position: fixed;
-  bottom: 2%;
-  right: 3%;
+  position: absolute;
+  bottom: 1rem;
+  right: 0;
 }
 .add_button {
   width: 17.3rem;
   height: 4rem;
   font-size: 1.3rem;
-  align-content: center;
-  margin-right: 0.5rem;
+  margin-right: 1rem;
   background-color: var(--light-blue);
+  color: var(--tan);
   opacity: calc(1);
   font-weight: 700;
-  color: white;
 }
 .add_button:disabled {
-  background-color:var(--light-blue);
-  color: white;  
   opacity: calc(0.7);
 }
 .unselect_images {
   width: 17.3rem;
   height: 4rem;
   font-size: 1.3rem;
-  align-content: center;
   margin-right: 1rem;
   background-color: var(--cancel);
+  color: var(--tan);
   opacity: calc(1);
   font-weight: 700;
-  color: white;
 }
 .unselect_images:disabled {
-  background-color:var(--cancel);
-  color: white;  
   opacity: calc(0.7);
 }
 .card{
@@ -428,11 +423,6 @@ onUnmounted(() => {
     font-size: 1.2rem;
     padding: 0.8rem;
   }
-  .add_button {
-    width: 12rem;
-    height: 3rem;
-    font-size: 1rem;
-  }
   .project-bar {
     height: 60%;
   }
@@ -451,11 +441,6 @@ onUnmounted(() => {
   .card {
     width: 40vw;
     height: 35vh;
-  } 
-  .add_button {
-    width: 22vw;
-    height: 4.8vh;
-    font-size: 1rem;
   } 
   .project-bar {
     height: 35vh;

@@ -8,6 +8,7 @@ export const useSettingsStore = defineStore('settings', {
   state() {
     return {
       selectedImages: [],
+      recentSessionId: '',
       imagesByProposal: {},
       startDate: new Date(Date.now() - 24 * 3600 * 1000),
       endDate: new Date(Date.now())
