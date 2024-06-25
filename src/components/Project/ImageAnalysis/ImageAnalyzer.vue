@@ -11,12 +11,16 @@ const emit = defineEmits(['update:modelValue'])
 const configStore = useConfigurationStore()
 
 const lineProfile = ref([])
-const lineProfileLength = ref(0)
+const lineProfileLength = ref()
+const startCoords = ref()
+const endCoords = ref()
 const catalog = ref([])
 
 function closeDialog() { 
   lineProfile.value = []
   lineProfileLength.value = 0
+  startCoords.value = null
+  endCoords.value = null
   emit('update:modelValue', false)
 }
 
@@ -36,6 +40,8 @@ function handleAnalysisOutput(response, action){
   case 'line-profile':
     lineProfile.value = response.line_profile
     lineProfileLength.value = response.arcsec
+    endCoords.value = response.end_coords
+    startCoords.value = response.start_coords
     break
   case 'source-catalog':
     catalog.value = response
@@ -90,6 +96,8 @@ function handleAnalysisOutput(response, action){
           <line-plot
             :y-axis-luminosity="lineProfile"
             :x-axis-arcsecs="lineProfileLength"
+            :start-coords="startCoords"
+            :end-coords="endCoords"
           />
         </div>
       </div>
