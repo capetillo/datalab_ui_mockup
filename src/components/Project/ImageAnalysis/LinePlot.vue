@@ -4,7 +4,7 @@ import * as d3 from 'd3'
 
 const svg = ref(null)
 
-const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs'])
+const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs', 'startCoords', 'endCoords'])
 
 // Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
@@ -51,7 +51,7 @@ const updatePlot = () => {
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', 'steelblue')
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 1)
 }
 
 watch(() => [props.yAxisLuminosity, props.xAxisArcsecs], () => {
@@ -107,6 +107,19 @@ onMounted(() => {
       :height="svgHeight"
     />
   </div>
+  <div
+    class="line-details"
+  >
+    <p v-if="xAxisArcsecs">
+      Distance: {{ xAxisArcsecs.toFixed(3) }} arcseconds
+    </p>
+    <p v-if="startCoords">
+      Start: RA {{ startCoords[0].toFixed(3) }} DEC {{ startCoords[1].toFixed(3) }}
+    </p>
+    <p v-if="endCoords">
+      End: RA {{ endCoords[0].toFixed(3) }} DEC {{ endCoords[1].toFixed(3) }}
+    </p>
+  </div>
 </template>
 
 <style scoped> 
@@ -116,6 +129,10 @@ onMounted(() => {
 }
 .axis-label {
   color: var(--tan);
+}
+.line-details {
+  color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
 }
 @media (max-width: 1200px) {
 .svg-wrapper {
