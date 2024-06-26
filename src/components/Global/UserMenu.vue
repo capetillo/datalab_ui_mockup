@@ -14,9 +14,7 @@ function logOut() {
 
 <template>
   <div class="user-menu">
-    <v-menu
-      :location="start"
-    >
+    <v-menu>
       <template #activator="{ props }">
         <v-btn
           class="nav-text"
