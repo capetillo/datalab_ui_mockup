@@ -58,11 +58,14 @@ async function pollOperationCompletion(operationID) {
 
   const updateOperationStatus = (response) => {
     if(response){
-      switch(response.status){
+      const operationStatus = response.status
+      const percentCompletion = response.percent_completion
+
+      switch(operationStatus){
       case 'PENDING':
         break
       case 'IN_PROGRESS':
-        operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
+        operationPercentages.value[operationID] = percentCompletion * DEC_TO_PERCENT
         break
       case 'COMPLETED':
         operationPercentages.value[operationID] = COMPLETE_PERCENT
@@ -73,7 +76,7 @@ async function pollOperationCompletion(operationID) {
         }
         break
       default:
-        console.error('Unknown Operation Status:', response.status)
+        console.error('Unknown Operation Status:', operationStatus)
       }
     }
     else{
