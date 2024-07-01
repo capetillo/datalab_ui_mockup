@@ -56,20 +56,35 @@ function operationBtnColor(index) {
 async function pollOperationCompletion(operationID) {
   const url = store.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
 
-  const updateOperationPercentages = (response) => {
-    if (response && response.percent_completion !== undefined && response.status != 'COMPLETED') {
-      operationPercentages.value[operationID] = response.percent_completion * DEC_TO_PERCENT
-    } else {
-      operationPercentages.value[operationID] = COMPLETE_PERCENT
-      emit('operationCompleted', response)
-      if (operationID in operationPollingTimers) {
-        clearInterval(operationPollingTimers[operationID])
-        setTimeout(clearPollingData(operationID), POLL_WAIT_TIME)
+  const updateOperationStatus = (response) => {
+    if(response){
+      const operationStatus = response.status
+      const percentCompletion = response.percent_completion
+
+      switch(operationStatus){
+      case 'PENDING':
+        break
+      case 'IN_PROGRESS':
+        operationPercentages.value[operationID] = percentCompletion * DEC_TO_PERCENT
+        break
+      case 'COMPLETED':
+        operationPercentages.value[operationID] = COMPLETE_PERCENT
+        emit('operationCompleted', response)
+        if (operationID in operationPollingTimers) {
+          clearInterval(operationPollingTimers[operationID])
+          setTimeout(clearPollingData(operationID), POLL_WAIT_TIME)
+        }
+        break
+      default:
+        console.error('Unknown Operation Status:', operationStatus)
       }
+    }
+    else{
+      console.error('No response on status for operation:', operationID)
     }
   }
 
-  await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationPercentages, failCallback: handleError })
+  await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationStatus, failCallback: handleError })
 }
 
 function clearPollingData(operationID) {
@@ -118,20 +133,44 @@ onBeforeUnmount(() => {
   <h3 class="operations">
     OPERATIONS
   </h3>
-  <v-divider class="mb-6" />
-  <v-row v-for="(operation, index) in operations" :key="operation.id" align="center" justify="center" class="mb-2">
-    <v-btn :class="operationBtnColor(index)" variant="outlined" class="operation_button" @click="selectOperation(index)">
+  <v-row
+    v-for="(operation, index) in operations"
+    :key="operation.id"
+    align="center"
+    justify="center"
+    class="operation mb-2"
+  >
+    <v-btn
+      :class="operationBtnColor(index)"
+      variant="outlined"
+      class="operation_button"
+      @click="selectOperation(index)"
+    >
       {{ index }}: {{ operation.name }}
     </v-btn>
-    <v-progress-linear v-if="operationPercentages[operation.id] !== undefined" class="operation_completion"
-      :model-value="operationPercentages[operation.id]" :height="5" />
+    <v-progress-linear
+      v-if="operationPercentages[operation.id] !== undefined"
+      class="operation_completion"
+      :model-value="operationPercentages[operation.id]"
+      :height="5"
+    />
   </v-row>
-  <v-divider class="mb-4 mt-4" />
-  <v-btn variant="flat" class="addop_button">
+  <v-btn
+    variant="flat"
+    class="addop_button"
+  >
     Add Operation
-    <v-dialog v-model="showWizardDialog" activator="parent" fullscreen transition="dialog-bottom-transition">
-      <operation-wizard :images="images" @close-wizard="showWizardDialog = false"
-        @add-operation="emit('addOperation', $event); showWizardDialog = false;" />
+    <v-dialog
+      v-model="showWizardDialog"
+      activator="parent"
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <operation-wizard
+        :images="images"
+        @close-wizard="showWizardDialog = false"
+        @add-operation="emit('addOperation', $event); showWizardDialog = false;"
+      />
     </v-dialog>
   </v-btn>
 </template>
@@ -143,6 +182,10 @@ onBeforeUnmount(() => {
   font-size: 2rem;
 }
 
+.operation{
+  margin-top: 1rem;
+}
+
 .addop_button {
   width: 16rem;
   height: 4rem;
@@ -151,6 +194,7 @@ onBeforeUnmount(() => {
   background-color: var(--light-blue);
   font-weight: 700;
   color: white;
+  margin-top: 1rem;
 }
 
 .operation_button {
