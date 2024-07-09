@@ -16,8 +16,6 @@ export const useAlertsStore = defineStore('alerts', {
   },
   actions: {
     setAlert(type, text, prefix = '') {
-      console.log('prefix', prefix)
-      console.log(prefix + text)
       this.alertType = type
       this.alertText = prefix ? prefix + ' ' + text : text
     }
