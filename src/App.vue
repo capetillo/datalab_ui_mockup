@@ -3,6 +3,7 @@ import { onMounted, computed, watch } from 'vue'
 import { useUserDataStore } from '@/stores/userData'
 import { useConfigurationStore } from './stores/configuration'
 import NavBar from './components/Global/NavBar.vue'
+import AlertToast from './components/Global/AlertToast.vue'
 
 const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
@@ -39,6 +40,7 @@ watch(() => userDataStore.isColorblindMode, (newVal) => {
   <template v-if="loadedConfig">
     <template v-if="userDataStore.userIsAuthenticated">
       <nav-bar />
+      <alert-toast />
     </template>
     <router-view />
   </template>
