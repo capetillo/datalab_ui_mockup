@@ -29,7 +29,7 @@ onMounted(async () => {
     tab.value = firstSessionId
     settingsStore.recentSessionId = firstSessionId
   } else {
-    console.log('no data sessions available to display')
+    console.error('no data sessions available to display')
   }
 })
 

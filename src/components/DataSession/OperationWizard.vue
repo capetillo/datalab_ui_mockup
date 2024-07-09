@@ -114,6 +114,7 @@ function goForward() {
       operationDefinition.input_data[inputKey] = selected
     }
     emit('addOperation', operationDefinition)
+    emit('closeWizard')
   }
 }
 
@@ -189,7 +190,6 @@ function selectImage(inputKey, imageIndex) {
           />
           <div
             v-else-if="inputDescription.type == 'file'"
-            class="images-container"
           >
             <div
               v-if="inputDescription.name"
@@ -276,23 +276,10 @@ function selectImage(inputKey, imageIndex) {
 }
 
 .operation-input {
-  width: 10vw;
-  margin-left: 2%;
-  background-color: var(--metal);
-  position: fixed;
-  top: 6%;
+  margin-top: 2rem;
+  width: 12rem;
 }
 
-.images-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  flex-direction: column;
-  width: 100%;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  margin-top: 6%;
-}
 .input-images {
   font-family: 'Open Sans', sans-serif;
   color: var(--tan);
@@ -324,34 +311,5 @@ function selectImage(inputKey, imageIndex) {
 .gofwd-btn {
   color: var(--light-blue);
   font-size: 1.2rem;
-}
-
-@media (max-width: 1200px) {
-  .operation-input {
-    margin-left: 3%;
-  }
-
-  .images-container {
-    margin-top: 2%;
-  }
-}
-
-@media (max-width: 900px) {
-  .selected-operation {
-    height: 120%;
-  }
-
-  .operation-description {
-    font-size: 1rem;
-  }
-
-  .operation-input {
-    margin-left: 4%;
-    width: 15vw;
-  }
-
-  .images-container {
-    margin-top: 3%;
-  }
 }
 </style>
