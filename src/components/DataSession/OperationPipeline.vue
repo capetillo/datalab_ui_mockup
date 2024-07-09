@@ -1,11 +1,12 @@
 <script setup>
-import { ref, defineEmits, defineProps, watch, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
+import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall, handleError } from '@/utils/api'
-import OperationWizard from './OperationWizard.vue'
 
 const store = useConfigurationStore()
-const emit = defineEmits(['addOperation', 'operationCompleted', 'selectOperation'])
+const alertStore = useAlertsStore()
+const emit = defineEmits(['operationCompleted', 'selectOperation', 'deleteOperation'])
 
 const props = defineProps({
   operations: {
@@ -16,10 +17,6 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  images: {
-    type: Array,
-    required: true
-  },
   active: {
     type: Boolean,
     required: true
@@ -27,7 +24,6 @@ const props = defineProps({
 })
 
 const selectedOperation = ref(-1)
-const showWizardDialog = ref(false)
 const operationPollingTimers = {}
 const operationPercentages = ref({})
 const POLL_WAIT_TIME = 2000
@@ -44,18 +40,8 @@ function selectOperation(index) {
   emit('selectOperation', selectedOperation.value)
 }
 
-function operationBtnColor(index) {
-  if (index == selectedOperation.value) {
-    return 'selected'
-  }
-  else {
-    return 'not-selected'
-  }
-}
-
 async function pollOperationCompletion(operationID) {
-  const url = store.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
-
+  // Success Callback for checking operation status
   const updateOperationStatus = (response) => {
     if(response){
       const operationStatus = response.status
@@ -70,10 +56,13 @@ async function pollOperationCompletion(operationID) {
       case 'COMPLETED':
         operationPercentages.value[operationID] = COMPLETE_PERCENT
         emit('operationCompleted', response)
-        if (operationID in operationPollingTimers) {
-          clearInterval(operationPollingTimers[operationID])
-          setTimeout(clearPollingData(operationID), POLL_WAIT_TIME)
-        }
+        clearPolling(operationID)
+        break
+      case 'FAILED':
+        alertStore.setAlert('error', response.message ? response.message : 'Failed', 'Operation Error:')
+        operationPercentages.value[operationID] = COMPLETE_PERCENT
+        emit('deleteOperation', operationID)
+        clearPolling(operationID)
         break
       default:
         console.error('Unknown Operation Status:', operationStatus)
@@ -84,12 +73,16 @@ async function pollOperationCompletion(operationID) {
     }
   }
 
+  const url = store.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
   await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationStatus, failCallback: handleError })
 }
 
-function clearPollingData(operationID) {
-  delete operationPercentages.value[operationID]
-  delete operationPollingTimers[operationID]
+function clearPolling(operationID) {
+  if (operationID in operationPollingTimers){
+    clearInterval(operationPollingTimers[operationID])
+    delete operationPercentages.value[operationID]
+    delete operationPollingTimers[operationID]
+  }
 }
 
 watch(() => props.operations, () => {
@@ -113,8 +106,7 @@ watch(
     }
     else {
       Object.keys(operationPollingTimers).forEach(operationID => {
-        clearInterval(operationPollingTimers[operationID])
-        clearPollingData(operationID)
+        clearPolling(operationID)
       })
     }
   }, { immediate: true }
@@ -123,8 +115,7 @@ watch(
 onBeforeUnmount(() => {
   // Clean up Polling Intervals
   Object.keys(operationPollingTimers).forEach(operationID => {
-    clearInterval(operationPollingTimers[operationID])
-    clearPollingData(operationID)
+    clearPolling(operationID)
   })
 })
 
@@ -141,7 +132,7 @@ onBeforeUnmount(() => {
     class="operation mb-2"
   >
     <v-btn
-      :class="operationBtnColor(index)"
+      :class="{selected: index == selectedOperation}"
       variant="outlined"
       class="operation_button"
       @click="selectOperation(index)"
@@ -155,24 +146,6 @@ onBeforeUnmount(() => {
       :height="5"
     />
   </v-row>
-  <v-btn
-    variant="flat"
-    class="addop_button"
-  >
-    Add Operation
-    <v-dialog
-      v-model="showWizardDialog"
-      activator="parent"
-      fullscreen
-      transition="dialog-bottom-transition"
-    >
-      <operation-wizard
-        :images="images"
-        @close-wizard="showWizardDialog = false"
-        @add-operation="emit('addOperation', $event); showWizardDialog = false;"
-      />
-    </v-dialog>
-  </v-btn>
 </template>
 
 <style scoped>
@@ -186,32 +159,18 @@ onBeforeUnmount(() => {
   margin-top: 1rem;
 }
 
-.addop_button {
-  width: 16rem;
-  height: 4rem;
-  font-size: 1.3rem;
-  align-content: center;
-  background-color: var(--light-blue);
-  font-weight: 700;
-  color: white;
-  margin-top: 1rem;
-}
-
 .operation_button {
   width: 12rem;
   height: 3rem;
   font-size: 1.2rem;
   font-weight: 600;
   border-style: none;
+  background-color: var(--tan);
+  color: var(--metal);
 }
 
 .selected {
   background-color: var(--light-blue)
-}
-
-.not-selected {
-  background-color: var(--light-gray);
-  color: var(--metal);
 }
 
 @media (max-width: 1200px) {

@@ -5,6 +5,7 @@ import { fetchApiCall, handleError } from '../../utils/api'
 import { calculateColumnSpan } from '@/utils/common'
 import { useConfigurationStore } from '@/stores/configuration'
 import ImageGrid from '../Global/ImageGrid'
+import OperationWizard from './OperationWizard.vue'
 
 const props = defineProps({
   data: {
@@ -22,6 +23,7 @@ const store = useConfigurationStore()
 const emit = defineEmits(['reloadSession'])
 const images = ref([...props.data.input_data])
 const filteredImages = ref([...images.value])
+const showWizardDialog = ref(false)
 
 const dataSessionsUrl = store.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
@@ -76,6 +78,11 @@ function selectOperation(operationIndex) {
   }
 }
 
+function deleteOperation(operationID) {
+  const url = dataSessionsUrl + props.data.id + '/operations/' + operationID + '/'
+  fetchApiCall({ url: url, method: 'DELETE', successCallback: () => {emit('reloadSession')}, failCallback: handleError })
+}
+
 async function addOperation(operationDefinition) {
   const url = dataSessionsUrl + props.data.id + '/operations/'
   if ('input_files' in operationDefinition.input_data) {
@@ -109,12 +116,43 @@ onMounted(() => {
 
 <template>
   <v-container class="d-lg-flex ds-container">
-    <image-grid :images="filteredImages" :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)" />
-    <v-col cols="3" justify="center" align="center">
+    <v-col
+      cols="3"
+      justify="center"
+      align="center"
+    >
       <!-- The operations bar list goes here -->
-      <operation-pipeline :images="images" :session_id="data.id" :operations="data.operations" :active="props.active"
-        @add-operation="addOperation" @operation-completed="addCompletedOperation" @select-operation="selectOperation" />
+      <operation-pipeline
+        :session_id="data.id"
+        :operations="data.operations"
+        :active="props.active"
+        @operation-completed="addCompletedOperation"
+        @select-operation="selectOperation"
+        @delete-operation="deleteOperation"
+      />
+      <v-btn
+        variant="flat"
+        class="addop_button"
+      >
+        Add Operation
+        <v-dialog
+          v-model="showWizardDialog"
+          activator="parent"
+          fullscreen
+          transition="dialog-bottom-transition"
+        >
+          <operation-wizard
+            :images="images"
+            @close-wizard="showWizardDialog = false"
+            @add-operation="addOperation"
+          />
+        </v-dialog>
+      </v-btn>
     </v-col>
+    <image-grid
+      :images="filteredImages"
+      :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)"
+    />
   </v-container>
 </template>
 
@@ -122,5 +160,15 @@ onMounted(() => {
 .ds-container {
   background-color: var(--metal);
   display: flex;
+}
+.addop_button {
+  width: 16rem;
+  height: 4rem;
+  font-size: 1.3rem;
+  align-content: center;
+  background-color: var(--light-blue);
+  font-weight: 700;
+  color: white;
+  margin-top: 1rem;
 }
 </style>
