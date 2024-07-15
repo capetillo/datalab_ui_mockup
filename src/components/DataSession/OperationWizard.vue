@@ -21,8 +21,7 @@ const selectedOperation = ref('')
 const selectedOperationInput = ref({})
 const selectedImages = ref({})
 const imagesPerRow = ref(3)
-
-let displayImages = ref(false)
+const page = ref('select')
 
 onMounted(async () => {
   const url = dataSessionsUrl + 'available_operations/'
@@ -31,8 +30,6 @@ onMounted(async () => {
     selectOperation(Object.keys(availableOperations.value)[0])
   }
 })
-
-const page = ref('select')
 
 function selectOperation(name) {
   selectedOperation.value = name
@@ -52,7 +49,6 @@ function selectOperation(name) {
 }
 
 function goBack() {
-  displayImages.value = false
   if (page.value == 'select') {
     emit('closeWizard')
   }
@@ -96,10 +92,8 @@ const wizardTitle = computed(() => {
 function goForward() {
   if (page.value == 'select') {
     page.value = 'configure'
-    displayImages.value = true
   }
   else {
-    displayImages.value = false
     let operationDefinition = {
       'name': selectedOperation.value,
       'input_data': {
