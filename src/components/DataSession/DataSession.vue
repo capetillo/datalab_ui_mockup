@@ -85,11 +85,6 @@ function deleteOperation(operationID) {
 
 async function addOperation(operationDefinition) {
   const url = dataSessionsUrl + props.data.id + '/operations/'
-  if ('input_files' in operationDefinition.input_data) {
-    for (const image of operationDefinition.input_data.input_files) {
-      image.source = 'archive'
-    }
-  }
 
   // first operation doesn't load unless this is here
   function postOperationSuccess() {
