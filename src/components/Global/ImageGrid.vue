@@ -2,6 +2,7 @@
 import { defineProps, ref, defineEmits, watch } from 'vue'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
+import FilterBadge from './FilterBadge.vue'
 
 const props = defineProps({
   images: {
@@ -62,6 +63,7 @@ watch(() => props.images, () => {
       v-for="(image, index) in props.images"
       :key="index"
       :cols="columnSpan"
+      class="image-grid-col"
     >
       <v-img
         v-if="image.basename in imageDetails && imageDetails[image.basename]"
@@ -70,7 +72,6 @@ watch(() => props.images, () => {
         cover
         :class="{ 'selected-image': isSelected(index) }"
         aspect-ratio="1"
-        class="image-grid"
         @click="onImageClick(index)"
       >
         <span
@@ -78,6 +79,10 @@ watch(() => props.images, () => {
           class="image-text-overlay"
         >{{ image.operationIndex }}</span>
       </v-img>
+      <filter-badge
+        v-if="image.filter"
+        :filter="image.filter"
+      />
     </v-col>
   </v-row>
 </template>
@@ -93,12 +98,7 @@ watch(() => props.images, () => {
   margin-right: 5px;
   float: right;
 }
-.image-grid {
-  max-width: 200px;
-}
-@media (max-width: 900px) {
-.image-grid {
-  width: 20vw;
-}
+.image-grid-col {
+  max-width: 300px;
 }
 </style>
