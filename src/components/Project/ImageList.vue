@@ -11,7 +11,7 @@ const props = defineProps(['data'])
 let headers = ref([
   { title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
   { title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
-  { title: 'OBJECT', align: 'start', sortable: true, key: 'OBJECT' },
+  { title: 'FILTER', align: 'start', sortable: true, key: 'FILTER' },
   { title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
 ])
 let itemsPerPage = ref(15)
@@ -64,6 +64,8 @@ onMounted ( () => {
   color: var(--tan);
   font-size: 1.4rem;
   background-color: var(--metal);
+  overflow-y: scroll;
+  max-height: 80vh;
 }
 .list_image{
   height: 8vh;

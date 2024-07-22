@@ -69,9 +69,7 @@ function handleAnalysisOutput(response, action){
           :download="image.basename"
           target="_blank"
         >
-          <v-btn
-            icon="mdi-download"
-          />
+          <v-icon icon="mdi-download" />
         </a>
         <v-btn
           icon="mdi-close"
@@ -92,6 +90,7 @@ function handleAnalysisOutput(response, action){
             <p>Site: {{ image.site_id }}</p>
             <p>Telescope: {{ image.telescope_id }}</p>
             <p>Instrument: {{ image.instrument_id }}</p>
+            <p>Filter: {{ image.FILTER }}</p>
           </v-sheet>
           <line-plot
             :y-axis-luminosity="lineProfile"
@@ -105,6 +104,9 @@ function handleAnalysisOutput(response, action){
   </v-dialog>
 </template>
 <style scoped>
+a{
+  color: var(--tan);
+}
 .analysis-sheet{
   background-color: var(--dark-blue);
   font-family: 'Open Sans', sans-serif;
