@@ -7,6 +7,7 @@ import { useThumbnailsStore } from '@/stores/thumbnails'
 import { Carousel, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import ImageAnalyzer from './ImageAnalysis/ImageAnalyzer.vue'
+import FilterBadge from '@/components/Global/FilterBadge.vue'
 
 const props = defineProps({
   data: {
@@ -109,14 +110,21 @@ watch(() => props.data, (newVal) => {
     </Slide>
   </Carousel>
   <Carousel
-    class="mt-4"
     id="thumbnails"
+    ref="carousel"
+    v-model="currentSlide"
+    class="mt-4"
     :wrap-around="false"
     :breakpoints="breakpoints"
-    v-model="currentSlide"
-    ref="carousel">
-    <Slide v-for="(item, index) in data" :key="index">
-      <div class="carousel__item" @click="handleThumbnailClick(item, index)">
+  >
+    <Slide
+      v-for="(item, index) in data"
+      :key="index"
+    >
+      <div
+        class="carousel__item"
+        @click="handleThumbnailClick(item, index)"
+      >
         <v-img
           :src="item.smallCachedUrl"
           loading="lazy"
@@ -124,7 +132,12 @@ watch(() => props.data, (newVal) => {
           class="thumbnail__item"
           :class="{'selected-thumbnail': store.isSelected(item)}"
           :alt="item.OBJECT"
-        />
+        >
+          <filter-badge
+            v-if="item.FILTER"
+            :filter="item.FILTER"
+          />
+        </v-img>
       </div>
     </Slide>
   </Carousel>
