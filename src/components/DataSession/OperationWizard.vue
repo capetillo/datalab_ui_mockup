@@ -91,14 +91,6 @@ const wizardTitle = computed(() => {
   }
 })
 
-function imagesWithFilter(filters) {
-  const imagesFiltered = props.images.filter((image) => filters.includes(image.filter))
-  if (imagesFiltered.length == 0) {
-    alert.setAlert('warning', 'Operation requires images with filter ' + filters.join(', '))
-  }
-  return imagesFiltered
-}
-
 function goForward() {
   if (page.value == 'select') {
     page.value = 'configure'
@@ -111,15 +103,27 @@ function goForward() {
       }
     }
     for (const inputKey in selectedImages.value) {
-      let selected = []
+      let input = []
+      const filter = selectedOperationInputs.value[inputKey].filter
       selectedImages.value[inputKey].forEach(index => {
-        selected.push(props.images[index])
+        input.push(imagesWithFilter(filter)[index])
       })
-      operationDefinition.input_data[inputKey] = selected
+      operationDefinition.input_data[inputKey] = input
     }
     emit('addOperation', operationDefinition)
     emit('closeWizard')
   }
+}
+
+function imagesWithFilter(filters) {
+  if(!filters) {
+    return props.images
+  }
+  const imagesFiltered = props.images.filter((image) => filters.includes(image.filter))
+  if (imagesFiltered.length == 0) {
+    alert.setAlert('warning', 'Operation requires images with filter ' + filters.join(', '))
+  }
+  return imagesFiltered
 }
 
 function selectImage(inputKey, imageIndex) {
@@ -209,7 +213,7 @@ function selectImage(inputKey, imageIndex) {
               {{ inputDescription.name }}
             </div>
             <image-grid
-              :images="inputDescription.filter ? imagesWithFilter(inputDescription.filter) : images"
+              :images="imagesWithFilter(inputDescription.filter)"
               :selected-images="selectedImages[inputKey]"
               :column-span="calculateColumnSpan(images.length, imagesPerRow)"
               class="wizard-images"
