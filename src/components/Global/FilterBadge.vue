@@ -9,7 +9,7 @@ const props = defineProps({
 
 const badgeColor = computed(() => {
   switch (props.filter) {
-  case 'R': case 'rp': case 'w':
+  case 'R': case 'rp':
     return 'red'
   case 'V': case 'gp':
     return 'green'
