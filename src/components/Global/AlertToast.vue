@@ -23,7 +23,7 @@ watch(() => alertStore.alertText, () => {showAlert.value = true})
     position: absolute;
     bottom: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 9999;
     padding: 10px;
     margin: 2rem;
   }
