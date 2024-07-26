@@ -84,7 +84,8 @@ const addImagesToExistingSession = async (session) => {
     const selectedImages = settingsStore.selectedImages
     const inputData = [...currentSessionData, ...selectedImages.map(image => ({
       'source': 'archive',
-      'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
+      'basename': image.basename.replace('-small', '') || image.basename.replace('-large', ''),
+      'filter': image.FILTER
     }))]
     const requestBody = {
       'name': session.name,
