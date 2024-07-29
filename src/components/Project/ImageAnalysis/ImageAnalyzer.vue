@@ -4,6 +4,7 @@ import { fetchApiCall } from '../../../utils/api'
 import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
+import FilterBadge from '@/components/Global/FilterBadge.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -90,7 +91,12 @@ function handleAnalysisOutput(response, action){
             <p>Site: {{ image.site_id }}</p>
             <p>Telescope: {{ image.telescope_id }}</p>
             <p>Instrument: {{ image.instrument_id }}</p>
-            <p>Filter: {{ image.FILTER }}</p>
+            <span>Filter: 
+              <filter-badge
+                v-if="image.FILTER"
+                :filter="image.FILTER"
+              />
+            </span>
           </v-sheet>
           <line-plot
             :y-axis-luminosity="lineProfile"

@@ -2,6 +2,7 @@
 <script setup>
 import { ref, onMounted, defineProps } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import FilterBadge from '@/components/Global/FilterBadge.vue'
 
 const store = useSettingsStore()
 // eslint-disable-next-line no-unused-vars
@@ -38,11 +39,16 @@ onMounted ( () => {
     item-value="basename"
     :return-object="true"
     show-select
-    density="compact"
     :hover="true"
     class="data_table"
     @update:model-value="select($event)"
   >
+    <template #[`item.FILTER`]="{ item }">
+      <filter-badge
+        v-if="item.FILTER"
+        :filter="item.FILTER"
+      />
+    </template>
     <template #[`item.url`]="{ item }">
       <v-img
         :src="item.smallCachedUrl"
