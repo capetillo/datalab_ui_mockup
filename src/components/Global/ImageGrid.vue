@@ -64,15 +64,15 @@ watch(() => props.images, () => {
         aspect-ratio="1"
         @click="emit('selectImage', index)"
       >
+        <filter-badge
+          v-if="image.filter"
+          :filter="image.filter"
+        />
         <span
           v-if="'operationIndex' in image"
           class="image-text-overlay"
         >{{ image.operationIndex }}</span>
       </v-img>
-      <filter-badge
-        v-if="image.filter"
-        :filter="image.filter"
-      />
     </v-col>
   </v-row>
 </template>

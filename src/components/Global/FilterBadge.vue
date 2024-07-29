@@ -33,5 +33,6 @@ const badgeColor = computed(() => {
   border-radius: 5px;
   color: var(--tan);
   padding: 5px 10px;
+  display: inline-block;
 }
 </style>
