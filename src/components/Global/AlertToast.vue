@@ -23,7 +23,8 @@ watch(() => alertStore.alertText, () => {showAlert.value = true})
     position: absolute;
     bottom: 0;
     left: 0;
-    z-index: 9999;
+    /* to show above the v-overlay whose z-index is 2400 */
+    z-index: 2401;
     padding: 10px;
     margin: 2rem;
   }
