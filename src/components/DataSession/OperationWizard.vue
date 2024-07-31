@@ -93,6 +93,13 @@ const wizardTitle = computed(() => {
 
 function goForward() {
   if (page.value == 'select') {
+    // if there are no images for a filter required by the operation, do not proceed
+    for (const inputKey in selectedOperationInputs.value) {
+      const inputField = selectedOperationInputs.value[inputKey]
+      if (inputField.type == 'file' && imagesWithFilter(inputField.filter).length == 0){
+        return
+      }
+    }
     page.value = 'configure'
   }
   else {
