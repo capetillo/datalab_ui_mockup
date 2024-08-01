@@ -1,12 +1,17 @@
 <script setup>
-import { defineProps, ref, defineEmits, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
+import FilterBadge from './FilterBadge.vue'
 
 const props = defineProps({
   images: {
     type: Array,
     required: true
+  },
+  selectedImages: {
+    type: Array,
+    default: () => []
   },
   columnSpan: {
     type: Number,
@@ -19,30 +24,16 @@ const props = defineProps({
 })
 
 let imageDetails = ref({})
-let selectedImages = ref([])
 const configurationStore = useConfigurationStore()
 const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
 
 
 const isSelected = (index) => {
-  return selectedImages.value.includes(index)
-}
-
-const onImageClick = (index) => {
-  if (props.allowSelection) {
-    if (selectedImages.value.includes(index)) {
-      selectedImages.value.splice(selectedImages.value.indexOf(index), 1)
-    }
-    else {
-      selectedImages.value.push(index)
-    }
-    emit('selectImage', index)
-  }
+  return props.selectedImages.includes(index)
 }
 
 watch(() => props.images, () => {
-  selectedImages.value = []
   props.images.forEach(image => {
     if (image.basename && !(image.basename in imageDetails.value)) {
       imageDetails.value[image.basename] = ref('')
@@ -62,6 +53,7 @@ watch(() => props.images, () => {
       v-for="(image, index) in props.images"
       :key="index"
       :cols="columnSpan"
+      class="image-grid-col"
     >
       <v-img
         v-if="image.basename in imageDetails && imageDetails[image.basename]"
@@ -70,9 +62,12 @@ watch(() => props.images, () => {
         cover
         :class="{ 'selected-image': isSelected(index) }"
         aspect-ratio="1"
-        class="image-grid"
-        @click="onImageClick(index)"
+        @click="emit('selectImage', index)"
       >
+        <filter-badge
+          v-if="image.filter"
+          :filter="image.filter"
+        />
         <span
           v-if="'operationIndex' in image"
           class="image-text-overlay"
@@ -83,29 +78,17 @@ watch(() => props.images, () => {
 </template>
 
 <style scoped>
-.image-grid-container {
-  display: flex;
-  max-width: 200px;
-  max-height: 200px;
-}
 .selected-image {
   border: 0.3rem solid var(--dark-green);
 }
 
 .image-text-overlay {
-  color: white;
+  color: var(--tan);
   font-weight: bold;
   margin-right: 5px;
   float: right;
 }
-.image-grid {
+.image-grid-col {
   max-width: 200px;
-  height: auto;
-}
-@media (max-width: 900px) {
-.image-grid {
-  width: 20vw;
-  height: auto;
-}
 }
 </style>
