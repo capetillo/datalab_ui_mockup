@@ -4,6 +4,7 @@ import { fetchApiCall } from '../../../utils/api'
 import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
+import FilterBadge from '@/components/Global/FilterBadge.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -69,9 +70,7 @@ function handleAnalysisOutput(response, action){
           :download="image.basename"
           target="_blank"
         >
-          <v-btn
-            icon="mdi-download"
-          />
+          <v-icon icon="mdi-download" />
         </a>
         <v-btn
           icon="mdi-close"
@@ -92,6 +91,12 @@ function handleAnalysisOutput(response, action){
             <p>Site: {{ image.site_id }}</p>
             <p>Telescope: {{ image.telescope_id }}</p>
             <p>Instrument: {{ image.instrument_id }}</p>
+            <span>Filter: 
+              <filter-badge
+                v-if="image.FILTER"
+                :filter="image.FILTER"
+              />
+            </span>
           </v-sheet>
           <line-plot
             :y-axis-luminosity="lineProfile"
@@ -105,6 +110,9 @@ function handleAnalysisOutput(response, action){
   </v-dialog>
 </template>
 <style scoped>
+a{
+  color: var(--tan);
+}
 .analysis-sheet{
   background-color: var(--dark-blue);
   font-family: 'Open Sans', sans-serif;

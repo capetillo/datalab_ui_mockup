@@ -4,6 +4,7 @@ import { fetchApiCall, handleError } from '@/utils/api'
 import { calculateColumnSpan } from '@/utils/common'
 import ImageGrid from '../Global/ImageGrid'
 import { useConfigurationStore } from '@/stores/configuration'
+import { useAlertsStore } from '@/stores/alerts'
 
 const props = defineProps({
   images: {
@@ -13,6 +14,7 @@ const props = defineProps({
 })
 
 const store = useConfigurationStore()
+const alert = useAlertsStore()
 const emit = defineEmits(['closeWizard', 'addOperation'])
 const dataSessionsUrl = store.datalabApiBaseUrl
 
@@ -91,6 +93,13 @@ const wizardTitle = computed(() => {
 
 function goForward() {
   if (page.value == 'select') {
+    // if there are no images for a filter required by the operation, do not proceed
+    for (const inputKey in selectedOperationInputs.value) {
+      const inputField = selectedOperationInputs.value[inputKey]
+      if (inputField.type == 'file' && imagesWithFilter(inputField.filter).length == 0){
+        return
+      }
+    }
     page.value = 'configure'
   }
   else {
@@ -101,23 +110,42 @@ function goForward() {
       }
     }
     for (const inputKey in selectedImages.value) {
-      let selected = []
+      let input = []
+      const filter = selectedOperationInputs.value[inputKey].filter
       selectedImages.value[inputKey].forEach(index => {
-        selected.push(props.images[index])
+        input.push(imagesWithFilter(filter)[index])
       })
-      operationDefinition.input_data[inputKey] = selected
+      operationDefinition.input_data[inputKey] = input
     }
     emit('addOperation', operationDefinition)
     emit('closeWizard')
   }
 }
 
-function selectImage(inputKey, imageIndex) {
-  if (selectedImages.value[inputKey].includes(imageIndex)) {
-    selectedImages.value[inputKey].splice(selectedImages.value[inputKey].indexOf(imageIndex), 1)
+function imagesWithFilter(filters) {
+  if(!filters) {
+    return props.images
   }
-  else {
-    selectedImages.value[inputKey].push(imageIndex)
+  const imagesFiltered = props.images.filter((image) => filters.includes(image.filter))
+  if (imagesFiltered.length == 0) {
+    alert.setAlert('warning', 'Operation requires images with filter ' + filters.join(', '))
+  }
+  return imagesFiltered
+}
+
+function selectImage(inputKey, imageIndex) {
+  const inputImages = selectedImages.value[inputKey]
+  const maxImages = selectedOperationInputs.value[inputKey].maximum
+
+  if (inputImages.includes(imageIndex)) {
+    inputImages.splice(inputImages.indexOf(imageIndex), 1)
+  }
+  else if (!maxImages || inputImages.length < maxImages){
+    inputImages.push(imageIndex)
+  }
+  else{
+    alert.setAlert('warning', 'Maximum number of images selected')
+    console.log('Maximum number of images selected in input', inputKey)
   }
 }
 
@@ -192,7 +220,8 @@ function selectImage(inputKey, imageIndex) {
               {{ inputDescription.name }}
             </div>
             <image-grid
-              :images="images"
+              :images="imagesWithFilter(inputDescription.filter)"
+              :selected-images="selectedImages[inputKey]"
               :column-span="calculateColumnSpan(images.length, imagesPerRow)"
               class="wizard-images"
               :allow-selection="true"

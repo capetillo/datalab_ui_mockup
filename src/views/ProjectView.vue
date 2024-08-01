@@ -25,7 +25,7 @@ onBeforeMount(() => {
   if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
 })
 
-const selectedProjectImages = ref([])
+const proposalImages = ref([])
 
 // handles the selected project to filter images that only have the selected proposal_id
 async function filterImagesByProposalId(proposalId) {
@@ -36,7 +36,7 @@ async function filterImagesByProposalId(proposalId) {
     await settingsStore.loadAndCacheImages(proposalId, 'reduction_level=91')
   }
   isLoading.value = false
-  selectedProjectImages.value = settingsStore.imagesByProposal[proposalId]
+  proposalImages.value = settingsStore.imagesByProposal[proposalId]
 }
 
 // boolean computed property used to disable the add to session button
@@ -84,7 +84,8 @@ const addImagesToExistingSession = async (session) => {
     const selectedImages = settingsStore.selectedImages
     const inputData = [...currentSessionData, ...selectedImages.map(image => ({
       'source': 'archive',
-      'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
+      'basename': image.basename.replace('-small', '') || image.basename.replace('-large', ''),
+      'filter': image.FILTER
     }))]
     const requestBody = {
       'name': session.name,
@@ -129,27 +130,27 @@ const closePopup = () => {
 
 // handles creation of a new session 
 const createNewDataSession = async () => {
-  const selectedImages = settingsStore.selectedImages
-  const inputData = selectedImages.map(image => ({
+  // Add more fields from the archive image here if needed
+  const inputData = settingsStore.selectedImages.map(image => ({
     'source': 'archive',
-    'basename': image.basename.replace('-small', '') || image.basename.replace('-large', '')
+    'basename': image.basename.replace('-small', '') || image.basename.replace('-large', ''),
+    'filter': image.FILTER
   }))
   const requestBody = {
     'name': newSessionName.value,
     'input_data': inputData
   }
 
-  // attempting a POST request for new session
-  const response = await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody })
-  if (response) {
+  const onCreateSuccess = (response)=> {
     isPopupVisible.value = false
     newSessionName.value = ''
     errorMessage.value = ''
     settingsStore.recentSessionId = response.id
     router.push({ name: 'DataSessionView' })
-  } else {
-    errorMessage.value = 'Error creating new data session'
   }
+
+  // attempting a POST request for new session
+  await fetchApiCall({ url: dataSessionsUrl, method: 'POST', body: requestBody, successCallback: onCreateSuccess, failCallback: handleError})
 }
 
 const sessionNameExists = (name) => {
@@ -197,15 +198,15 @@ onUnmounted(() => {
       </div>
       <div v-else>
         <ImageCarousel
-          v-if="userDataStore.carouselGridToggle && selectedProjectImages.length"
-          :data="selectedProjectImages"
+          v-if="userDataStore.carouselGridToggle && proposalImages.length"
+          :data="proposalImages"
         />
         <ImageList
-          v-if="!userDataStore.carouselGridToggle && selectedProjectImages.length"
-          :data="selectedProjectImages"
+          v-if="!userDataStore.carouselGridToggle && proposalImages.length"
+          :data="proposalImages"
         />
         <v-banner
-          v-if="!selectedProjectImages.length"
+          v-if="!proposalImages.length"
           class="d-flex align-center justify-center mt-10"
           icon="mdi-image-off"
           color="warning"
