@@ -5,6 +5,7 @@ import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
+import DownloadMenu from '@/components/Project/ImageAnalysis/DownloadMenu.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -65,13 +66,9 @@ function handleAnalysisOutput(response, action){
         density="comfortable"
         :title="image.target_name"
       >
-        <a
-          :href="image.url"
-          :download="image.basename"
-          target="_blank"
-        >
-          <v-icon icon="mdi-download" />
-        </a>
+        <download-menu
+          :image="image"
+        />
         <v-btn
           icon="mdi-close"
           @click="closeDialog()"
