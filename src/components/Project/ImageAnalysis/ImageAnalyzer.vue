@@ -7,7 +7,6 @@ import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
 import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
 
-// eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
 const configStore = useConfigurationStore()
@@ -17,7 +16,6 @@ const lineProfileLength = ref()
 const startCoords = ref()
 const endCoords = ref()
 const catalog = ref([])
-const tifUrl = ref()
 
 function closeDialog() { 
   lineProfile.value = []
@@ -28,17 +26,17 @@ function closeDialog() {
 }
 
 // This function runs when imageViewer emits an analysis-action event and should be extended to handle other analysis types
-function requestAnalysis(action, input){
+function requestAnalysis(action, input, action_callback=null){
   const url = configStore.datalabApiBaseUrl + 'analysis/' + action + '/'
   const body = {
     'basename': props.image.basename,
     ...input
   }
-  fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action)}})
+  fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action, action_callback)}})
 }
 
 // The successCallback function for the fetchApiCall in requestAnalysis new operations can be added here as an additional case
-function handleAnalysisOutput(response, action){
+function handleAnalysisOutput(response, action, action_callback){
   switch (action) {
   case 'line-profile':
     lineProfile.value = response.line_profile
@@ -50,7 +48,7 @@ function handleAnalysisOutput(response, action){
     catalog.value = response
     break
   case 'get-tif':
-    tifUrl.value = response.tif_url
+    action_callback(response.tif_url, props.image.basename, 'TIF')
     break
   default:
     console.error('Invalid action:', action)
@@ -72,7 +70,6 @@ function handleAnalysisOutput(response, action){
       >
         <image-download-menu
           :image="image"
-          :tif-url="tifUrl"
           @analysis-action="requestAnalysis"
         />
         <v-btn
