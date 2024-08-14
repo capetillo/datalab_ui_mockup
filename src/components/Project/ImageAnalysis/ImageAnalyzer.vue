@@ -5,7 +5,7 @@ import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
-import DownloadMenu from '@/components/Project/ImageAnalysis/DownloadMenu.vue'
+import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
 
 // eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
@@ -17,6 +17,7 @@ const lineProfileLength = ref()
 const startCoords = ref()
 const endCoords = ref()
 const catalog = ref([])
+const tifUrl = ref()
 
 function closeDialog() { 
   lineProfile.value = []
@@ -48,6 +49,9 @@ function handleAnalysisOutput(response, action){
   case 'source-catalog':
     catalog.value = response
     break
+  case 'get-tif':
+    tifUrl.value = response.tif_url
+    break
   default:
     console.error('Invalid action:', action)
     break
@@ -66,8 +70,10 @@ function handleAnalysisOutput(response, action){
         density="comfortable"
         :title="image.target_name"
       >
-        <download-menu
+        <image-download-menu
           :image="image"
+          :tif-url="tifUrl"
+          @analysis-action="requestAnalysis"
         />
         <v-btn
           icon="mdi-close"
