@@ -1,14 +1,13 @@
 <script setup>
-import { onMounted } from 'vue'
 import { useAlertsStore } from '@/stores/alerts'
 
 const props = defineProps(['image', 'tifUrl'])
 
-const emit = defineEmits(['analysisAction'])
+defineEmits(['analysisAction'])
 
 const alertStore = useAlertsStore()
 
-function downloadLink(link, filename, fileType) {
+function downloadLink(link, filename, fileType='file'){
   if(!link){
     alertStore.setAlert('error', `No ${fileType} available for download`)
     return
@@ -20,13 +19,6 @@ function downloadLink(link, filename, fileType) {
   a.click()
   document.body.removeChild(a)
 }
-
-onMounted(() => {
-  const getTifInput = {
-    'basename': props.image.basename
-  }
-  emit('analysisAction', 'get-tif', getTifInput)
-})
 
 </script>
 <template>
@@ -48,7 +40,7 @@ onMounted(() => {
     <v-btn
       key="2"
       text=".TIF"
-      @click="downloadLink(props.tifUrl, props.image.basename, 'TIF')"
+      @click="$emit('analysisAction', 'get-tif', {'basename': props.image.basename}, downloadLink)"
     />
     <v-btn
       key="3"
