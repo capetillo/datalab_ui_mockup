@@ -5,8 +5,8 @@ import { useConfigurationStore } from '@/stores/configuration'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
+import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
 
-// eslint-disable-next-line no-unused-vars
 const props = defineProps(['modelValue', 'image'])
 const emit = defineEmits(['update:modelValue'])
 const configStore = useConfigurationStore()
@@ -26,17 +26,17 @@ function closeDialog() {
 }
 
 // This function runs when imageViewer emits an analysis-action event and should be extended to handle other analysis types
-function requestAnalysis(action, input){
+function requestAnalysis(action, input, action_callback=null){
   const url = configStore.datalabApiBaseUrl + 'analysis/' + action + '/'
   const body = {
     'basename': props.image.basename,
     ...input
   }
-  fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action)}})
+  fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action, action_callback)}})
 }
 
 // The successCallback function for the fetchApiCall in requestAnalysis new operations can be added here as an additional case
-function handleAnalysisOutput(response, action){
+function handleAnalysisOutput(response, action, action_callback){
   switch (action) {
   case 'line-profile':
     lineProfile.value = response.line_profile
@@ -46,6 +46,9 @@ function handleAnalysisOutput(response, action){
     break
   case 'source-catalog':
     catalog.value = response
+    break
+  case 'get-tif':
+    action_callback(response.tif_url, props.image.basename, 'TIF')
     break
   default:
     console.error('Invalid action:', action)
@@ -65,13 +68,10 @@ function handleAnalysisOutput(response, action){
         density="comfortable"
         :title="image.target_name"
       >
-        <a
-          :href="image.url"
-          :download="image.basename"
-          target="_blank"
-        >
-          <v-icon icon="mdi-download" />
-        </a>
+        <image-download-menu
+          :image="image"
+          @analysis-action="requestAnalysis"
+        />
         <v-btn
           icon="mdi-close"
           @click="closeDialog()"
