@@ -191,6 +191,7 @@ function handleEdit(event) {
   requestLineProfile(event.layer.getLatLngs())
 }
 
+// Event handler for drawn lines, emits an action that will trigger an api call in the parent
 function requestLineProfile(latLngs) {
   // Check that there are two points to calculate the line length
   if (latLngs.length < 2) return
@@ -208,6 +209,7 @@ function requestLineProfile(latLngs) {
   emit('analysisAction', 'line-profile', lineProfileInput)
 }
 
+// When we get the catalog data this creates a layer of circles on the map
 function createCatalogLayer(){
   if (!props.catalog) return
 
@@ -218,7 +220,8 @@ function createCatalogLayer(){
       color: 'var(--tangerine)',
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
-      radius: 10
+      radius: 10,
+      pmIgnore: true // Ignore this layer for geoman editing
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
@@ -226,6 +229,10 @@ function createCatalogLayer(){
   })
 
   let catalogLayerGroup = L.layerGroup(catalogMarkers)
+
+  // Shows the catalog layer by default
+  catalogLayerGroup.addTo(image)
+
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
 

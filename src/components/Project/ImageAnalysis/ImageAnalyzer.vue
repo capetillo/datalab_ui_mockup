@@ -7,7 +7,17 @@ import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
 import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
 
-const props = defineProps(['modelValue', 'image'])
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  image: {
+    type: Object,
+    required: true,
+    default: null,
+  }
+})
 const emit = defineEmits(['update:modelValue'])
 const configStore = useConfigurationStore()
 
