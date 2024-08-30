@@ -221,7 +221,7 @@ function createCatalogLayer(){
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10,
-      pmIgnore: true
+      pmIgnore: true // Ignore this layer for geoman editing
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
