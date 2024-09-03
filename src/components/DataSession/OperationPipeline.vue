@@ -3,6 +3,7 @@ import { ref, watch, onBeforeUnmount } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall, handleError } from '@/utils/api'
+import LoadBarButton from '@/components/Global/LoadBarButton'
 
 const store = useConfigurationStore()
 const alertStore = useAlertsStore()
@@ -13,7 +14,7 @@ const props = defineProps({
     type: Array,
     required: true
   },
-  session_id: {
+  sessionId: {
     type: Number,
     required: true
   },
@@ -73,14 +74,13 @@ async function pollOperationCompletion(operationID) {
     }
   }
 
-  const url = store.datalabApiBaseUrl + 'datasessions/' + props.session_id + '/operations/' + operationID + '/'
+  const url = store.datalabApiBaseUrl + 'datasessions/' + props.sessionId + '/operations/' + operationID + '/'
   await fetchApiCall({ url: url, method: 'GET', successCallback: updateOperationStatus, failCallback: handleError })
 }
 
 function clearPolling(operationID) {
   if (operationID in operationPollingTimers){
     clearInterval(operationPollingTimers[operationID])
-    delete operationPercentages.value[operationID]
     delete operationPollingTimers[operationID]
   }
 }
@@ -89,6 +89,8 @@ watch(() => props.operations, () => {
   if (props.active) {
     props.operations.forEach(operation => {
       if (!operationPollingTimers[operation.id]) {
+        // call once so buttons progress is updated immediately
+        operationPollingTimers[operation.id] = pollOperationCompletion(operation.id)
         operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
       }
     })
@@ -100,6 +102,8 @@ watch(
     if (active && !previousActive) {
       props.operations.forEach(operation => {
         if (!operationPollingTimers[operation.id]) {
+          // call once so buttons progress is updated immediately
+          operationPollingTimers[operation.id] = pollOperationCompletion(operation.id)
           operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
         }
       })
@@ -131,20 +135,16 @@ onBeforeUnmount(() => {
     justify="center"
     class="operation mb-2"
   >
-    <v-btn
+    <load-bar-button
       :class="{selected: index == selectedOperation}"
-      variant="outlined"
       class="operation_button"
+      :progress="operationPercentages[operation.id] ?? 0"
       @click="selectOperation(index)"
     >
-      {{ index }}: {{ operation.name }}
-    </v-btn>
-    <v-progress-linear
-      v-if="operationPercentages[operation.id] !== undefined"
-      class="operation_completion"
-      :model-value="operationPercentages[operation.id]"
-      :height="5"
-    />
+      <p>
+        {{ index }}: {{ operation.name }}
+      </p>
+    </load-bar-button>
   </v-row>
 </template>
 
@@ -165,12 +165,11 @@ onBeforeUnmount(() => {
   font-size: 1.2rem;
   font-weight: 600;
   border-style: none;
-  background-color: var(--tan);
   color: var(--metal);
 }
 
 .selected {
-  background-color: var(--light-blue)
+  color: var(--tan);
 }
 
 @media (max-width: 1200px) {

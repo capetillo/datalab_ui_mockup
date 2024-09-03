@@ -118,7 +118,7 @@ onMounted(() => {
     >
       <!-- The operations bar list goes here -->
       <operation-pipeline
-        :session_id="data.id"
+        :session-id="data.id"
         :operations="data.operations"
         :active="props.active"
         @operation-completed="addCompletedOperation"
