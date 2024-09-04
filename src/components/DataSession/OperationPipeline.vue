@@ -3,7 +3,7 @@ import { ref, watch, onBeforeUnmount } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall, handleError } from '@/utils/api'
-import LoadBarButton from '@/components/Global/LoadBarButton'
+import LoadBarButton from '@/components/DataSession/LoadBarButton.vue'
 
 const store = useConfigurationStore()
 const alertStore = useAlertsStore()
@@ -70,7 +70,7 @@ async function pollOperationCompletion(operationID) {
       }
     }
     else{
-      console.error('No response on status for operation:', operationID)
+      alertStore.setAlert('error', 'Operation status not found')
     }
   }
 
@@ -166,10 +166,6 @@ onBeforeUnmount(() => {
   font-weight: 600;
   border-style: none;
   color: var(--metal);
-}
-
-.selected {
-  color: var(--tan);
 }
 
 @media (max-width: 1200px) {
