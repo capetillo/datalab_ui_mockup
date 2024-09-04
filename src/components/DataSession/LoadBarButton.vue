@@ -32,10 +32,7 @@ defineProps({
   left: 0;
   background-color: var(--tan);
   height: 100%;
-  width: 0%;
-  opacity: 1;
   transition: 0.3s;
-  z-index: 1;
   }
 
 .selected .progress-bar {
