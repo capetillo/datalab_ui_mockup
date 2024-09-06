@@ -38,9 +38,9 @@ watch(() => userDataStore.isColorblindMode, (newVal) => {
 
 <template>
   <template v-if="loadedConfig">
+    <alert-toast />
     <template v-if="userDataStore.userIsAuthenticated">
       <nav-bar />
-      <alert-toast />
     </template>
     <router-view />
   </template>
