@@ -5,7 +5,12 @@ import { useAlertsStore } from '../../stores/alerts'
 const alertStore = useAlertsStore()
 const showAlert = ref(false)
 
-watch(() => alertStore.alertText, () => {showAlert.value = true})
+watch(() => alertStore.alertText, () => {
+  showAlert.value = true
+  setTimeout(() => {
+    showAlert.value = false
+  }, 5000)
+})
 
 </script>
 <template>
