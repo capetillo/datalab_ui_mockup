@@ -53,9 +53,9 @@ const loadImageOverlay = () => {
   img.onload = () => {
     imageWidth.value = img.width
     imageHeight.value = img.height
-    
+
     // Getting image bounds based on img's size
-    imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]] 
+    imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]]
     if (imageOverlay) {
       image.removeLayer(imageOverlay)
     }
@@ -221,7 +221,8 @@ function createCatalogLayer(){
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10,
-      pmIgnore: true // Ignore this layer for geoman editing
+      // TODO: Figure out a way to make this uneditable without pmIgnore. This breaks the snap to source functionality :(
+      //pmIgnore: true // Ignore this layer for geoman editing
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
