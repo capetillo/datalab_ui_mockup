@@ -26,8 +26,9 @@ const lineProfileLength = ref()
 const startCoords = ref()
 const endCoords = ref()
 const catalog = ref([])
+const positionAngle = ref()
 
-function closeDialog() { 
+function closeDialog() {
   lineProfile.value = []
   lineProfileLength.value = 0
   startCoords.value = null
@@ -53,6 +54,7 @@ function handleAnalysisOutput(response, action, action_callback){
     lineProfileLength.value = response.arcsec
     endCoords.value = response.end_coords
     startCoords.value = response.start_coords
+    positionAngle.value = response.position_angle
     break
   case 'source-catalog':
     catalog.value = response
@@ -101,7 +103,7 @@ function handleAnalysisOutput(response, action, action_callback){
             <p>Site: {{ image.site_id }}</p>
             <p>Telescope: {{ image.telescope_id }}</p>
             <p>Instrument: {{ image.instrument_id }}</p>
-            <span>Filter: 
+            <span>Filter:
               <filter-badge
                 v-if="image.FILTER"
                 :filter="image.FILTER"
@@ -113,6 +115,7 @@ function handleAnalysisOutput(response, action, action_callback){
             :x-axis-arcsecs="lineProfileLength"
             :start-coords="startCoords"
             :end-coords="endCoords"
+            :position-angle="positionAngle"
           />
         </div>
       </div>
@@ -148,7 +151,7 @@ a{
   margin-left: 10px;
   margin-bottom: 5%;
 }
-@media (min-width: 1201px) { 
+@media (min-width: 1201px) {
   .side-panel-container {
     margin-left: 20%;
   }

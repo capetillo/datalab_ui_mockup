@@ -4,7 +4,7 @@ import * as d3 from 'd3'
 
 const svg = ref(null)
 
-const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs', 'startCoords', 'endCoords'])
+const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs', 'startCoords', 'endCoords', 'positionAngle'])
 
 // Setting dimensions and margins for the plot
 const margin = { top: 20, right: 20, bottom: 70, left: 80 },
@@ -94,7 +94,7 @@ onMounted(() => {
     .style('font-family', 'Open Sans, sans-serif')
     .style('text-anchor', 'middle')
     .text('Luminosity')
-  
+
 })
 </script>
 
@@ -119,10 +119,14 @@ onMounted(() => {
     <p v-if="endCoords">
       End: RA {{ endCoords[0].toFixed(3) }} DEC {{ endCoords[1].toFixed(3) }}
     </p>
+    <p v-if="positionAngle">
+      Position Angle: {{ positionAngle.toFixed(3) }} degrees E of N
+    </p>
+
   </div>
 </template>
 
-<style scoped> 
+<style scoped>
 .line-plot {
   color: var(--tan);
   font-family: 'Open Sans', sans-serif;
