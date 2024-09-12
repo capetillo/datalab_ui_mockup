@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
 import FilterBadge from './FilterBadge.vue'
+import ImageAnalyzer from '../Project/ImageAnalysis/ImageAnalyzer.vue'
 
 const props = defineProps({
   images: {
@@ -27,7 +28,28 @@ let imageDetails = ref({})
 const configurationStore = useConfigurationStore()
 const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
+const showAnalysisDialog = ref(false)
+const currLargeImage = ref({})
 
+const launchAnalysis = (image) => {
+  const url = image.large_url || image.largeThumbUrl || ''
+  if (image.basename) {
+    if (!image.largeCachedUrl) {
+      image.largeCachedUrl = ref('')
+      if (url || image.source == 'archive') {
+        thumbnailsStore.cacheImage('large', configurationStore.archiveType, url, image.basename).then((cachedUrl) => {
+          image.largeCachedUrl = cachedUrl
+          currLargeImage.value = image
+          showAnalysisDialog.value = true
+        })
+      }
+    }
+    else {
+      currLargeImage.value = image
+      showAnalysisDialog.value = true
+    }
+  }
+}
 
 const isSelected = (index) => {
   return props.selectedImages.includes(index)
@@ -63,6 +85,7 @@ watch(() => props.images, () => {
         :class="{ 'selected-image': isSelected(index) }"
         aspect-ratio="1"
         @click="emit('selectImage', index)"
+        @dblclick="launchAnalysis(image)"
       >
         <filter-badge
           v-if="image.filter"
@@ -75,6 +98,10 @@ watch(() => props.images, () => {
       </v-img>
     </v-col>
   </v-row>
+  <image-analyzer
+    v-model="showAnalysisDialog"
+    :image="currLargeImage"
+  />
 </template>
 
 <style scoped>
