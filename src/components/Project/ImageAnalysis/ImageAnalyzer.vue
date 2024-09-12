@@ -76,7 +76,7 @@ function handleAnalysisOutput(response, action, action_callback){
       <v-toolbar
         class="analysis-toolbar"
         density="comfortable"
-        :title="image.target_name"
+        :title="image.target_name || 'N/A'"
       >
         <image-download-menu
           :image="image"
