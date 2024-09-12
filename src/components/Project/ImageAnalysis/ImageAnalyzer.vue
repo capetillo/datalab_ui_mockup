@@ -103,8 +103,8 @@ function handleAnalysisOutput(response, action, action_callback){
             <p>Instrument: {{ image.instrument_id }}</p>
             <span>Filter: 
               <filter-badge
-                v-if="image.FILTER"
-                :filter="image.FILTER"
+                v-if="image.FILTER || image.filter"
+                :filter="image.FILTER || image.filter"
               />
             </span>
           </v-sheet>
