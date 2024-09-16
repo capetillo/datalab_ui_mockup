@@ -120,9 +120,8 @@ onMounted(() => {
       End: RA {{ endCoords[0].toFixed(3) }} DEC {{ endCoords[1].toFixed(3) }}
     </p>
     <p v-if="positionAngle">
-      Position Angle: {{ positionAngle.toFixed(3) }} degrees E of N
+      Position Angle: {{ positionAngle.toFixed(3) }}° East of North
     </p>
-
   </div>
 </template>
 
