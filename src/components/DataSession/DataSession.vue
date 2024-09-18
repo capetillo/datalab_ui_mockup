@@ -57,9 +57,9 @@ function addCompletedOperation(operationResponse) {
       outputFile.operation = operationResponse.id
       outputFile.operationIndex = operationMap[operationResponse.id]
       if (!imagesContainsFile(outputFile)) {
-        images.value.push({...outputFile})
+        images.value.push(outputFile)
         if (selectedOperation == -1 || selectedOperation == outputFile.operation) {
-          filteredImages.value.push({...outputFile})
+          filteredImages.value.push(outputFile)
         }
       }
     })
