@@ -4,10 +4,11 @@ import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall, handleError } from '@/utils/api'
 import LoadBarButton from '@/components/DataSession/LoadBarButton.vue'
+import DeleteOperationDialog from '@/components/Global/DeleteOperationDialog.vue'
 
 const store = useConfigurationStore()
 const alertStore = useAlertsStore()
-const emit = defineEmits(['operationCompleted', 'selectOperation', 'deleteOperation'])
+const emit = defineEmits(['operationCompleted', 'selectOperation', 'deleteOperation', 'operationWasDeleted'])
 
 const props = defineProps({
   operations: {
@@ -27,6 +28,8 @@ const props = defineProps({
 const selectedOperation = ref(-1)
 const operationPollingTimers = {}
 const operationPercentages = ref({})
+const deleteOperationId = ref(-1)
+const showDeleteDialog = ref(false)
 const POLL_WAIT_TIME = 2000
 const DEC_TO_PERCENT = 100
 const COMPLETE_PERCENT = 100
@@ -85,13 +88,20 @@ function clearPolling(operationID) {
   }
 }
 
+function openDeleteOperationDialog(operation) {
+  deleteOperationId.value = operation.id
+  showDeleteDialog.value = true
+}
+
 watch(() => props.operations, () => {
   if (props.active) {
     props.operations.forEach(operation => {
       if (!operationPollingTimers[operation.id]) {
         // call once so buttons progress is updated immediately
-        operationPollingTimers[operation.id] = pollOperationCompletion(operation.id)
-        operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+        pollOperationCompletion(operation.id)
+        if (operation.status == 'PENDING' || operation.status == 'IN_PROGRESS'){
+          operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+        }
       }
     })
   }
@@ -103,8 +113,10 @@ watch(
       props.operations.forEach(operation => {
         if (!operationPollingTimers[operation.id]) {
           // call once so buttons progress is updated immediately
-          operationPollingTimers[operation.id] = pollOperationCompletion(operation.id)
-          operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+          pollOperationCompletion(operation.id)
+          if (operation.status == 'PENDING' || operation.status == 'IN_PROGRESS'){
+            operationPollingTimers[operation.id] = setInterval(() => pollOperationCompletion(operation.id), POLL_WAIT_TIME)
+          }
         }
       })
     }
@@ -145,7 +157,20 @@ onBeforeUnmount(() => {
         {{ index }}: {{ operation.name }}
       </p>
     </load-bar-button>
+    <v-btn
+      variant="text"
+      icon="mdi-close"
+      class="tab_button"
+      color="error"
+      @click="openDeleteOperationDialog(operation)"
+    />
   </v-row>
+  <delete-operation-dialog
+    v-model="showDeleteDialog"
+    :session-id="sessionId"
+    :operation-id="deleteOperationId"
+    @item-was-deleted="emit('operationWasDeleted', $event)"
+  />
 </template>
 
 <style scoped>
