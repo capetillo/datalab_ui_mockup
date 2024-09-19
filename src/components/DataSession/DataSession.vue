@@ -79,6 +79,7 @@ function selectOperation(operationIndex) {
 }
 
 function reconcileOperationImages() {
+  // This updates the operationIndex of images after changes in the operations list
   images.value = images.value.filter(obj => !obj.operation || obj.operation in operationMap)
   images.value.forEach(image => {
     if (image.operation) {
@@ -89,6 +90,7 @@ function reconcileOperationImages() {
 }
 
 function reconcileFilteredImages() {
+  // This updates the filteredImages after changes in the operations list, or changes in selection of an operation.
   if (selectedOperation == -1) {
     filteredImages.value = [...images.value]
   }
@@ -114,6 +116,7 @@ async function addOperation(operationDefinition) {
 }
 
 function reconcileOperations() {
+  // This makes sure our operationMap mapping operation ids to indices is up to date following changes in the operation list
   operationMap = {}
   props.data.operations.forEach((operation, index) => {
     operationMap[operation.id] = index
