@@ -2,13 +2,14 @@
 import { ref, watch } from 'vue'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
+import { useAlertsStore } from '@/stores/alerts'
 import FilterBadge from './FilterBadge.vue'
 import ImageAnalyzer from '../Project/ImageAnalysis/ImageAnalyzer.vue'
 
 const props = defineProps({
   images: {
-    type: Array,
-    required: true
+    type: [Array, Boolean],
+    default: false
   },
   selectedImages: {
     type: Array,
@@ -26,28 +27,44 @@ const props = defineProps({
 
 let imageDetails = ref({})
 const configurationStore = useConfigurationStore()
+const alertsStore = useAlertsStore()
 const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
 const showAnalysisDialog = ref(false)
-const currLargeImage = ref({})
+const analysisImage = ref({})
+var clickTimer = 0
+
+const handleClick = (index) => {
+  clearTimeout(clickTimer)
+  clickTimer = setTimeout(() => {
+    emit('selectImage', index)
+    clickTimer = 0
+  }, 250)
+}
+
+const handleDoubleClick = (image) => {
+  clearTimeout(clickTimer)
+  alertsStore.setAlert('loading', `Opening ${image?.basename} for analysis`)
+  launchAnalysis(image)
+}
 
 const launchAnalysis = (image) => {
-  const url = image.large_url || image.largeThumbUrl || ''
-  if (image.basename) {
+  try {
     if (!image.largeCachedUrl) {
       image.largeCachedUrl = ref('')
-      if (url || image.source == 'archive') {
-        thumbnailsStore.cacheImage('large', configurationStore.archiveType, url, image.basename).then((cachedUrl) => {
-          image.largeCachedUrl = cachedUrl
-          currLargeImage.value = image
-          showAnalysisDialog.value = true
-        })
-      }
+      const url = image.large_url || image.largeThumbUrl || ''
+      thumbnailsStore.cacheImage('large', configurationStore.archiveType, url, image.basename).then((cachedUrl) => {
+        image.largeCachedUrl = cachedUrl
+        analysisImage.value = image
+        showAnalysisDialog.value = true
+      })
     }
     else {
-      currLargeImage.value = image
+      analysisImage.value = image
       showAnalysisDialog.value = true
     }
+  } catch {
+    alertsStore.setAlert('error', `Failed to open ${image?.basename}`)
   }
 }
 
@@ -56,6 +73,7 @@ const isSelected = (index) => {
 }
 
 watch(() => props.images, () => {
+  if (!props.images) return
   props.images.forEach(image => {
     if (image.basename && !(image.basename in imageDetails.value)) {
       imageDetails.value[image.basename] = ref('')
@@ -70,37 +88,54 @@ watch(() => props.images, () => {
 </script>
 
 <template>
-  <v-row v-if="props.images.length">
-    <v-col
-      v-for="(image, index) in props.images"
-      :key="index"
-      :cols="columnSpan"
-      class="image-grid-col"
-    >
-      <v-img
-        v-if="image.basename in imageDetails && imageDetails[image.basename]"
-        :src="imageDetails[image.basename]"
-        :alt="image.basename"
-        cover
-        :class="{ 'selected-image': isSelected(index) }"
-        aspect-ratio="1"
-        @click="emit('selectImage', index)"
-        @dblclick="launchAnalysis(image)"
+  <v-row>
+    <template v-if="props.images">
+      <v-col
+        v-for="(image, index) in props.images"
+        :key="index"
+        :cols="columnSpan"
+        class="image-grid-col"
       >
-        <filter-badge
-          v-if="image.filter"
-          :filter="image.filter"
+        <v-img
+          v-if="image.basename in imageDetails && imageDetails[image.basename]"
+          :src="imageDetails[image.basename]"
+          :alt="image.basename"
+          cover
+          :class="{ 'selected-image': isSelected(index) }"
+          aspect-ratio="1"
+          @click="handleClick(index)"
+          @dblclick="handleDoubleClick(image)"
+        >
+          <filter-badge
+            v-if="image.filter || image.FILTER"
+            :filter="image.filter || image.FILTER"
+          />
+          <span
+            v-if="'operationIndex' in image"
+            class="image-text-overlay"
+          >{{ image.operationIndex }}</span>
+        </v-img>
+      </v-col>
+    </template>
+    <template v-else>
+      <v-col
+        v-for="n in 10"
+        :key="n"
+        :cols="columnSpan"
+        class="image-grid-col"
+      >
+        <v-skeleton-loader
+          type="card"
+          class="ma-1"
+          color="var(--dark-blue)"
+          bg-color="var(--metal)"
         />
-        <span
-          v-if="'operationIndex' in image"
-          class="image-text-overlay"
-        >{{ image.operationIndex }}</span>
-      </v-img>
-    </v-col>
+      </v-col>
+    </template>
   </v-row>
   <image-analyzer
     v-model="showAnalysisDialog"
-    :image="currLargeImage"
+    :image="analysisImage"
   />
 </template>
 

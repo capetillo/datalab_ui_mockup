@@ -8,15 +8,16 @@ export const useUserDataStore = defineStore('userData', {
       authToken: '',
       profile: {},
       proposals: [],
+      openProposals: [],
       isColorblindMode: false,
-      carouselGridToggle: true
+      gridToggle: true,
+      mostRecentSessionId: ''
     }
   },
   persist: true,
   getters: {
     userIsAuthenticated: (state) => {
-      if(state.authToken) return true
-      else return false
+      return state.authToken
     }
   },
   actions: {
