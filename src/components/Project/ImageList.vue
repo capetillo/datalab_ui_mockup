@@ -1,48 +1,98 @@
-<!-- eslint-disable vue/require-prop-types -->
 <script setup>
-import { ref, onMounted, defineProps } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
+import { ref, computed, defineProps } from 'vue'
+import { useThumbnailsStore } from '@/stores/thumbnails'
+import { useAlertsStore } from '@/stores/alerts'
+import { useConfigurationStore } from '@/stores/configuration'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
+import ImageAnalyzer from '../Project/ImageAnalysis/ImageAnalyzer.vue'
 
-const store = useSettingsStore()
-// eslint-disable-next-line no-unused-vars
-const props = defineProps(['data'])
+const props = defineProps({
+  images: {
+    type: [Array, Boolean],
+    default: false
+  },
+  selectedImages: {
+    type: Array,
+    default: () => []
+  }
+})
 
-// v-data-table setup variables
-let headers = ref([
-  { title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
-  { title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
-  { title: 'FILTER', align: 'start', sortable: true, key: 'FILTER' },
+const emit = defineEmits(['selectImage'])
+
+// Adding index key so @select component emits selected image index
+const indexedImages = computed(() => {
+  return props.images ? props.images.map((image, index) => {
+    return {
+      ...image,
+      index
+    }
+  }) : []
+})
+
+const headers = ref([
   { title: 'IMAGE', align: 'start', sortable: false, key: 'url' },
+  { title: 'FILTER', align: 'start', sortable: true, key: 'FILTER' },
+  { title: 'IMAGE NAME', align: 'start', sortable: true, key: 'basename' },
+  { title: 'TARGET', align: 'start', sortable: true, key: 'target_name' },
+  { title: 'TIME', align: 'start', sortable: true, key: 'observation_date' },
+  { title: 'SITE', align: 'start', sortable: true, key: 'site_id' },
+  { title: 'TELESCOPE', align: 'start', sortable: true, key: 'telescope_id' },
 ])
-let itemsPerPage = ref(15)
+const showAnalysisDialog = ref(false)
+const currLargeImage = ref({})
+const alertsStore = useAlertsStore()
+const thumbnailsStore = useThumbnailsStore()
+const configurationStore = useConfigurationStore()
 
-// --- Selection Logic ---
-let selected = ref([])
-
-function select(selectedImageNames) {
-  store.selectedImages = selectedImageNames
+function select(tableSelectedImages){
+  // check for the difference between selectedImages and event and return the unique indexes
+  for (const index of tableSelectedImages.filter(x => !props.selectedImages.includes(x))) {
+    emit('selectImage', index)
+  }
 }
 
-onMounted ( () => {
-  selected.value = store.selectedImages
-})
+function launchAnalysis(image){
+  try {
+    if (!image.largeCachedUrl) {
+      image.largeCachedUrl = ref('')
+      const url = image.large_url || image.largeThumbUrl || ''
+      thumbnailsStore.cacheImage('large', configurationStore.archiveType, url, image.basename).then((cachedUrl) => {
+        image.largeCachedUrl = cachedUrl
+        currLargeImage.value = image
+        showAnalysisDialog.value = true
+      })
+    }
+    else {
+      currLargeImage.value = image
+      showAnalysisDialog.value = true
+    }
+  } catch (error) {
+    console.error(error)
+    alertsStore.setAlert('error', `Failed to open ${image?.basename}`)
+  }
+}
 
 </script>
 
 <template>
   <v-data-table
-    v-model="selected"
-    v-model:items-per-page="itemsPerPage"
+    v-if="images"
+    :model-value="selectedImages"
     :headers="headers"
-    :items="data"
-    item-value="basename"
-    :return-object="true"
+    :items="indexedImages"
+    item-value="index"
+    :items-per-page="images.length"
     show-select
     :hover="true"
+    :hide-default-footer="true"
+    :hide-no-data="true"
     class="data_table"
-    @update:model-value="select($event)"
+    @update:model-value="select"
   >
+    <template #[`header.data-table-select`] /> <!--Hides select all checkbox-->
+    <template #[`item.observation_date`]="{ item }">
+      <p>{{ new Date(item.observation_date).toLocaleString() }}</p>
+    </template>
     <template #[`item.FILTER`]="{ item }">
       <filter-badge
         v-if="item.FILTER"
@@ -51,42 +101,41 @@ onMounted ( () => {
     </template>
     <template #[`item.url`]="{ item }">
       <v-img
+        v-if="item.smallCachedUrl"
         :src="item.smallCachedUrl"
         :alt="item.OBJECT"
         class="list_image"
         cover
         loading="lazy"
+        @click="launchAnalysis(item)"
+      />
+      <v-progress-circular
+        v-else
+        indeterminate
+        :width="8"
       />
     </template>
   </v-data-table>
+  <v-skeleton-loader
+    v-else
+    type="table"
+    color="var(--dark-blue)"
+    bg-color="var(--metal)"
+  />
+  <image-analyzer
+    v-model="showAnalysisDialog"
+    :image="currLargeImage"
+  />
 </template>
 
 <style scoped>
 .data_table {
-  margin-top: 2rem;
-  padding-top: 0.5rem;
   font-family: 'Open Sans', sans-serif;
-  letter-spacing: 0.05rem;
+  font-size: 1rem;
   color: var(--tan);
-  font-size: 1.4rem;
   background-color: var(--metal);
-  overflow-y: scroll;
-  max-height: 80vh;
 }
 .list_image{
-  height: 8vh;
   width: 8vw;
-}
-@media (max-width: 1200px) {
-  .data_table {
-    font-size: 0.9rem;
-    margin-top: 0.9rem;
-    margin-left: 0.5rem;
-  }
-}
-@media (max-width: 900px) {
-  .list_image{
-    width: 12vw;
-  }
 }
 </style>

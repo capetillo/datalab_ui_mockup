@@ -2,7 +2,6 @@
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
-import { useSettingsStore } from '@/stores/settings'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession/DataSession.vue'
 import DeleteSessionDialog from '@/components/DataSession/DeleteSessionDialog.vue'
@@ -11,9 +10,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
-const settingsStore = useSettingsStore()
 const dataSessions = ref([])
-const tab = ref(settingsStore.recentSessionId)
+const tab = ref(userDataStore.mostRecentSessionId)
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
@@ -24,10 +22,10 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   await loadSessions()
-  if (dataSessions.value.length > 0 && !settingsStore.recentSessionId) {
+  if (dataSessions.value.length > 0 && !userDataStore.mostRecentSessionId) {
     const firstSessionId = dataSessions.value[0].id
     tab.value = firstSessionId
-    settingsStore.recentSessionId = firstSessionId
+    userDataStore.mostRecentSessionId = firstSessionId
   } else {
     console.error('no data sessions available to display')
   }
@@ -35,7 +33,7 @@ onMounted(async () => {
 
 function onTabChange(newSessionId) {
   tab.value = newSessionId
-  settingsStore.recentSessionId = newSessionId
+  userDataStore.mostRecentSessionId = newSessionId
 }
 
 function openDeleteDialog(id) {
