@@ -172,12 +172,14 @@ onMounted(() => {
       class="proposal-filter"
       label="RA"
       clearable
+      hide-details
     />
     <v-text-field
       v-model="dec"
       class="proposal-filter"
       label="DEC"
       clearable
+      hide-details
     />
     <v-text-field
       v-model="search"
@@ -185,6 +187,7 @@ onMounted(() => {
       prepend-inner-icon="mdi-magnify"
       label="Sources"
       clearable
+      hide-details
     />
     <v-switch
       v-model="userDataStore.gridToggle"
@@ -265,9 +268,6 @@ onMounted(() => {
   gap: 1rem;
   margin: 1rem;
   color: var(--tan);
-}
-.proposal-filter{
-  height: 100%;
 }
 .v-expansion-panel-title p{
   color: var(--tan);
