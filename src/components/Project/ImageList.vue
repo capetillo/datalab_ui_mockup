@@ -83,9 +83,9 @@ function launchAnalysis(image){
     item-value="index"
     :items-per-page="images.length"
     show-select
-    :hover="true"
-    :hide-default-footer="true"
-    :hide-no-data="true"
+    hover
+    hide-default-footer
+    hide-no-data
     class="data_table"
     @update:model-value="select"
   >
