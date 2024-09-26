@@ -39,7 +39,7 @@ const headers = ref([
   { title: 'TELESCOPE', align: 'start', sortable: true, key: 'telescope_id' },
 ])
 const showAnalysisDialog = ref(false)
-const currLargeImage = ref({})
+const analysisImage = ref({})
 const alertsStore = useAlertsStore()
 const thumbnailsStore = useThumbnailsStore()
 const configurationStore = useConfigurationStore()
@@ -58,12 +58,12 @@ function launchAnalysis(image){
       const url = image.large_url || image.largeThumbUrl || ''
       thumbnailsStore.cacheImage('large', configurationStore.archiveType, url, image.basename).then((cachedUrl) => {
         image.largeCachedUrl = cachedUrl
-        currLargeImage.value = image
+        analysisImage.value = image
         showAnalysisDialog.value = true
       })
     }
     else {
-      currLargeImage.value = image
+      analysisImage.value = image
       showAnalysisDialog.value = true
     }
   } catch (error) {
@@ -124,7 +124,7 @@ function launchAnalysis(image){
   />
   <image-analyzer
     v-model="showAnalysisDialog"
-    :image="currLargeImage"
+    :image="analysisImage"
   />
 </template>
 

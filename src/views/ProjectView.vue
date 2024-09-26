@@ -47,14 +47,14 @@ function selectImage(proposalIndex, imageIndex) {
 }
 
 function deselectAllImages() {
-  // clear the arrays per project in selectedImagesByProposal
+  // clear the arrays per proposal in selectedImagesByProposal
   Object.keys(selectedImagesByProposal.value).forEach(projectId => {
     selectedImagesByProposal.value[projectId] = []
   })
 }
 
 async function loadProposals(option){
-  // optimized load images for only open panels
+  // Only loads images for open proposal panels
   userDataStore.openProposals.forEach(async proposal => {
 
     const proposalID = userDataStore.proposals[proposal].id
@@ -102,11 +102,10 @@ watch(() => [startDate.value, endDate.value], async () => {
 })
 
 watch(() => [ra.value, dec.value], async () => {
-  // validate that ra and dec are numbers
   if(isNaN(ra.value) || isNaN(dec.value)){
     alertsStore.setAlert('warning', `RA and DEC must be numbers ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
   }
-  // Watch filters that should wait/debounce for the user to finish typing
+  // Debouncing the load so users have time to finish typing
   else if(setTimeout(async () => {
     imagesByProposal.value = {}
     await loadProposals('reduction_level=91')
@@ -117,7 +116,6 @@ watch(() => [ra.value, dec.value], async () => {
 
 watch(() => search.value, async () => {
   if(search.value){
-    // Query the Simbad service API for ra and dec of the search value
     const url = `https://simbad2k.lco.global/${search.value}`
     fetchApiCall({url: url, method: 'GET', successCallback: (data)=> {
       if(!data.error){
@@ -138,9 +136,9 @@ onBeforeMount(() => {
 
 onMounted(() => {
   loadProposals('reduction_level=91')
-  // create selected images array for each project
-  userDataStore.proposals.forEach(project => {
-    selectedImagesByProposal.value[project.id] = []
+  // create selected images array for each proposal
+  userDataStore.proposals.forEach(proposal => {
+    selectedImagesByProposal.value[proposal.id] = []
   })
 })
 
@@ -204,30 +202,30 @@ onMounted(() => {
       bg-color="var(--metal)"
     >
       <v-expansion-panel
-        v-for="project in userDataStore.proposals"
-        :key="project.id"
+        v-for="proposal in userDataStore.proposals"
+        :key="proposal.id"
         @click="loadProposals('reduction_level=91')"
       >
         <v-expansion-panel-title>
-          <p>{{ project.title }}</p>
+          <p>{{ proposal.title }}</p>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <image-grid
             v-if="userDataStore.gridToggle"
-            :images="imagesByProposal[project.id]"
-            :selected-images="selectedImagesByProposal[project.id]"
+            :images="imagesByProposal[proposal.id]"
+            :selected-images="selectedImagesByProposal[proposal.id]"
             :allow-selection="true"
             :column-span="5"
-            @select-image="selectImage(project.id, $event)"
+            @select-image="selectImage(proposal.id, $event)"
           />
           <image-list
             v-else
-            :images="imagesByProposal[project.id]"
-            :selected-images="selectedImagesByProposal[project.id]"
-            @select-image="selectImage(project.id, $event)"
+            :images="imagesByProposal[proposal.id]"
+            :selected-images="selectedImagesByProposal[proposal.id]"
+            @select-image="selectImage(proposal.id, $event)"
           />
           <div
-            v-if="imagesByProposal[project.id]?.length == 0"
+            v-if="imagesByProposal[proposal.id]?.length == 0"
             class="no-images mt-5 d-flex flex-column justify-center align-center"
           >
             <v-icon
@@ -241,17 +239,17 @@ onMounted(() => {
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
-  <div class="project-buttons">
+  <div class="proposal-buttons">
     <v-btn
       :disabled="selectedImages.length == 0"
-      class="project-button deselect_button"
+      class="proposal-button deselect_button"
       prepend-icon="mdi-trash-can-outline"
       text="Clear"
       @click="deselectAllImages"
     />
     <v-btn
       :disabled="selectedImages.length == 0"
-      class="project-button add_button"
+      class="proposal-button add_button"
       :text=" selectedImages.length == 0 ? 'No Images' : `Add ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}` "
       @click="showCreateSessionDialog=true"
     />
@@ -285,21 +283,21 @@ onMounted(() => {
 .no-images{
   color: var(--tan);
 }
-.project-buttons {
+.proposal-buttons {
   margin-bottom: 1rem;
   position: fixed;
   bottom: 0;
   right: 0;
   color: var(--tan);
 }
-.project-button {
+.proposal-button {
   margin-right: 1rem;
   background-color: var(--light-blue);
   font-weight: 700;
   font-size: 1.3rem;
   margin-right: 1rem;
 }
-.project-button:disabled {
+.proposal-button:disabled {
   opacity: calc(0.5);
 }
 .add_button {
