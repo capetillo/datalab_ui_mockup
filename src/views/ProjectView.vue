@@ -56,6 +56,8 @@ function deselectAllImages() {
 async function loadProposals(option){
   // Only loads images for open proposal panels
   userDataStore.openProposals.forEach(async proposal => {
+    // if there the value for the key is null the user is not authorized to view the proposal
+    if(!userDataStore.proposals[proposal]) return
 
     const proposalID = userDataStore.proposals[proposal].id
     const baseUrl = configurationStore.datalabArchiveApiUrl + 'frames/'
