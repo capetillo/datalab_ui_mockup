@@ -1,14 +1,16 @@
 <script setup>
 import { useUserDataStore } from '@/stores/userData'
+import { useRouter } from 'vue-router'
 
 const userDataStore = useUserDataStore()
+const router = useRouter()
 
 function logOut() {
   userDataStore.username = ''
   userDataStore.authToken = ''
   userDataStore.profile = {}
   userDataStore.proposals = []
-  location.reload()
+  router.push({name: 'Registration'})
 }
 </script>
 

@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import UserMenu from './UserMenu.vue'
 
 </script>
@@ -20,18 +21,20 @@ import UserMenu from './UserMenu.vue'
       DATALAB
     </v-toolbar-title>
     <v-tabs>
-      <v-tab
-        class="nav-text"
-        to="/projects"
-      >
-        Projects
-      </v-tab>
-      <v-tab
-        class="nav-text"
-        to="/datasessions"
-      >
-        Data Sessions
-      </v-tab>
+      <RouterLink to="/projects">
+        <v-tab
+          class="nav-text"
+        >
+          Projects
+        </v-tab>
+      </RouterLink>
+      <RouterLink to="/datasessions">
+        <v-tab
+          class="nav-text"
+        >
+          Data Sessions
+        </v-tab>
+      </RouterLink>
     </v-tabs>
     <template #append>
       <user-menu />
@@ -45,4 +48,3 @@ import UserMenu from './UserMenu.vue'
   font-size: 1rem;
   }
 </style>
-
