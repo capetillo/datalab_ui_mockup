@@ -17,23 +17,22 @@ import UserMenu from './UserMenu.vue'
       contain
       src="../../assets/PTR-lambda.png"
     />
-    <v-toolbar-title class="nav-text">
-      DATALAB
-    </v-toolbar-title>
+    <v-toolbar-title 
+      text="DATALAB"
+      class="nav-text"
+    />
     <v-tabs>
       <RouterLink to="/projects">
         <v-tab
+          text="Projects"
           class="nav-text"
-        >
-          Projects
-        </v-tab>
+        />
       </RouterLink>
       <RouterLink to="/datasessions">
         <v-tab
+          text="Data Sessions"
           class="nav-text"
-        >
-          Data Sessions
-        </v-tab>
+        />
       </RouterLink>
     </v-tabs>
     <template #append>
