@@ -20,13 +20,11 @@ function logOut() {
       <template #activator="{ props }">
         <v-btn
           class="nav-text"
+          :text="userDataStore.username"
           v-bind="props"
           append-icon="mdi-account-circle"
-        >
-          {{ userDataStore.username }}
-        </v-btn>
+        />
       </template>
-
       <v-card
         color="var(--metal)"
         class="nav-text"
