@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall, handleError } from '../utils/api'
@@ -15,10 +15,6 @@ const tab = ref(userDataStore.mostRecentSessionId)
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
-
-onBeforeMount(() => {
-  if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
-})
 
 onMounted(async () => {
   await loadSessions()

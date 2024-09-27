@@ -1,17 +1,15 @@
 <script setup>
-import { ref, computed, onBeforeMount, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 import ImageList from '@/components/Project/ImageList.vue'
 import ImageGrid from '@/components/Global/ImageGrid.vue'
 import CreateSessionDialog from '@/components/Project/CreateSessionDialog.vue'
-import { useRouter } from 'vue-router'
 import { useUserDataStore } from '@/stores/userData'
 import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall } from '@/utils/api'
 
-const router = useRouter()
 const userDataStore = useUserDataStore()
 const thumbnailsStore = useThumbnailsStore()
 const configurationStore = useConfigurationStore()
@@ -130,10 +128,6 @@ watch(() => search.value, async () => {
     ra.value = null
     dec.value = null
   }
-})
-
-onBeforeMount(() => {
-  if (!userDataStore.userIsAuthenticated) router.push({ name: 'Registration' })
 })
 
 onMounted(() => {
