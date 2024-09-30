@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import UserMenu from './UserMenu.vue'
 
 </script>
@@ -16,22 +17,23 @@ import UserMenu from './UserMenu.vue'
       contain
       src="../../assets/PTR-lambda.png"
     />
-    <v-toolbar-title class="nav-text">
-      DATALAB
-    </v-toolbar-title>
+    <v-toolbar-title 
+      text="DATALAB"
+      class="nav-text"
+    />
     <v-tabs>
-      <v-tab
-        class="nav-text"
-        to="/projects"
-      >
-        Projects
-      </v-tab>
-      <v-tab
-        class="nav-text"
-        to="/datasessions"
-      >
-        Data Sessions
-      </v-tab>
+      <RouterLink to="/projects">
+        <v-tab
+          text="Projects"
+          class="nav-text"
+        />
+      </RouterLink>
+      <RouterLink to="/datasessions">
+        <v-tab
+          text="Data Sessions"
+          class="nav-text"
+        />
+      </RouterLink>
     </v-tabs>
     <template #append>
       <user-menu />
@@ -45,4 +47,3 @@ import UserMenu from './UserMenu.vue'
   font-size: 1rem;
   }
 </style>
-
