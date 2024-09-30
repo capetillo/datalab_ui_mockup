@@ -115,6 +115,12 @@ watch(() => props.images, () => {
             class="image-text-overlay"
           >{{ image.operationIndex }}</span>
         </v-img>
+        <v-skeleton-loader
+          v-else
+          type="card"
+          color="var(--dark-blue)"
+          bg-color="var(--metal)"
+        />
       </v-col>
     </template>
     <template v-else>
