@@ -32,18 +32,19 @@ const thumbnailsStore = useThumbnailsStore()
 const emit = defineEmits(['selectImage'])
 const showAnalysisDialog = ref(false)
 const analysisImage = ref({})
-var clickTimer = 0
+var doubleClickTimer = 0
 
 const handleClick = (index) => {
-  clearTimeout(clickTimer)
-  clickTimer = setTimeout(() => {
+  clearTimeout(doubleClickTimer)
+  // timeout length indicates how long to wait for a second click before treating as a single click
+  doubleClickTimer = setTimeout(() => {
     emit('selectImage', index)
-    clickTimer = 0
+    doubleClickTimer = 0
   }, 250)
 }
 
 const handleDoubleClick = (image) => {
-  clearTimeout(clickTimer)
+  clearTimeout(doubleClickTimer)
   alertsStore.setAlert('loading', `Opening ${image?.basename} for analysis`)
   launchAnalysis(image)
 }
