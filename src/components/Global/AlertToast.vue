@@ -5,7 +5,7 @@ import { useAlertsStore } from '../../stores/alerts'
 const alertStore = useAlertsStore()
 const showAlert = ref(false)
 
-watch(() => alertStore.alertText, () => {
+watch(() => alertStore.alertTimeStamp, () => {
   showAlert.value = true
   setTimeout(() => {
     showAlert.value = false
