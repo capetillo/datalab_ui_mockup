@@ -27,7 +27,7 @@ const showWizardDialog = ref(false)
 
 const dataSessionsUrl = store.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
-const operationMap = {}
+var operationMap = {}
 var selectedOperation = -1
 
 async function addCompletedOperationsOutput() {
@@ -39,6 +39,7 @@ async function addCompletedOperationsOutput() {
         addCompletedOperation(operationResponse)
       }
     })
+    reconcileOperations()
   }
 
   await fetchApiCall({ url: url, method: 'GET', successCallback: updateCompletedOperations, failCallback: handleError })
@@ -57,7 +58,7 @@ function addCompletedOperation(operationResponse) {
       outputFile.operationIndex = operationMap[operationResponse.id]
       if (!imagesContainsFile(outputFile)) {
         images.value.push(outputFile)
-        if (selectedOperation == -1 || selectedOperation == outputFile.operationIndex) {
+        if (selectedOperation == -1 || selectedOperation == outputFile.operation) {
           filteredImages.value.push(outputFile)
         }
       }
@@ -65,16 +66,36 @@ function addCompletedOperation(operationResponse) {
   }
 }
 
-
 function selectOperation(operationIndex) {
-  if (operationIndex != selectedOperation) {
-    selectedOperation = operationIndex
-    if (selectedOperation == -1) {
-      filteredImages.value = images.value
+  if (operationIndex != operationMap[selectedOperation]) {
+    if (operationIndex == -1) {
+      selectedOperation = -1
     }
     else {
-      filteredImages.value = images.value.filter(image => image.operationIndex == operationIndex)
+      selectedOperation = props.data.operations[operationIndex].id
     }
+    reconcileFilteredImages()
+  }
+}
+
+function reconcileOperationImages() {
+  // This updates the operationIndex of images after changes in the operations list
+  images.value = images.value.filter(obj => !obj.operation || obj.operation in operationMap)
+  images.value.forEach(image => {
+    if (image.operation) {
+      image.operationIndex = operationMap[image.operation]
+    }
+  })
+  reconcileFilteredImages()
+}
+
+function reconcileFilteredImages() {
+  // This updates the filteredImages after changes in the operations list, or changes in selection of an operation.
+  if (selectedOperation == -1) {
+    filteredImages.value = [...images.value]
+  }
+  else {
+    filteredImages.value = images.value.filter(image => image.operation == selectedOperation)
   }
 }
 
@@ -94,14 +115,23 @@ async function addOperation(operationDefinition) {
   await fetchApiCall({ url: url, method: 'POST', body: operationDefinition, successCallback: postOperationSuccess, failCallback: handleError })
 }
 
+function reconcileOperations() {
+  // This makes sure our operationMap mapping operation ids to indices is up to date following changes in the operation list
+  operationMap = {}
+  props.data.operations.forEach((operation, index) => {
+    operationMap[operation.id] = index
+  })
+  if (!(selectedOperation in operationMap)) {
+    selectedOperation = -1
+  }
+  reconcileOperationImages()
+}
+
 watch(
   () => props.data.operations, () => {
-    props.data.operations.forEach((operation, index) => {
-      operationMap[operation.id] = index
-    })
+    reconcileOperations()
   },
-  { immediate: true })
-
+  { immediate: false })
 
 onMounted(() => {
   addCompletedOperationsOutput()
@@ -123,6 +153,7 @@ onMounted(() => {
         :active="props.active"
         @operation-completed="addCompletedOperation"
         @select-operation="selectOperation"
+        @operation-was-deleted="emit('reloadSession')"
         @delete-operation="deleteOperation"
       />
       <v-btn

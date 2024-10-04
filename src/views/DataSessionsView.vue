@@ -4,7 +4,7 @@ import { useConfigurationStore } from '@/stores/configuration'
 import { useUserDataStore } from '@/stores/userData'
 import { fetchApiCall, handleError } from '../utils/api'
 import DataSession from '@/components/DataSession/DataSession.vue'
-import DeleteSessionDialog from '@/components/DataSession/DeleteSessionDialog.vue'
+import DeleteSessionDialog from '@/components/Global/DeleteSessionDialog.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -87,10 +87,10 @@ function tabActive(index) {
         >
           {{ ds.name }}
           <v-btn
-            variant="text"
+            variant="plain"
+            size="small"
             icon="mdi-close"
             class="tab_button"
-            :class="tabColor(index)"
             @click="openDeleteDialog(ds.id)"
           />
         </v-tab>
@@ -117,8 +117,8 @@ function tabActive(index) {
     </v-card>
     <delete-session-dialog
       v-model="showDeleteDialog"
-      :delete-id="deleteSessionId"
-      @reload-session="loadSessions()"
+      :session-id="deleteSessionId"
+      @item-was-deleted="loadSessions()"
     />
   </v-container>
 </template>
