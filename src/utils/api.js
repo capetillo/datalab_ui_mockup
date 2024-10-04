@@ -1,7 +1,7 @@
 import { useUserDataStore } from '@/stores/userData'
 
 // handles api requests for datasessions with configurable parameters and callback functions
-async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = null }) {
+async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = handleError }) {
 
   const store = useUserDataStore()
 

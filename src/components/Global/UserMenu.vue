@@ -1,14 +1,16 @@
 <script setup>
 import { useUserDataStore } from '@/stores/userData'
+import { useRouter } from 'vue-router'
 
 const userDataStore = useUserDataStore()
+const router = useRouter()
 
 function logOut() {
   userDataStore.username = ''
   userDataStore.authToken = ''
   userDataStore.profile = {}
   userDataStore.proposals = []
-  location.reload()
+  router.push({name: 'Registration'})
 }
 </script>
 
@@ -18,13 +20,11 @@ function logOut() {
       <template #activator="{ props }">
         <v-btn
           class="nav-text"
+          :text="userDataStore.username"
           v-bind="props"
           append-icon="mdi-account-circle"
-        >
-          {{ userDataStore.username }}
-        </v-btn>
+        />
       </template>
-
       <v-card
         color="var(--metal)"
         class="nav-text"
@@ -45,16 +45,10 @@ function logOut() {
         </v-list-item>
         <v-list-item>
           <v-switch
-            v-model="userDataStore.carouselGridToggle"
-            class="d-flex"
-            prepend-icon="mdi-view-list"
-            append-icon="mdi-image"
-          />
-        </v-list-item>
-        <v-list-item>
-          <v-switch
             v-model="userDataStore.isColorblindMode"
             label="High Contrast"
+            color="var(--light-blue)"
+            base-color="var(--light-blue)"
           />
         </v-list-item>
       </v-card>
