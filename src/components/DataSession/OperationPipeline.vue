@@ -140,7 +140,6 @@ onBeforeUnmount(() => {
   <v-row
     v-for="(operation, index) in operations"
     :key="operation.id"
-    align="center"
     justify="center"
     class="operation mb-2"
   >
@@ -154,13 +153,15 @@ onBeforeUnmount(() => {
         {{ index }}: {{ operation.name }}
       </p>
     </load-bar-button>
-    <v-btn
-      variant="text"
-      icon="mdi-close"
-      class="tab_button"
-      color="error"
-      @click="openDeleteOperationDialog(operation)"
-    />
+    <v-slide-x-transition hide-on-leave>
+      <v-btn
+        v-if="index == selectedOperation"
+        variant="plain"
+        icon="mdi-close"
+        color="var(--cancel)"
+        @click="openDeleteOperationDialog(operation)"
+      />
+    </v-slide-x-transition>
   </v-row>
   <delete-operation-dialog
     v-model="showDeleteDialog"

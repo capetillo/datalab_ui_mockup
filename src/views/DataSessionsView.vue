@@ -87,10 +87,10 @@ function tabActive(index) {
         >
           {{ ds.name }}
           <v-btn
-            variant="text"
+            variant="plain"
+            size="small"
             icon="mdi-close"
             class="tab_button"
-            color="error"
             @click="openDeleteDialog(ds.id)"
           />
         </v-tab>
