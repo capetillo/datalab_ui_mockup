@@ -6,6 +6,7 @@ import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
 import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
+import { siteIDToName } from '@/utils/common'
 
 const props = defineProps({
   modelValue: {
@@ -27,6 +28,7 @@ const startCoords = ref()
 const endCoords = ref()
 const catalog = ref([])
 const positionAngle = ref()
+const showFitsHeaderDialog = ref(false)
 
 function closeDialog() {
   lineProfile.value = []
@@ -78,11 +80,20 @@ function handleAnalysisOutput(response, action, action_callback){
       <v-toolbar
         class="analysis-toolbar"
         density="comfortable"
-        :title="image.target_name || 'N/A'"
       >
+        <filter-badge
+          v-if="image.FILTER || image.filter"
+          :filter="image.FILTER || image.filter"
+          class="ml-2"
+        />
+        <v-toolbar-title>{{ image.basename || "Unknown" }}</v-toolbar-title>
         <image-download-menu
           :image="image"
           @analysis-action="requestAnalysis"
+        />
+        <v-btn
+          icon="mdi-information"
+          @click="showFitsHeaderDialog = true"
         />
         <v-btn
           icon="mdi-close"
@@ -96,19 +107,15 @@ function handleAnalysisOutput(response, action, action_callback){
           @analysis-action="requestAnalysis"
         />
         <div class="side-panel-container">
-          <v-sheet class="side-panel">
-            <h1>Details</h1>
-            <p>Basename: {{ image.basename }}</p>
-            <p>Date & Time: {{ image.observation_date }}</p>
-            <p>Site: {{ image.site_id }}</p>
-            <p>Telescope: {{ image.telescope_id }}</p>
-            <p>Instrument: {{ image.instrument_id }}</p>
-            <span>Filter:
-              <filter-badge
-                v-if="image.FILTER || image.filter"
-                :filter="image.FILTER || image.filter"
-              />
-            </span>
+          <v-sheet
+            v-if="image.site_id || image.telescope_id || image.instrument_id || image.observation_date"
+            rounded
+            class="side-panel"
+          >
+            <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
+            <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
+            <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
+            <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
           </v-sheet>
           <line-plot
             :y-axis-luminosity="lineProfile"
@@ -121,10 +128,48 @@ function handleAnalysisOutput(response, action, action_callback){
       </div>
     </v-sheet>
   </v-dialog>
+  <v-dialog
+    v-model="showFitsHeaderDialog"
+    width="auto"
+  >
+    <v-sheet
+      class="pa-12"
+      max-width="1000"
+    >
+      <h1 class="mb-8">
+        Image Data
+      </h1>
+      <v-table>
+        <tbody>
+          <tr
+            v-for="(value, key) in image"
+            :key="key"
+          >
+            <td class="table_key">
+              {{ key }}
+            </td>
+            <td>{{ value }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-sheet>
+  </v-dialog>
 </template>
 <style scoped>
 a{
   color: var(--tan);
+}
+.v-sheet{
+  background-color: var(--metal);
+  color: var(--tan);
+}
+.v-table{
+  background-color: var(--metal);
+  color: var(--tan);
+}
+.table_key{
+  font-weight: bold;
+  font-size: large;
 }
 .analysis-sheet{
   background-color: var(--dark-blue);
@@ -146,7 +191,7 @@ a{
   flex-direction: column
 }
 .side-panel{
-  background-color: var(--dark-blue);
+  padding: 2rem;
   color: var(--tan);
   margin-left: 10px;
   margin-bottom: 5%;
