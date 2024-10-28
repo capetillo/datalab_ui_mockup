@@ -22,11 +22,11 @@ const alertsStore = useAlertsStore()
 const showCreateSessionDialog = ref(false)
 const imagesByProposal = ref({})
 const selectedImagesByProposal = ref({})
-const startDate =  ref( new Date(route.query.startDate) || new Date(Date.now() - 24 * 3600 * 1000))
-const endDate = ref( new Date(route.query.endDate) || new Date(Date.now()))
+const startDate = ref(isNaN(new Date(route.query.startDate).getTime()) ? new Date(Date.now() - 24 * 3600 * 1000) : new Date(route.query.startDate))
+const endDate = ref( isNaN(new Date(route.query.endDate).getTime()) ? new Date(Date.now()) : new Date(route.query.endDate))
 const ra = ref(route.query.ra)
 const dec = ref(route.query.dec)
-const search = ref(null)
+const search = ref(route.query.search)
 const observationId = ref(route.query.observationId)
 
 const selectedImages = computed(() => {
@@ -57,6 +57,11 @@ function deselectAllImages() {
 }
 
 async function loadProposals(option){
+  imagesByProposal.value = {}
+
+  // Update the URL with the current filters
+  router.push({ query: { ra: ra.value, dec: dec.value, observationId: observationId.value, search: search.value, startDate: startDate.value.toISOString(), endDate: endDate.value.toISOString() } })
+
   // Only loads images for open proposal panels
   userDataStore.openProposals.forEach(async proposal => {
     // if there the value for the key is null the user is not authorized to view the proposal
@@ -65,13 +70,10 @@ async function loadProposals(option){
     const proposalID = userDataStore.proposals[proposal].id
     const baseUrl = configurationStore.datalabArchiveApiUrl + 'frames/'
     const timeStr = `start=${startDate.value.toISOString()}&end=${endDate.value.toISOString()}`
-
     
-    option = option ? `${option}&${timeStr}` : timeStr
-    option += ra.value && dec.value ? `&covers=POINT(${ra.value} ${dec.value})` : ''
-    option += observationId.value ? `&observation_id=${observationId.value}` : ''
-    option += `&proposal_id=${proposalID}`
-    option += '&include_thumbnails=true'
+    option = `${option}&${timeStr}&proposal_id=${proposalID}&include_thumbnails=true`
+    if(ra.value && dec.value) option += `&covers=POINT(${ra.value} ${dec.value})`
+    if(observationId.value) option += `&observation_id=${observationId.value}`
 
     const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
     const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
@@ -103,22 +105,18 @@ async function loadProposals(option){
 
 watch(() => [startDate.value, endDate.value], async () => {
   // Watch filters that can be queried instantly with no debounce
-  imagesByProposal.value = {}
-  router.push({ query: { startDate: startDate.value.toISOString(), endDate: endDate.value.toISOString() } })
   loadProposals('reduction_level=91')
 })
 
 watch(() => [ra.value, dec.value, observationId.value], async () => {
-  if(isNaN(ra.value) || isNaN(dec.value)){
+  if(ra.value && dec.value && isNaN(ra.value) || isNaN(dec.value)){
     alertsStore.setAlert('warning', `RA and DEC must be numbers ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
   }
-  if(isNaN(observationId.value)){
+  if(observationId.value && isNaN(observationId.value)){
     alertsStore.setAlert('warning', `Observation ID must be a number ${observationId.value}`)
   }
   // Debouncing the load so users have time to finish typing
   else if(setTimeout(async () => {
-    imagesByProposal.value = {}
-    router.push({ query: { ra: ra.value, dec: dec.value, observationId: observationId.value } })
     await loadProposals('reduction_level=91')
   }, 1700)){
     clearTimeout()
