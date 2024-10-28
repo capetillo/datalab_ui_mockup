@@ -22,8 +22,8 @@ const alertsStore = useAlertsStore()
 const showCreateSessionDialog = ref(false)
 const imagesByProposal = ref({})
 const selectedImagesByProposal = ref({})
-const startDate =  ref(new Date(Date.now() - 24 * 3600 * 1000))
-const endDate = ref(new Date(Date.now()))
+const startDate =  ref( new Date(route.query.startDate) || new Date(Date.now() - 24 * 3600 * 1000))
+const endDate = ref( new Date(route.query.endDate) || new Date(Date.now()))
 const ra = ref(route.query.ra)
 const dec = ref(route.query.dec)
 const search = ref(null)
@@ -104,6 +104,7 @@ async function loadProposals(option){
 watch(() => [startDate.value, endDate.value], async () => {
   // Watch filters that can be queried instantly with no debounce
   imagesByProposal.value = {}
+  router.push({ query: { startDate: startDate.value.toISOString(), endDate: endDate.value.toISOString() } })
   loadProposals('reduction_level=91')
 })
 
