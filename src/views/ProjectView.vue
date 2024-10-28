@@ -9,6 +9,7 @@ import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall } from '@/utils/api'
+import { initializeDate } from '@/utils/common'
 import { useRoute } from 'vue-router'
 import router from '@/router'
 
@@ -22,8 +23,8 @@ const alertsStore = useAlertsStore()
 const showCreateSessionDialog = ref(false)
 const imagesByProposal = ref({})
 const selectedImagesByProposal = ref({})
-const startDate = ref(isNaN(new Date(route.query.startDate).getTime()) ? new Date(Date.now() - 24 * 3600 * 1000) : new Date(route.query.startDate))
-const endDate = ref( isNaN(new Date(route.query.endDate).getTime()) ? new Date(Date.now()) : new Date(route.query.endDate))
+const startDate = ref(initializeDate(route.query.startDate, -3))
+const endDate = ref( initializeDate(route.query.endDate))
 const ra = ref(route.query.ra)
 const dec = ref(route.query.dec)
 const search = ref(route.query.search)
