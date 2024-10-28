@@ -81,6 +81,7 @@ async function loadProposals(option){
 
     if (responseData && responseData.results) {
       // Preload all the small thumbnails into the cache. The large thumbnails will be loaded on demand
+      // TODO: The processing of frames should be moved to the thumbnails store or the thumbnail's utility file
       responseData.results.forEach((frame) => {
         frame.smallThumbUrl = ''
         frame.largeThumbUrl = ''
