@@ -9,6 +9,10 @@ import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall } from '@/utils/api'
+import { useRoute } from 'vue-router'
+import router from '@/router'
+
+const route = useRoute()
 
 const userDataStore = useUserDataStore()
 const thumbnailsStore = useThumbnailsStore()
@@ -20,9 +24,10 @@ const imagesByProposal = ref({})
 const selectedImagesByProposal = ref({})
 const startDate =  ref(new Date(Date.now() - 24 * 3600 * 1000))
 const endDate = ref(new Date(Date.now()))
-const ra = ref(null)
-const dec = ref(null)
+const ra = ref(route.query.ra)
+const dec = ref(route.query.dec)
 const search = ref(null)
+const observationId = ref(route.query.observationId)
 
 const selectedImages = computed(() => {
   // returns a list combining all the selected images in all projects to be used for a new data session
@@ -64,6 +69,7 @@ async function loadProposals(option){
     
     option = option ? `${option}&${timeStr}` : timeStr
     option += ra.value && dec.value ? `&covers=POINT(${ra.value} ${dec.value})` : ''
+    option += observationId.value ? `&observation_id=${observationId.value}` : ''
     option += `&proposal_id=${proposalID}`
     option += '&include_thumbnails=true'
 
@@ -96,18 +102,22 @@ async function loadProposals(option){
 }
 
 watch(() => [startDate.value, endDate.value], async () => {
-  // Watch filters that can be queried instantly without waiting for the rest of the input
+  // Watch filters that can be queried instantly with no debounce
   imagesByProposal.value = {}
   loadProposals('reduction_level=91')
 })
 
-watch(() => [ra.value, dec.value], async () => {
+watch(() => [ra.value, dec.value, observationId.value], async () => {
   if(isNaN(ra.value) || isNaN(dec.value)){
     alertsStore.setAlert('warning', `RA and DEC must be numbers ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
+  }
+  if(isNaN(observationId.value)){
+    alertsStore.setAlert('warning', `Observation ID must be a number ${observationId.value}`)
   }
   // Debouncing the load so users have time to finish typing
   else if(setTimeout(async () => {
     imagesByProposal.value = {}
+    router.push({ query: { ra: ra.value, dec: dec.value, observationId: observationId.value } })
     await loadProposals('reduction_level=91')
   }, 1700)){
     clearTimeout()
@@ -125,6 +135,7 @@ watch(() => search.value, async () => {
     }})
   }
   else{
+    // after the user clears the search field, also clear the ra and dec fields
     ra.value = null
     dec.value = null
   }
@@ -144,7 +155,6 @@ onMounted(() => {
   <div class="proposal-filters">
     <v-date-input
       v-model="startDate"
-      class="proposal-filter"
       :max="endDate"
       label="From"
       prepend-icon=""
@@ -154,7 +164,6 @@ onMounted(() => {
     />
     <v-date-input
       v-model="endDate"
-      class="proposal-filter"
       :max="new Date()"
       :min="startDate"
       label="To"
@@ -164,22 +173,25 @@ onMounted(() => {
       hide-details="auto"
     />
     <v-text-field
+      v-model="observationId"
+      label="Observation ID"
+      clearable
+      hide-details
+    />
+    <v-text-field
       v-model="ra"
-      class="proposal-filter"
       label="RA"
       clearable
       hide-details
     />
     <v-text-field
       v-model="dec"
-      class="proposal-filter"
       label="DEC"
       clearable
       hide-details
     />
     <v-text-field
       v-model="search"
-      class="proposal-filter"
       prepend-inner-icon="mdi-magnify"
       label="Sources"
       clearable
