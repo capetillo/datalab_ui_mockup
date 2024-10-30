@@ -1,7 +1,8 @@
 <script setup>
 import { ref, defineProps, computed, watch, onMounted } from 'vue'
 import { useScalingStore } from '@/stores/scaling'
-// import _ from 'lodash'
+
+// This component draws a composite RGB image from the scaling store
 
 const props = defineProps({
   width: {
@@ -19,16 +20,11 @@ const props = defineProps({
 })
 
 const store = useScalingStore()
-
+// This isn't currently used by can be used to trigger showing a spinning circular
+// loading icon over the image if we add a debounce to the redraw in the future
 const isLoading = ref(false)
 const imageCanvas = ref(null)
 var context = null
-// var imageData = null
-
-// const debouncedRedraw = _.debounce(function() {
-//   redrawImage()
-//   isLoading.value = false
-// }, 50)
 
 const ableToDraw = computed(() => {
   return (store.scaledImageArrays[props.imageName] && store.scaledImageArrays[props.imageName].combined)
@@ -36,36 +32,19 @@ const ableToDraw = computed(() => {
 
 function redrawImage() {
   if (ableToDraw.value) {
-
-    // for (let i = 0; i < store.scaledImageArrays[props.imageName].r.length; i++) {
-    //   imageData.data[i * 4] = store.scaledImageArrays[props.imageName].r[i]
-    //   imageData.data[i * 4 + 1] = store.scaledImageArrays[props.imageName].g[i]
-    //   imageData.data[i * 4 + 2] = store.scaledImageArrays[props.imageName].b[i]
-    //   imageData.data[i * 4 + 3] = 255
-    // }
-
-    // const newImageDataObject = new ImageData(store.scaledImageArrays[props.imageName].combined, props.width, props.height)
-    createImageBitmap(store.scaledImageArrays[props.imageName].combined).then(function (image) {
-      context.drawImage(image, 0, 0)
-    })
-    // context.putImageData(store.scaledImageArrays[props.imageName].combined, 0, 0)
+    context.putImageData(store.scaledImageArrays[props.imageName].combined, 0, 0)
   }
 }
 
 onMounted(() => {
   context = imageCanvas.value.getContext('2d')
-  // imageData = context.createImageData(props.width, props.height)
 })
 
 watch(
   () => store.arrayChanged[props.imageName], () => {
-    // isLoading.value = true
-    // debouncedRedraw()
+    // Triggering on this arrayChanged trigger variable is so we avoid trying
+    // to redraw until the image array is done being modified
     redrawImage()
-    // setTimeout(() => {
-    //   redrawImage()
-    //   isLoading.value = false
-    // }, 100)
   },
   { deep: true }
 )
