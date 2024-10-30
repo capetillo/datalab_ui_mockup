@@ -105,9 +105,6 @@ onMounted(async () => {
         thumb-label="always"
         @update:modelValue="emit('updateScaling', props.imageName, sliderRange[0], sliderRange[1])"
       >
-        <!-- <template v-slot:thumb-label="{ modelValue }">
-          <div :class="thumbLabelClass(modelValue)">{{ modelValue }}</div>
-        </template> -->
         <template v-slot:prepend>
           <v-text-field
             v-model="sliderRange[0]"
