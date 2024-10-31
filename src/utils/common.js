@@ -5,14 +5,14 @@ const calculateColumnSpan = (imageCount, imagesPerRow) => {
 
 function siteIDToName(siteID) {
   const siteIDMap = {
-    'COJ': 'Siding Spring Observatory',
-    'CPT': 'South African Astronomical Observatory',
-    'TFN': 'Teide Observatory',
-    'LSC': 'Cerro Tololo Inter-American Observatory',
-    'ELP': 'McDonald Observatory',
-    'OGG': 'Haleakala Observatory',
-    'TLV': 'Wise Observatory',
-    'NGQ': 'Ali Observatory'
+    'COJ': 'Siding Spring Observatory @ New South Wales',
+    'CPT': 'South African Astronomical Observatory @ Cape Town',
+    'TFN': 'Teide Observatory @ Tenerife',
+    'LSC': 'Cerro Tololo Inter-American Observatory @ Chile',
+    'ELP': 'McDonald Observatory @ University of Texas',
+    'OGG': 'Haleakala Observatory @ Maui',
+    'TLV': 'Wise Observatory @ Tel Aviv University',
+    'NGQ': 'Ali Observatory @ Tibet',
   }
 
   return siteIDMap[siteID?.toUpperCase()] || siteID
