@@ -143,6 +143,13 @@ watch(() => search.value, async () => {
 })
 
 onMounted(() => {
+  if(route.query.proposalId){
+    const proposalIndexToOpen = userDataStore.proposals.findIndex(proposal => proposal.id == route.query.proposalId)
+    if(proposalIndexToOpen != -1)
+      userDataStore.openProposals = [proposalIndexToOpen]
+    else
+      alertsStore.setAlert('warning', `Proposal ${route.query.proposalId} not found in users proposals`)
+  }
   loadProposals('reduction_level=91')
   // create selected images array for each proposal
   userDataStore.proposals.forEach(proposal => {
