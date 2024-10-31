@@ -54,7 +54,7 @@ function select(tableSelectedImages){
 
 function launchAnalysis(image){
   try {
-    alertsStore.setAlert('loading', `Opening ${image?.basename} for analysis`)
+    alertsStore.setAlert('info', `Opening ${image?.basename} for analysis`)
     if (!image.largeCachedUrl) {
       image.largeCachedUrl = ref('')
       const url = image.large_url || image.largeThumbUrl || ''
