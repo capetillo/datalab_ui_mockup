@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { fetchApiCall } from '../../../utils/api'
 import { useConfigurationStore } from '@/stores/configuration'
+import { useAlertsStore } from '@/stores/alerts'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
@@ -21,6 +22,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 const configStore = useConfigurationStore()
+const alertsStore = useAlertsStore()
 
 const lineProfile = ref([])
 const lineProfileLength = ref()
@@ -28,13 +30,15 @@ const startCoords = ref()
 const endCoords = ref()
 const catalog = ref([])
 const positionAngle = ref()
-const showFitsHeaderDialog = ref(false)
+const headerDialog = ref(false)
+const headerData = ref({})
 
 function closeDialog() {
   lineProfile.value = []
   lineProfileLength.value = 0
   startCoords.value = null
   endCoords.value = null
+  headerData.value = null
   emit('update:modelValue', false)
 }
 
@@ -70,6 +74,26 @@ function handleAnalysisOutput(response, action, action_callback){
   }
 }
 
+function showHeaderDialog() {
+
+  if(headerData.value && Object.keys(headerData.value).length > 0) {
+    headerDialog.value = true
+    return
+  }
+
+  const archiveHeadersUrl = configStore.datalabArchiveApiUrl + 'frames/' + props.image.id + '/headers/'
+  fetchApiCall({url: archiveHeadersUrl, method: 'GET', 
+    successCallback: (response) => {
+      headerData.value = response.data
+      headerDialog.value = true
+    },
+    failCallback: (error) => {
+      console.error('Failed to fetch headers:', error)
+      alertsStore.setAlert('error', `Could not fetch headers for frame ${props.image.id}`)
+    }
+  })
+}
+
 </script>
 <template>
   <v-dialog
@@ -93,7 +117,7 @@ function handleAnalysisOutput(response, action, action_callback){
         />
         <v-btn
           icon="mdi-information"
-          @click="showFitsHeaderDialog = true"
+          @click="showHeaderDialog"
         />
         <v-btn
           icon="mdi-close"
@@ -129,20 +153,17 @@ function handleAnalysisOutput(response, action, action_callback){
     </v-sheet>
   </v-dialog>
   <v-dialog
-    v-model="showFitsHeaderDialog"
+    v-model="headerDialog"
     width="auto"
   >
-    <v-sheet
-      class="pa-12"
-      max-width="1000"
-    >
+    <v-sheet class="pa-12">
       <h1 class="mb-8">
-        Image Data
+        FITS Headers
       </h1>
       <v-table>
         <tbody>
           <tr
-            v-for="(value, key) in image"
+            v-for="(value, key) in headerData"
             :key="key"
           >
             <td class="table_key">
@@ -166,6 +187,7 @@ a{
 .v-table{
   background-color: var(--metal);
   color: var(--tan);
+  max-width: 60ch;
 }
 .table_key{
   font-weight: bold;
@@ -191,7 +213,7 @@ a{
   flex-direction: column
 }
 .side-panel{
-  padding: 2rem;
+  padding: 1rem;
   color: var(--tan);
   margin-left: 10px;
   margin-bottom: 5%;
