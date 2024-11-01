@@ -11,7 +11,7 @@ const routes = [
     component: Registration
   },
   {
-    path: '/projects',
+    path: '/projects:startDate?:endDate?:observationId?:ra?:dec?:search?:proposalId?',
     name: 'ProjectView',
     component: ProjectView,
     beforeEnter: requireAuth,
