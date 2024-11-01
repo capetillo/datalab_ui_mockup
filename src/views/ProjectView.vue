@@ -106,16 +106,16 @@ async function loadProposals(option){
 }
 
 watch(() => [startDate.value, endDate.value], async () => {
-  // Watch filters that can be queried instantly with no debounce
+  // Filters that can be queried instantly with no debounce
   loadProposals('reduction_level=91')
 })
 
 watch(() => [ra.value, dec.value, observationId.value], async () => {
   if(ra.value && dec.value && isNaN(ra.value) || isNaN(dec.value)){
-    alertsStore.setAlert('warning', `RA and DEC must be numbers ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
+    alertsStore.setAlert('warning', `RA and DEC must be a number ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
   }
   if(observationId.value && isNaN(observationId.value)){
-    alertsStore.setAlert('warning', `Observation ID must be a number ${observationId.value}`)
+    alertsStore.setAlert('warning', `Observation ID is not a number ${observationId.value}`)
   }
   // Debouncing the load so users have time to finish typing
   else if(setTimeout(async () => {
@@ -126,6 +126,7 @@ watch(() => [ra.value, dec.value, observationId.value], async () => {
 })
 
 watch(() => search.value, async () => {
+  // Search has its own watcher since we would like to clear the ra and dec fields when the search field is cleared
   if(search.value){
     const url = `https://simbad2k.lco.global/${search.value}`
     fetchApiCall({url: url, method: 'GET', successCallback: (data)=> {
@@ -136,13 +137,13 @@ watch(() => search.value, async () => {
     }})
   }
   else{
-    // after the user clears the search field, also clear the ra and dec fields
     ra.value = null
     dec.value = null
   }
 })
 
 onMounted(() => {
+  // Check so Observe@PTR can open the relevant proposal
   if(route.query.proposalId){
     const proposalIndexToOpen = userDataStore.proposals.findIndex(proposal => proposal.id == route.query.proposalId)
     if(proposalIndexToOpen != -1)
