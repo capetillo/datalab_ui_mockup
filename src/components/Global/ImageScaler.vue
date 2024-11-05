@@ -39,6 +39,16 @@ const titleText = computed(() => {
   return props.imageName.replace('_', ' ')
 })
 
+const maxPixelValue = computed(() => {
+  if (rawData.value && rawData.value.bitdepth) {
+    return Math.pow(2, rawData.value.bitdepth) - 1
+  }
+  else {
+    // Assume 16 bit depth to start as default
+    return 65535
+  }
+})
+
 function updateLowerScale(value) {
   sliderRange.value = [Number(value), sliderRange.value[1]]
   emit('updateScaling', props.imageName, sliderRange.value[0], sliderRange.value[1])
@@ -99,7 +109,7 @@ onMounted(async () => {
       <v-range-slider
         v-model="sliderRange"
         step="500"
-        max="65535"
+        :max=maxPixelValue
         :max-width="props.maxSize + 100"
         strict
         thumb-label="always"
