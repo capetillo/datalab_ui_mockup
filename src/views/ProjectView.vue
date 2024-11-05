@@ -9,6 +9,11 @@ import { useThumbnailsStore } from '@/stores/thumbnails'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import { fetchApiCall } from '@/utils/api'
+import { initializeDate } from '@/utils/common'
+import { useRoute } from 'vue-router'
+import router from '@/router'
+
+const route = useRoute()
 
 const userDataStore = useUserDataStore()
 const thumbnailsStore = useThumbnailsStore()
@@ -18,11 +23,12 @@ const alertsStore = useAlertsStore()
 const showCreateSessionDialog = ref(false)
 const imagesByProposal = ref({})
 const selectedImagesByProposal = ref({})
-const startDate =  ref(new Date(Date.now() - 24 * 3600 * 1000))
-const endDate = ref(new Date(Date.now()))
-const ra = ref(null)
-const dec = ref(null)
-const search = ref(null)
+const startDate = ref(initializeDate(route.query.startDate, -3))
+const endDate = ref( initializeDate(route.query.endDate))
+const ra = ref(route.query.ra)
+const dec = ref(route.query.dec)
+const search = ref(route.query.search)
+const observationId = ref(route.query.observationId)
 
 const selectedImages = computed(() => {
   // returns a list combining all the selected images in all projects to be used for a new data session
@@ -52,6 +58,11 @@ function deselectAllImages() {
 }
 
 async function loadProposals(option){
+  imagesByProposal.value = {}
+
+  // Update the URL with the current filters
+  router.push({ query: { ra: ra.value, dec: dec.value, observationId: observationId.value, search: search.value, startDate: startDate.value.toISOString(), endDate: endDate.value.toISOString() } })
+
   // Only loads images for open proposal panels
   userDataStore.openProposals.forEach(async proposal => {
     // if there the value for the key is null the user is not authorized to view the proposal
@@ -60,18 +71,17 @@ async function loadProposals(option){
     const proposalID = userDataStore.proposals[proposal].id
     const baseUrl = configurationStore.datalabArchiveApiUrl + 'frames/'
     const timeStr = `start=${startDate.value.toISOString()}&end=${endDate.value.toISOString()}`
-
     
-    option = option ? `${option}&${timeStr}` : timeStr
-    option += ra.value && dec.value ? `&covers=POINT(${ra.value} ${dec.value})` : ''
-    option += `&proposal_id=${proposalID}`
-    option += '&include_thumbnails=true'
+    option = `${option}&${timeStr}&proposal_id=${proposalID}&include_thumbnails=true`
+    if(ra.value && dec.value) option += `&covers=POINT(${ra.value} ${dec.value})`
+    if(observationId.value) option += `&observation_id=${observationId.value}`
 
     const imageUrl = option ? `${baseUrl}?${option}` : baseUrl
     const responseData = await fetchApiCall({ url: imageUrl, method: 'GET' })
 
     if (responseData && responseData.results) {
       // Preload all the small thumbnails into the cache. The large thumbnails will be loaded on demand
+      // TODO: The processing of frames should be moved to the thumbnails store or the thumbnail's utility file
       responseData.results.forEach((frame) => {
         frame.smallThumbUrl = ''
         frame.largeThumbUrl = ''
@@ -96,18 +106,19 @@ async function loadProposals(option){
 }
 
 watch(() => [startDate.value, endDate.value], async () => {
-  // Watch filters that can be queried instantly without waiting for the rest of the input
-  imagesByProposal.value = {}
+  // Filters that can be queried instantly with no debounce
   loadProposals('reduction_level=91')
 })
 
-watch(() => [ra.value, dec.value], async () => {
-  if(isNaN(ra.value) || isNaN(dec.value)){
-    alertsStore.setAlert('warning', `RA and DEC must be numbers ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
+watch(() => [ra.value, dec.value, observationId.value], async () => {
+  if(ra.value && dec.value && isNaN(ra.value) || isNaN(dec.value)){
+    alertsStore.setAlert('warning', `RA and DEC must be a number ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
+  }
+  if(observationId.value && isNaN(observationId.value)){
+    alertsStore.setAlert('warning', `Observation ID is not a number ${observationId.value}`)
   }
   // Debouncing the load so users have time to finish typing
   else if(setTimeout(async () => {
-    imagesByProposal.value = {}
     await loadProposals('reduction_level=91')
   }, 1700)){
     clearTimeout()
@@ -115,6 +126,7 @@ watch(() => [ra.value, dec.value], async () => {
 })
 
 watch(() => search.value, async () => {
+  // Search has its own watcher since we would like to clear the ra and dec fields when the search field is cleared
   if(search.value){
     const url = `https://simbad2k.lco.global/${search.value}`
     fetchApiCall({url: url, method: 'GET', successCallback: (data)=> {
@@ -131,6 +143,14 @@ watch(() => search.value, async () => {
 })
 
 onMounted(() => {
+  // Check so Observe@PTR can open the relevant proposal
+  if(route.query.proposalId){
+    const proposalIndexToOpen = userDataStore.proposals.findIndex(proposal => proposal.id == route.query.proposalId)
+    if(proposalIndexToOpen != -1)
+      userDataStore.openProposals = [proposalIndexToOpen]
+    else
+      alertsStore.setAlert('warning', `Proposal ${route.query.proposalId} not found in users proposals`)
+  }
   loadProposals('reduction_level=91')
   // create selected images array for each proposal
   userDataStore.proposals.forEach(proposal => {
@@ -144,7 +164,6 @@ onMounted(() => {
   <div class="proposal-filters">
     <v-date-input
       v-model="startDate"
-      class="proposal-filter"
       :max="endDate"
       label="From"
       prepend-icon=""
@@ -154,7 +173,6 @@ onMounted(() => {
     />
     <v-date-input
       v-model="endDate"
-      class="proposal-filter"
       :max="new Date()"
       :min="startDate"
       label="To"
@@ -164,22 +182,25 @@ onMounted(() => {
       hide-details="auto"
     />
     <v-text-field
+      v-model="observationId"
+      label="Observation ID"
+      clearable
+      hide-details
+    />
+    <v-text-field
       v-model="ra"
-      class="proposal-filter"
       label="RA"
       clearable
       hide-details
     />
     <v-text-field
       v-model="dec"
-      class="proposal-filter"
       label="DEC"
       clearable
       hide-details
     />
     <v-text-field
       v-model="search"
-      class="proposal-filter"
       prepend-inner-icon="mdi-magnify"
       label="Sources"
       clearable
