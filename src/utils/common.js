@@ -3,6 +3,30 @@ const calculateColumnSpan = (imageCount, imagesPerRow) => {
   return totalColumns
 }
 
+const convertFilter = (filter) => {
+  if (filter === 'V' || filter === 'gp') {
+    return 'g'
+  }
+  else if (filter === 'rp' || filter === 'r') {
+    return 'r'
+  }
+  else if (filter === 'B') {
+    return 'b'
+  }
+}
+
+const filterToPixelIndex = (filter) => {
+  if (filter === 'r') {
+    return 0
+  }
+  else if (filter === 'g') {
+    return 1
+  }
+  else if (filter === 'b') {
+    return 2
+  }
+}
+
 function siteIDToName(siteID) {
   const siteIDMap = {
     'COJ': 'Siding Spring Observatory @ New South Wales',
@@ -30,4 +54,4 @@ function initializeDate(dateString = 'none', defaultOffsetDays = 0) {
   return isNaN(date.getTime()) ? new Date(Date.now() + defaultOffsetDays * 24 * 3600 * 1000) : date
 }
 
-export { calculateColumnSpan, siteIDToName, initializeDate }
+export { calculateColumnSpan, siteIDToName, initializeDate, convertFilter, filterToPixelIndex }
