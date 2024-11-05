@@ -224,9 +224,8 @@ onMounted(() => {
       <v-expansion-panel
         v-for="proposal in userDataStore.proposals"
         :key="proposal.id"
-        @click="loadProposals('reduction_level=91')"
       >
-        <v-expansion-panel-title>
+        <v-expansion-panel-title @click="loadProposals('reduction_level=91')">
           <p>{{ proposal.title }}</p>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
