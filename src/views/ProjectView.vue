@@ -58,8 +58,6 @@ function deselectAllImages() {
 }
 
 async function loadProposals(option){
-  imagesByProposal.value = {}
-
   // Update the URL with the current filters
   router.push({ query: { ra: ra.value, dec: dec.value, observationId: observationId.value, search: search.value, startDate: startDate.value.toISOString(), endDate: endDate.value.toISOString() } })
 
