@@ -271,9 +271,7 @@ function selectImage(inputKey, imageIndex) {
             :type="inputDescription.type"
             class="operation-input"
           />
-          <div
-            v-else-if="inputDescription.type == 'file'"
-          >
+          <div v-else-if="inputDescription.type == 'file'">
             <div
               v-if="inputDescription.name"
               class="input-images"
@@ -284,7 +282,6 @@ function selectImage(inputKey, imageIndex) {
               :images="imagesWithFilter(inputDescription.filter)"
               :selected-images="selectedImages[inputKey]"
               :column-span="calculateColumnSpan(images.length, imagesPerRow)"
-              class="wizard-images"
               :allow-selection="true"
               @select-image="selectImage(inputKey, $event)"
             />
@@ -293,17 +290,16 @@ function selectImage(inputKey, imageIndex) {
       </v-card-text>
     </v-slide-y-reverse-transition>
     <v-slide-y-reverse-transition hide-on-leave>
-    <v-card-text
+      <v-card-text
         v-show="page == 'scaling'"
         class="wizard-card"
       >
         <div v-if="isInputComplete">
           <image-scaling-group
-            :inputDescription="selectedOperationInputs"
+            :input-description="selectedOperationInputs"
             :inputs="selectedOperationInput"
             @update-scaling="updateScaling"
-          >
-          </image-scaling-group>
+          />
         </div>
       </v-card-text>
     </v-slide-y-reverse-transition>
