@@ -11,25 +11,21 @@ const router = useRouter()
 const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
 const dataSessions = ref([])
-const tab = ref(userDataStore.mostRecentSessionId)
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
 
 onMounted(async () => {
   await loadSessions()
-  if (dataSessions.value.length > 0 && !userDataStore.mostRecentSessionId) {
-    const firstSessionId = dataSessions.value[0].id
-    tab.value = firstSessionId
-    userDataStore.mostRecentSessionId = firstSessionId
-  } else {
+  if (dataSessions.value.length > 0 && !userDataStore.activeSessionId) {
+    userDataStore.activeSessionId = dataSessions.value[0].id
+  } else if (dataSessions.value.length === 0) {
     console.error('no data sessions available to display')
   }
 })
 
 function onTabChange(newSessionId) {
-  tab.value = newSessionId
-  userDataStore.mostRecentSessionId = newSessionId
+  userDataStore.activeSessionId = newSessionId
 }
 
 function openDeleteDialog(id) {
@@ -44,8 +40,8 @@ async function loadSessions() {
 // if tab is not in new data default to displaying first tab
 function updateData(data) {
   dataSessions.value = data.results
-  if (!dataSessions.value.some(ds => ds.id == tab.value)) {
-    tab.value = dataSessions.value[0]?.id
+  if (!dataSessions.value.some(ds => ds.id == userDataStore.activeSessionId)) {
+    userDataStore.activeSessionId = dataSessions.value[0]?.id
   }
 }
 
@@ -58,7 +54,7 @@ function tabColor(index) {
 }
 
 function tabActive(index) {
-  if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
+  if (dataSessions.value[index] && userDataStore.activeSessionId === dataSessions.value[index].id) {
     return true
   } else {
     return false
@@ -71,11 +67,12 @@ function tabActive(index) {
   <v-container class="d-lg datasession-container">
     <v-card>
       <v-tabs
-        v-model="tab"
+        v-model="userDataStore.activeSessionId"
         class="tabs"
-        next-icon="mdi-arrow-right-bold-box-outline"
-        prev-icon="mdi-arrow-left-bold-box-outline"
+        next-icon="mdi-chevron-right"
+        prev-icon="mdi-chevron-left"
         show-arrows
+        center-active
         @update:model-value="onTabChange"
       >
         <v-tab
@@ -101,7 +98,7 @@ function tabActive(index) {
           @click="router.push({ name: 'ProjectView' })"
         />
       </v-tabs>
-      <v-window v-model="tab">
+      <v-window v-model="userDataStore.activeSessionId">
         <v-window-item
           v-for="(ds, index) in dataSessions"
           :key="ds.id"
