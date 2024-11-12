@@ -7,10 +7,6 @@ defineProps({
     type: Boolean,
     required: true
   },
-  showSnackBar: {
-    type: Boolean,
-    required: true
-  },
   dialogTitle: {
     type: String,
     required: true
@@ -70,13 +66,6 @@ function closeDialog() {
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-snackbar
-    :model-value="showSnackBar"
-    color="red"
-    :timeout="2000"
-  >
-    Error: Item couldn't be deleted
-  </v-snackbar>
 </template>
 
 <style scoped>

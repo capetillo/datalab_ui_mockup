@@ -59,7 +59,7 @@ watch(
         :value="groupName"
         class="pr-0 tab"
       >
-      {{ groupName }}
+        {{ groupName }}
       </v-tab>
     </v-tabs>
     <v-card-text>
@@ -69,13 +69,21 @@ watch(
           :key="groupName"
           :value="groupName"
         >
-          <v-content style="height:100vh">
-            <v-container fluid pa-0 class="d-flex flex-column flex-grow-1 fill-parent-height">
+          <v-main style="height:100vh">
+            <v-container
+              fluid
+              pa-0
+              class="d-flex flex-column flex-grow-1 fill-parent-height"
+            >
               <v-row no-gutters>
-                <v-col cols="6" class="flex-grow-1 flex-shrink-1 fill-parent-height scaled-images">
-                  <v-row no-gutters
+                <v-col
+                  cols="6"
+                  class="flex-grow-1 flex-shrink-1 fill-parent-height scaled-images"
+                >
+                  <v-row
                     v-for="(groupInput, groupInputName ) in groupInputs"
                     :key="groupName + '-' + groupInputName"
+                    no-gutters
                   >
                     <image-scaler
                       v-if="groupInput"
@@ -83,28 +91,29 @@ watch(
                       :image-name="groupInputName"
                       :composite-name="groupName"
                       @update-scaling="(imageName, zmin, zmax) => emit('updateScaling', imageName, zmin, zmax)"
-                    >
-                    </image-scaler>
-                    <v-divider></v-divider>
+                    />
+                    <v-divider />
                   </v-row>
                 </v-col>
-                <v-col cols="6" class="flex-grow-0 flex-shrink-0 fill-parent-height mt-8" v-if="groupName != 'default'">
+                <v-col
+                  v-if="groupName != 'default'"
+                  cols="6"
+                  class="flex-grow-0 flex-shrink-0 fill-parent-height mt-8"
+                >
                   <v-row no-gutters>
                     <composite-image
-                      :width=500
-                      :height=500
-                      :imageName="groupName"
-                    >
-                    </composite-image>
+                      :width="500"
+                      :height="500"
+                      :image-name="groupName"
+                    />
                   </v-row>
                 </v-col>
               </v-row>
             </v-container>
-          </v-content>
+          </v-main>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card-text>
-
   </v-card>
 </template>
 <style scoped>

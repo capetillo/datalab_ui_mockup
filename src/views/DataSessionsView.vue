@@ -11,25 +11,22 @@ const router = useRouter()
 const configurationStore = useConfigurationStore()
 const userDataStore = useUserDataStore()
 const dataSessions = ref([])
-const tab = ref(userDataStore.mostRecentSessionId)
 const deleteSessionId = ref(-1)
 const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
 
 onMounted(async () => {
+  // display users most recent session by keeping track with activeSessionId
   await loadSessions()
-  if (dataSessions.value.length > 0 && !userDataStore.mostRecentSessionId) {
-    const firstSessionId = dataSessions.value[0].id
-    tab.value = firstSessionId
-    userDataStore.mostRecentSessionId = firstSessionId
-  } else {
+  if (dataSessions.value.length > 0 && !userDataStore.activeSessionId) {
+    userDataStore.activeSessionId = dataSessions.value[0].id
+  } else if (dataSessions.value.length === 0) {
     console.error('no data sessions available to display')
   }
 })
 
 function onTabChange(newSessionId) {
-  tab.value = newSessionId
-  userDataStore.mostRecentSessionId = newSessionId
+  userDataStore.activeSessionId = newSessionId
 }
 
 function openDeleteDialog(id) {
@@ -44,77 +41,65 @@ async function loadSessions() {
 // if tab is not in new data default to displaying first tab
 function updateData(data) {
   dataSessions.value = data.results
-  if (!dataSessions.value.some(ds => ds.id == tab.value)) {
-    tab.value = dataSessions.value[0]?.id
-  }
-}
-
-function tabColor(index) {
-  if (tabActive(index)) {
-    return 'selected'
-  } else {
-    return 'not-selected'
+  if (!dataSessions.value.some(ds => ds.id == userDataStore.activeSessionId)) {
+    userDataStore.activeSessionId = dataSessions.value[0]?.id
   }
 }
 
 function tabActive(index) {
-  if (dataSessions.value[index] && tab.value === dataSessions.value[index].id) {
-    return true
-  } else {
-    return false
-  }
+  // checks if this tabs id is the active session id
+  return dataSessions.value[index] && userDataStore.activeSessionId === dataSessions.value[index].id
 }
 
 </script>
 
 <template>
   <v-container class="d-lg datasession-container">
-    <v-card>
-      <v-tabs
-        v-model="tab"
-        class="tabs"
-        next-icon="mdi-arrow-right-bold-box-outline"
-        prev-icon="mdi-arrow-left-bold-box-outline"
-        show-arrows
-        @update:model-value="onTabChange"
+    <v-tabs
+      v-model="userDataStore.activeSessionId"
+      class="tabs"
+      next-icon="mdi-chevron-right"
+      prev-icon="mdi-chevron-left"
+      show-arrows
+      center-active
+      @update:model-value="onTabChange"
+    >
+      <v-tab
+        v-for="(ds, index) in dataSessions"
+        :key="ds.id"
+        :value="ds.id"
+        :class="{ selected: tabActive(index) }"
+        class="pr-0 tab"
       >
-        <v-tab
-          v-for="(ds, index) in dataSessions"
-          :key="ds.id"
-          :value="ds.id"
-          :class="tabColor(index)"
-          class="pr-0 tab"
-        >
-          {{ ds.name }}
-          <v-btn
-            variant="plain"
-            size="small"
-            icon="mdi-close"
-            class="tab_button"
-            @click="openDeleteDialog(ds.id)"
-          />
-        </v-tab>
+        {{ ds.name }}
         <v-btn
           variant="plain"
-          icon="mdi-plus-box"
+          size="small"
+          icon="mdi-close"
           class="tab_button"
-          @click="router.push({ name: 'ProjectView' })"
+          @click="openDeleteDialog(ds.id)"
         />
-      </v-tabs>
-      <v-window v-model="tab">
-        <v-window-item
-          v-for="(ds, index) in dataSessions"
-          :key="ds.id"
-          :value="ds.id"
-        >
-          <data-session
-            :data="ds"
-            :active="tabActive(index)"
-            @reload-session="loadSessions()"
-          />
-        </v-window-item>
-      </v-window>
-    </v-card>
+      </v-tab>
+      <v-btn
+        variant="plain"
+        icon="mdi-plus-box"
+        class="tab_button"
+        @click="router.push({ name: 'ProjectView' })"
+      />
+    </v-tabs>
+    <v-window v-model="userDataStore.activeSessionId">
+      <v-window-item
+        v-for="(ds, index) in dataSessions"
+        :key="ds.id"
+        :value="ds.id"
+      >
+        <data-session
+          :data="ds"
+          :active="tabActive(index)"
+          @reload-session="loadSessions()"
+        />
+      </v-window-item>
+    </v-window>
     <delete-session-dialog
       v-model="showDeleteDialog"
       :session-id="deleteSessionId"
@@ -146,10 +131,6 @@ function tabActive(index) {
 .selected {
   background-color: var(--light-blue);
   color: white;
-}
-
-.not-selected {
-  background-color: var(--metal);
 }
 
 @media (max-width: 1200px) {

@@ -1,4 +1,5 @@
 import { useUserDataStore } from '@/stores/userData'
+import { useConfigurationStore } from '@/stores/configuration'
 
 // handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = handleError }) {
@@ -46,5 +47,11 @@ const handleError = (error) => {
   console.error('API call failed with error:', error)
 }
 
+function deleteOperation(sessionId, operationId, successCallback, failCallback = handleError) {
+  const configStore = useConfigurationStore()
+  const url = configStore.datalabApiBaseUrl + 'datasessions/' + sessionId + '/operations/' + operationId + '/'
+  fetchApiCall({ url: url, method: 'DELETE', successCallback: successCallback, failCallback: failCallback })
+}
 
-export { fetchApiCall, handleError }
+
+export { fetchApiCall, handleError, deleteOperation }
