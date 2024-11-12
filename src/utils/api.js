@@ -47,7 +47,7 @@ const handleError = (error) => {
   console.error('API call failed with error:', error)
 }
 
-function deleteOperation(sessionId, operationId, successCallback = null, failCallback = handleError) {
+function deleteOperation(sessionId, operationId, successCallback, failCallback = handleError) {
   const configStore = useConfigurationStore()
   const url = configStore.datalabApiBaseUrl + 'datasessions/' + sessionId + '/operations/' + operationId + '/'
   fetchApiCall({ url: url, method: 'DELETE', successCallback: successCallback, failCallback: failCallback })
