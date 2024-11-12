@@ -16,12 +16,10 @@ const showDeleteDialog = ref(false)
 const dataSessionsUrl = configurationStore.datalabApiBaseUrl + 'datasessions/'
 
 onMounted(async () => {
-  // display users most recent session by keeping track with activeSessionId
   await loadSessions()
+  // if there is no active session set the first session default
   if (dataSessions.value.length > 0 && !userDataStore.activeSessionId) {
     userDataStore.activeSessionId = dataSessions.value[0].id
-  } else if (dataSessions.value.length === 0) {
-    console.error('no data sessions available to display')
   }
 })
 
@@ -54,7 +52,10 @@ function tabActive(index) {
 </script>
 
 <template>
-  <v-container class="d-lg datasession-container">
+  <v-container
+    v-if="dataSessions.length != 0"
+    class="d-lg datasession-container"
+  >
     <v-tabs
       v-model="userDataStore.activeSessionId"
       class="tabs"
@@ -106,6 +107,17 @@ function tabActive(index) {
       @item-was-deleted="loadSessions()"
     />
   </v-container>
+  <div
+    v-else
+    class="no-sessions mt-15 d-flex flex-column justify-center align-center"
+  >
+    <v-icon
+      icon="mdi-space-invaders"
+      :size="100"
+    />
+    <h1>No Data Sessions to Display</h1>
+    <p>Head over to the Projects tab and select some images to create one!</p>
+  </div>
 </template>
 
 <style scoped>
@@ -131,6 +143,11 @@ function tabActive(index) {
 .selected {
   background-color: var(--light-blue);
   color: white;
+}
+
+.no-sessions{
+  font-weight: 600;
+  color: var(--tan);
 }
 
 @media (max-width: 1200px) {
