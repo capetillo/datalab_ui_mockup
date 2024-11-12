@@ -382,12 +382,6 @@ function selectImage(inputKey, imageIndex) {
   font-size: 1.5rem;
   text-transform: uppercase;
 }
-.wizard-images {
-  max-width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  cursor: pointer;
-}
 
 .selected-image {
   border: 0.3rem solid var(--dark-green);
