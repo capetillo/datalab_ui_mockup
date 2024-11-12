@@ -90,6 +90,11 @@ function openDeleteOperationDialog(operation) {
   showDeleteDialog.value = true
 }
 
+function itemDeleted(){
+  selectedOperation.value = -1
+  emit('operationWasDeleted')
+}
+
 watch(() => props.operations, () => {
   if (props.active) {
     props.operations.forEach(operation => {
@@ -167,7 +172,7 @@ onBeforeUnmount(() => {
     v-model="showDeleteDialog"
     :session-id="sessionId"
     :operation-id="deleteOperationId"
-    @item-was-deleted="emit('operationWasDeleted', $event)"
+    @item-was-deleted="itemDeleted()"
   />
 </template>
 
@@ -185,9 +190,8 @@ onBeforeUnmount(() => {
 .operation_button {
   width: 12rem;
   height: 3rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
-  border-style: none;
   color: var(--metal);
 }
 
