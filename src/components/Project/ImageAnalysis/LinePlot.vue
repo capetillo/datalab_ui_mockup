@@ -137,23 +137,4 @@ onMounted(() => {
   color: var(--tan);
   font-family: 'Open Sans', sans-serif;
 }
-@media (max-width: 1200px) {
-.svg-wrapper {
-  margin-left: -18%;
-}
-.line-plot {
-  background-color: var(--dark-blue);
-  transform: scale(0.7);
-}
-}
-@media (max-width: 900px) {
-.svg-wrapper {
-  margin-top: -7%;
-  padding-left: 15%;
-}
-.line-plot {
-  background-color: var(--dark-blue);
-  transform: scale(0.8);
-}
-}
 </style>
