@@ -4,6 +4,7 @@ import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet/dist/leaflet.css'
+import { useAlertsStore } from '@/stores/alerts'
 
 const props = defineProps({
   imageSrc: {
@@ -19,46 +20,57 @@ const props = defineProps({
 
 const emit = defineEmits(['analysisAction'])
 
-const isLoading = ref(true)
-
-const imageContainer = ref(null)
 let imageMap = null
 let imageOverlay = null
 let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
-let lastDrawnLine = null
+let lineLayer = null
 let layerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
+const isLoading = ref(true)
+const imageContainer = ref(null)
+const DRAGGING_DISABLED_ZOOM = 1
+const alerts = useAlertsStore()
+
+onMounted(() => {
+  loadImageOverlay()
+  leafletSetup()
+})
+
+watch(() => props.catalog, () => {
+  createCatalogLayer()
+})
 
 // loads image overlay and set bounds
-const loadImageOverlay = () => {
+function loadImageOverlay() {
   // Create leaflet map (here referred to as image)
   imageMap = L.map(imageContainer.value, {
     center: [0, 0],
-    zoom: 1,
+    maxZoom: 6,
     crs: L.CRS.Simple,
-    minZoom: 0,
     dragging: false,
   })
 
-  // Can add new layers to this control and they will be able to be turned on and off in the top right corner of the map
+  // Layer control allows the toggling of layers on the map
   layerControl = L.control.layers().addTo(imageMap)
 
   const img = new Image()
-
+  img.src = props.imageSrc
+  
   img.onload = () => {
     imageWidth.value = img.width
     imageHeight.value = img.height
+
+    // source catalog requires image dimensions to be fetched
+    fetchCatalog()
 
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]]
     if (imageOverlay) {
       imageMap.removeLayer(imageOverlay)
     }
-
-    fetchCatalog()
 
     // Add new overlay with correct bounds
     imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(imageMap)
@@ -75,7 +87,6 @@ const loadImageOverlay = () => {
     initialZoom = imageMap.getZoom()
     isLoading.value = false
   }
-  img.src = props.imageSrc
 }
 
 function leafletSetup(){
@@ -90,7 +101,6 @@ function leafletSetup(){
     },
     actions: [],
     toggle: false,
-    disabled: false,
   })
 
   // Disabling default controls
@@ -103,33 +113,25 @@ function leafletSetup(){
     drawText: false,
     drawRectangle: false,
     editMode: true,
-    dragMode: true,
+    dragMode: false,
     cutPolygon: false,
     rotateMode: false,
     removalMode: true
   })
 
-  const zoomedInThreshold = 1
-
   // Disable dragging until zoomed in
   imageMap.on('zoomend', () => {
-    if (imageMap.getZoom() >= zoomedInThreshold) {
-      imageMap.dragging.enable()
-    } else {
-      imageMap.dragging.disable()
-    }
+    imageMap.getZoom() >= DRAGGING_DISABLED_ZOOM ? imageMap.dragging.enable() : imageMap.dragging.disable()
   })
 
-  // Finish line after 2 points (default is multiple points for a line)
   imageMap.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
-    if (lastDrawnLine && imageMap.hasLayer(lastDrawnLine)) {
-      imageMap.removeLayer(lastDrawnLine)
+    if (lineLayer && imageMap.hasLayer(lineLayer)) {
+      imageMap.removeLayer(lineLayer)
     }
-    let pointsCount = 0
+    // Limit line to 2 points
     workingLayer.on('pm:vertexadded', () => {
-      pointsCount++
-      if (pointsCount === 2) {
+      if (imageMap.pm.Draw.Line._markers.length === 2) {
         imageMap.pm.Draw.Line._finishShape()
       }
     })
@@ -138,61 +140,36 @@ function leafletSetup(){
   // Get coordinates of the line
   imageMap.on('pm:create', (e) => {
     // Save last drawn line
-    lastDrawnLine = e.layer
-    e.layer.on('pm:edit', handleEdit)
-    requestLineProfile(e.layer.getLatLngs())
+    lineLayer = e.layer
+    lineLayer.on('pm:edit', handleEdit)
+    requestLineProfile(lineLayer.getLatLngs())
   })
-}
-
-// Checks if the point is within the bounds of the image
-function isWithinBounds(point) {
-  const latWithinBounds = point.lat >= 0 && point.lat <= imageBounds[1][0]
-  const lngWithinBounds = point.lng >= 0 && point.lng <= imageBounds[1][1]
-  return latWithinBounds && lngWithinBounds
 }
 
 // Adjusts the point to be within the bounds of the image
 function adjustToBounds(point) {
   const lat = Math.max(0, Math.min(imageBounds[1][0], point.lat))
   const lng = Math.max(0, Math.min(imageBounds[1][1], point.lng))
-  // Returns a new point with adjusted coordinates if the point is outside the bounds
   return L.latLng(lat, lng)
 }
 
-// Callback function for when a line is edited and checks if it's within bounds
+// Adjust edited lines to bounds, removes old line, and creates a new one
 function handleEdit(event) {
-  let latLngs = event.layer.getLatLngs()
-
-  // Checking if the line is within the bounds
-  const adjustedLatLngs = latLngs.map(point => {
-    return isWithinBounds(point) ? point : adjustToBounds(point)
-  })
-
-  // Removes the existing layer from the image
-  imageMap.removeLayer(event.layer)
-
-  // Creates a new line with the adjusted coordinates
-  const newLine = L.polyline(adjustedLatLngs)
-  newLine.addTo(imageMap)
-
-  // Re-enable editing and attach the edit handler
-  newLine.pm.enable({
-    allowSelfIntersection: false,
-  })
-
-  // Set this new line as the last drawn line if you're tracking that
-  lastDrawnLine = newLine
-
-  // Re-attach the edit handling logic
-  newLine.on('pm:edit', handleEdit)
-
-  requestLineProfile(event.layer.getLatLngs())
+  const editedLineLayer = event.layer
+  const boundedLatLngs = editedLineLayer.getLatLngs().map(adjustToBounds)
+  editedLineLayer.setLatLngs(boundedLatLngs)
+  
+  // Request line profile with the new line
+  requestLineProfile(editedLineLayer.getLatLngs())
 }
 
 // Event handler for drawn lines, emits an action that will trigger an api call in the parent
 function requestLineProfile(latLngs) {
   // Check that there are two points to calculate the line length
-  if (latLngs.length < 2) return
+  if (latLngs.length != 2){
+    alerts.setAlert('error', 'Please draw a line with two points')
+    return
+  }
 
   const startCoordinates = { x1: latLngs[0].lat, y1: latLngs[0].lng }
   const endCoordinates = { x2: latLngs[1].lat, y2: latLngs[1].lng }
@@ -209,9 +186,12 @@ function requestLineProfile(latLngs) {
 
 // When we get the catalog data this creates a layer of circles on the map
 function createCatalogLayer(){
-  if (!props.catalog) return
+  if (!props.catalog){
+    alerts.setAlert('info', 'No source catalog data for this image')
+    return
+  }
 
-  let catalogMarkers = []
+  let sourceCatalogMarkers = []
 
   props.catalog.forEach((source) => {
     let sourceMarker = L.circle([source.y, source.x], {
@@ -224,12 +204,13 @@ function createCatalogLayer(){
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
-    catalogMarkers.push(sourceMarker)
+    sourceCatalogMarkers.push(sourceMarker)
   })
 
-  let catalogLayerGroup = L.layerGroup(catalogMarkers)
+  // Associate all source markers with a single layer group
+  let catalogLayerGroup = L.layerGroup(sourceCatalogMarkers)
 
-  // Shows the catalog layer by default
+  // Displays the catalog layer by default
   catalogLayerGroup.addTo(imageMap)
 
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
@@ -243,18 +224,7 @@ function fetchCatalog(){
   emit('analysisAction', 'source-catalog', catalogInput)
 }
 
-watch(() => props.catalog, () => {
-  createCatalogLayer()
-})
-
-onMounted(() => {
-  loadImageOverlay()
-  leafletSetup()
-})
-
 </script>
-
-
 <template>
   <template v-if="isLoading">
     <v-progress-circular
