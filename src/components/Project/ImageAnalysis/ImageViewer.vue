@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick, computed, watch } from 'vue'
+import { onMounted, ref, nextTick, watch } from 'vue'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
@@ -22,7 +22,7 @@ const emit = defineEmits(['analysisAction'])
 const isLoading = ref(true)
 
 const imageContainer = ref(null)
-let image = null
+let imageMap = null
 let imageOverlay = null
 let imageBounds
 let initialCenter = [0, 0]
@@ -32,13 +32,10 @@ let layerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 
-const scaledHeight = computed(() => imageHeight.value * 0.7)
-const scaledWidth = computed(() => imageWidth.value * 0.7)
-
 // loads image overlay and set bounds
 const loadImageOverlay = () => {
   // Create leaflet map (here referred to as image)
-  image = L.map(imageContainer.value, {
+  imageMap = L.map(imageContainer.value, {
     center: [0, 0],
     zoom: 1,
     crs: L.CRS.Simple,
@@ -47,9 +44,10 @@ const loadImageOverlay = () => {
   })
 
   // Can add new layers to this control and they will be able to be turned on and off in the top right corner of the map
-  layerControl = L.control.layers().addTo(image)
+  layerControl = L.control.layers().addTo(imageMap)
 
   const img = new Image()
+
   img.onload = () => {
     imageWidth.value = img.width
     imageHeight.value = img.height
@@ -57,24 +55,24 @@ const loadImageOverlay = () => {
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]]
     if (imageOverlay) {
-      image.removeLayer(imageOverlay)
+      imageMap.removeLayer(imageOverlay)
     }
 
     fetchCatalog()
 
     // Add new overlay with correct bounds
-    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(image)
+    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(imageMap)
     // Fit image view to the bounds of the image
-    image.fitBounds(imageBounds)
-    image.setMaxBounds(imageBounds)
+    imageMap.fitBounds(imageBounds)
+    imageMap.setMaxBounds(imageBounds)
 
     // waits for DOM to load then recalculates image's size and position after the container's dimensions have changed (built in method of Leaflet)
     nextTick(() => {
-      image.invalidateSize()
+      imageMap.invalidateSize()
     })
 
-    initialCenter = image.getCenter()
-    initialZoom = image.getZoom()
+    initialCenter = imageMap.getCenter()
+    initialZoom = imageMap.getZoom()
     isLoading.value = false
   }
   img.src = props.imageSrc
@@ -82,13 +80,13 @@ const loadImageOverlay = () => {
 
 function leafletSetup(){
   // Create custom control to reset view after zooming in
-  image.pm.Toolbar.createCustomControl({
+  imageMap.pm.Toolbar.createCustomControl({
     name: 'resetView',
     block: 'custom',
     title: 'Reset View',
     className: 'custom-reset-zoom-icon',
     onClick: () => {
-      image.setView(initialCenter, initialZoom)
+      imageMap.setView(initialCenter, initialZoom)
     },
     actions: [],
     toggle: false,
@@ -96,7 +94,7 @@ function leafletSetup(){
   })
 
   // Disabling default controls
-  image.pm.addControls({
+  imageMap.pm.addControls({
     position: 'topleft',
     drawMarker: false,
     drawCircle: false,
@@ -114,31 +112,31 @@ function leafletSetup(){
   const zoomedInThreshold = 1
 
   // Disable dragging until zoomed in
-  image.on('zoomend', () => {
-    if (image.getZoom() >= zoomedInThreshold) {
-      image.dragging.enable()
+  imageMap.on('zoomend', () => {
+    if (imageMap.getZoom() >= zoomedInThreshold) {
+      imageMap.dragging.enable()
     } else {
-      image.dragging.disable()
+      imageMap.dragging.disable()
     }
   })
 
   // Finish line after 2 points (default is multiple points for a line)
-  image.on('pm:drawstart', ({ workingLayer }) => {
+  imageMap.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
-    if (lastDrawnLine && image.hasLayer(lastDrawnLine)) {
-      image.removeLayer(lastDrawnLine)
+    if (lastDrawnLine && imageMap.hasLayer(lastDrawnLine)) {
+      imageMap.removeLayer(lastDrawnLine)
     }
     let pointsCount = 0
     workingLayer.on('pm:vertexadded', () => {
       pointsCount++
       if (pointsCount === 2) {
-        image.pm.Draw.Line._finishShape()
+        imageMap.pm.Draw.Line._finishShape()
       }
     })
   })
 
   // Get coordinates of the line
-  image.on('pm:create', (e) => {
+  imageMap.on('pm:create', (e) => {
     // Save last drawn line
     lastDrawnLine = e.layer
     e.layer.on('pm:edit', handleEdit)
@@ -171,11 +169,11 @@ function handleEdit(event) {
   })
 
   // Removes the existing layer from the image
-  image.removeLayer(event.layer)
+  imageMap.removeLayer(event.layer)
 
   // Creates a new line with the adjusted coordinates
   const newLine = L.polyline(adjustedLatLngs)
-  newLine.addTo(image)
+  newLine.addTo(imageMap)
 
   // Re-enable editing and attach the edit handler
   newLine.pm.enable({
@@ -232,7 +230,7 @@ function createCatalogLayer(){
   let catalogLayerGroup = L.layerGroup(catalogMarkers)
 
   // Shows the catalog layer by default
-  catalogLayerGroup.addTo(image)
+  catalogLayerGroup.addTo(imageMap)
 
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
@@ -258,32 +256,20 @@ onMounted(() => {
 
 
 <template>
-  <div
-    class="wrapper"
-    :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }"
-  >
-    <div
-      v-if="isLoading"
-      class="image-loading-container"
-    >
-      <v-progress-circular
-        indeterminate
-        model-value="20"
-        :size="50"
-        :width="9"
-      />
-    </div>
-    <div
-      ref="imageContainer"
-      class="leaflet-map-container"
-      :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+  <template v-if="isLoading">
+    <v-progress-circular
+      indeterminate
+      model-value="20"
+      :size="50"
+      :width="9"
     />
-  </div>
+  </template>
+  <div
+    ref="imageContainer"
+    :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+  />
 </template>
 <style>
-.leaflet-map-container .marker-icon-middle {
-  display: none !important;
-}
 .custom-reset-zoom-icon {
   background-image: url('../../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
   background-size: 24px 24px;
@@ -294,43 +280,4 @@ onMounted(() => {
 }
 </style>
 <style scoped>
-.wrapper{
-  background-color: var(--dark-blue);
-}
-.leaflet-map-container {
-  background-color: transparent;
-  margin-left: 2%;
-  margin-top: 2%;
-}
-.leaflet-image-layer {
-  width: 100% !important;
-  height: 100% !important;
-}
-.leaflet-tooltip {
-  display: none !important;
-}
-.button-container.active .leaflet-pm-actions-container {
-  display: none !important;
-}
-@media (max-width: 1200px) {
-  .wrapper {
-    overflow: visible;
-  }
-  .leaflet-map-container{
-    transform: scale(0.6);
-    transform-origin: top left;
-    background-color: transparent;
-  }
-}
-@media (max-width: 900px) {
-  .wrapper {
-    overflow: visible;
-    margin-left: 10%;
-  }
-  .leaflet-map-container{
-    transform: scale(0.7);
-    transform-origin: top left;
-    background-color: transparent;
-  }
-}
 </style>

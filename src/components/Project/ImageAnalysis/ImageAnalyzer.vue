@@ -181,11 +181,30 @@ a{
   color: var(--tan);
 }
 .v-sheet{
-  background-color: var(--metal);
+  background-color: var(--dark-blue);
   color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
 }
-.v-table{
+.analysis-toolbar{
+  color: var(--tan);
   background-color: var(--metal);
+}
+.analysis-content{
+  padding: 1rem;
+}
+.side-panel-container {
+  display: flex;
+  flex-direction: column
+}
+.side-panel{
+  padding: 1rem;
+  color: var(--tan);
+  background-color: var(--metal);
+  margin-left: 10px;
+}
+/* Fits Header Info Table */
+.v-table{
+  background-color: var(--dark-blue);
   color: var(--tan);
   max-width: 60ch;
 }
@@ -193,72 +212,4 @@ a{
   font-weight: bold;
   font-size: large;
 }
-.analysis-sheet{
-  background-color: var(--dark-blue);
-  font-family: 'Open Sans', sans-serif;
-  text-transform: uppercase;
-}
-.analysis-toolbar{
-  color: var(--tan);
-  background-color: var(--metal);
-}
-.analysis-content{
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-.side-panel-container {
-  margin-top: 2%;
-  display: flex;
-  flex-direction: column
-}
-.side-panel{
-  padding: 1rem;
-  color: var(--tan);
-  margin-left: 10px;
-  margin-bottom: 5%;
-}
-@media (min-width: 1201px) {
-  .side-panel-container {
-    margin-left: 20%;
-  }
-}
-@media (max-width: 1200px) {
-.analysis-sheet {
-  overflow: hidden !important;
-}
-.side-panel {
-  font-size: 0.75em;
-}
-}
-@media (max-width: 900px) {
-.analysis-sheet {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden !important;
-}
-.analysis-content {
-  flex-direction: column;
-}
-.side-panel-container {
-  margin-left: 11%;
-  margin-top: 5%;
-  flex-direction: row;
-  height: 30%;
-}
-.side-panel {
-  width: 25%;
-  height: 50%;
-  margin: 0;
-}
-.line-plot {
-  flex-grow: 1;
-  height: 100%;
-}
-.image-viewer {
-  order: -1;
-  height: 70%;
-}
-}
-
 </style>
