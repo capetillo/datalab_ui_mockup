@@ -153,14 +153,11 @@ function adjustToBounds(point) {
   return L.latLng(lat, lng)
 }
 
-// Adjust edited lines to bounds, removes old line, and creates a new one
-function handleEdit(event) {
-  const editedLineLayer = event.layer
-  const boundedLatLngs = editedLineLayer.getLatLngs().map(adjustToBounds)
-  editedLineLayer.setLatLngs(boundedLatLngs)
-  
-  // Request line profile with the new line
-  requestLineProfile(editedLineLayer.getLatLngs())
+// Adjust edited lines to bounds and requests line profile
+function handleEdit() {
+  const boundedLatLngs = lineLayer.getLatLngs().map(adjustToBounds)
+  lineLayer.setLatLngs(boundedLatLngs)
+  requestLineProfile(lineLayer.getLatLngs())
 }
 
 // Event handler for drawn lines, emits an action that will trigger an api call in the parent
