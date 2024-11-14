@@ -75,23 +75,22 @@ function handleAnalysisOutput(response, action, action_callback){
 }
 
 function showHeaderDialog() {
-
   if(headerData.value && Object.keys(headerData.value).length > 0) {
     headerDialog.value = true
-    return
   }
-
-  const archiveHeadersUrl = configStore.datalabArchiveApiUrl + 'frames/' + props.image.id + '/headers/'
-  fetchApiCall({url: archiveHeadersUrl, method: 'GET', 
-    successCallback: (response) => {
-      headerData.value = response.data
-      headerDialog.value = true
-    },
-    failCallback: (error) => {
-      console.error('Failed to fetch headers:', error)
-      alertsStore.setAlert('error', `Could not fetch headers for frame ${props.image.id}`)
-    }
-  })
+  else{
+    const archiveHeadersUrl = configStore.datalabArchiveApiUrl + 'frames/' + props.image.id + '/headers/'
+    fetchApiCall({url: archiveHeadersUrl, method: 'GET', 
+      successCallback: (response) => {
+        headerData.value = response.data
+        headerDialog.value = true
+      },
+      failCallback: (error) => {
+        console.error('Failed to fetch headers:', error)
+        alertsStore.setAlert('error', `Could not fetch headers for frame ${props.image.id}`)
+      }
+    })
+  }
 }
 
 </script>
