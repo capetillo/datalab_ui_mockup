@@ -51,10 +51,11 @@ function loadImageOverlay() {
     maxZoom: 6,
     crs: L.CRS.Simple,
     dragging: false,
+    attributionControl: false,
   })
 
   // Layer control allows the toggling of layers on the map
-  layerControl = L.control.layers().addTo(imageMap)
+  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
 
   const img = new Image()
   img.src = props.imageSrc
@@ -196,8 +197,8 @@ function createCatalogLayer(){
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10,
-      // TODO: Figure out a way to make this uneditable without pmIgnore. This breaks the snap to source functionality :(
-      //pmIgnore: true // Ignore this layer for geoman editing
+      pmIgnore: true, // Ignore this layer for editing
+      snapIgnore: false, // Allow snapping to this layer
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
@@ -237,13 +238,50 @@ function fetchCatalog(){
   />
 </template>
 <style>
+/* Custom icons for leaflet-geoman */
 .custom-reset-zoom-icon {
-  background-image: url('../../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
-  background-size: 24px 24px;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 24px;
-  height: 24px;
+  background-image: url('../../../assets/images/resize.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-delete {
+  background-image: url('../../../assets/images/delete.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-polyline {
+  background-image: url('../../../assets/images/vector-line.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-edit {
+  background-image: url('../../../assets/images/vector-polyline-edit.svg');
+}
+/* Custom styling for toolbar */
+.leaflet-bar a:hover{
+  background-color: var(--dark-green);
+}
+
+.leaflet-bar a{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+
+.leaflet-bar a.leaflet-disabled{
+  background-color: var(--metal);
+  color: var(--dark-blue);
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover{
+  background-color: var(--dark-green);
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+/* Custom styling for Layer Control */
+.leaflet-control-layers-expanded{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+  user-select: none;
 }
 </style>
 <style scoped>
