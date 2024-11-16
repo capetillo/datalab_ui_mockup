@@ -131,7 +131,6 @@ function zScaleImage() {
   scaleRange.value = [props.zMin, props.zMax]
   sliderRange.value = [scaleToSliderValue(props.zMin), scaleToSliderValue(props.zMax)]
   emit('updateScaling', scaleRange.value[0], scaleRange.value[1])
-  console.log('clicked zscale')
 }
 
 watch(
