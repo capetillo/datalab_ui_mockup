@@ -11,7 +11,7 @@ export const useUserDataStore = defineStore('userData', {
       openProposals: [],
       isColorblindMode: false,
       gridToggle: true,
-      mostRecentSessionId: ''
+      activeSessionId: ''
     }
   },
   persist: true,
