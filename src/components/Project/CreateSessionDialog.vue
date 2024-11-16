@@ -69,7 +69,7 @@ async function createNewDataSession(){
 }
 
 function routeToDataSessionView(response){
-  userDataStore.mostRecentSessionId = response.id
+  userDataStore.activeSessionId = response.id
   router.push({ name: 'DataSessionView' })
 }
 

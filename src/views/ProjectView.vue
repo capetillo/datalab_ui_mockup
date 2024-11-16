@@ -109,8 +109,12 @@ watch(() => [startDate.value, endDate.value], async () => {
 })
 
 watch(() => [ra.value, dec.value, observationId.value], async () => {
-  if(ra.value && dec.value && isNaN(ra.value) || isNaN(dec.value)){
-    alertsStore.setAlert('warning', `RA and DEC must be a number ${isNaN(ra.value) ? ra.value : ''} ${isNaN(dec.value) ? dec.value : ''}`)
+  // Clear the Search filter if the ra or dec field is cleared
+  if(!ra.value || !dec.value){
+    search.value = ''
+  }
+  if((ra.value && isNaN(ra.value)) || (dec.value && isNaN(dec.value))){
+    alertsStore.setAlert('warning', 'RA and DEC must be a number')
   }
   if(observationId.value && isNaN(observationId.value)){
     alertsStore.setAlert('warning', `Observation ID is not a number ${observationId.value}`)

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineEmits, defineProps, onMounted, watch } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
-import { fetchApiCall, handleError } from '../../utils/api'
+import { fetchApiCall, handleError, deleteOperation } from '../../utils/api'
 import { calculateColumnSpan } from '@/utils/common'
 import { useConfigurationStore } from '@/stores/configuration'
 import ImageGrid from '../Global/ImageGrid'
@@ -99,11 +99,6 @@ function reconcileFilteredImages() {
   }
 }
 
-function deleteOperation(operationID) {
-  const url = dataSessionsUrl + props.data.id + '/operations/' + operationID + '/'
-  fetchApiCall({ url: url, method: 'DELETE', successCallback: () => {emit('reloadSession')}, failCallback: handleError })
-}
-
 async function addOperation(operationDefinition) {
   const url = dataSessionsUrl + props.data.id + '/operations/'
 
@@ -143,7 +138,6 @@ onMounted(() => {
   <v-container class="d-lg-flex ds-container">
     <v-col
       cols="3"
-      justify="center"
       align="center"
     >
       <!-- The operations bar list goes here -->
@@ -154,7 +148,7 @@ onMounted(() => {
         @operation-completed="addCompletedOperation"
         @select-operation="selectOperation"
         @operation-was-deleted="emit('reloadSession')"
-        @delete-operation="deleteOperation"
+        @delete-operation="(operationID) => deleteOperation(props.data.id, operationID, emit('reloadSession'))"
       />
       <v-btn
         variant="flat"
@@ -188,13 +182,12 @@ onMounted(() => {
   display: flex;
 }
 .addop_button {
-  width: 16rem;
-  height: 4rem;
-  font-size: 1.3rem;
+  font-size: 1rem;
   align-content: center;
   background-color: var(--light-blue);
   font-weight: 700;
-  color: white;
+  color: var(--tan);
   margin-top: 1rem;
+  padding: 25px
 }
 </style>

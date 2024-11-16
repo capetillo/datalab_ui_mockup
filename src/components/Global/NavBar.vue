@@ -21,14 +21,20 @@ import UserMenu from './UserMenu.vue'
       text="DATALAB"
       class="nav-text"
     />
-    <v-tabs>
-      <RouterLink to="/projects">
+    <v-tabs hide-slider>
+      <RouterLink
+        active-class="active-tab"
+        to="/projects"
+      >
         <v-tab
           text="Projects"
           class="nav-text"
         />
       </RouterLink>
-      <RouterLink to="/datasessions">
+      <RouterLink
+        active-class="active-tab"
+        to="/datasessions"
+      >
         <v-tab
           text="Data Sessions"
           class="nav-text"
@@ -45,5 +51,8 @@ import UserMenu from './UserMenu.vue'
   color: var(--tan);
   font-weight: 600;
   font-size: 1rem;
+  }
+  .active-tab {
+    background-color: var(--dark-blue);
   }
 </style>
