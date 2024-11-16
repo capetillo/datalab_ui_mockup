@@ -69,7 +69,6 @@ watch(
           :key="groupName"
           :value="groupName"
         >
-          <v-main style="height:100vh">
             <v-container
               fluid
               pa-0
@@ -110,7 +109,6 @@ watch(
                 </v-col>
               </v-row>
             </v-container>
-          </v-main>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card-text>
