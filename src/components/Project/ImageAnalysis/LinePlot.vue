@@ -7,9 +7,9 @@ const svg = ref(null)
 const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs', 'startCoords', 'endCoords', 'positionAngle'])
 
 // Setting dimensions and margins for the plot
-const margin = { top: 20, right: 20, bottom: 70, left: 80 },
-  svgWidth = 700,
-  svgHeight = 480,
+const margin = { top: 0, right: 40, bottom: 50, left: 60 },
+  svgWidth = 500,
+  svgHeight = 350,
   width = svgWidth - margin.left - margin.right,
   height = svgHeight - margin.top - margin.bottom
 
@@ -29,7 +29,7 @@ const line = d3.line()
 
 const updateAxes = () => {
   const maxX = props.xAxisArcsecs
-  // Add 5% to the largest number from the randomNumbers array to buffer the plot
+  // Add 5% to the largest number to buffer the plot
   const maxY = d3.max(props.yAxisLuminosity) * 1.05
 
   x.domain([0, maxX])
