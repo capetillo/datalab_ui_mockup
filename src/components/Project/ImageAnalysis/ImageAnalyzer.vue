@@ -133,20 +133,25 @@ function showHeaderDialog() {
           <v-sheet
             v-if="image.site_id || image.telescope_id || image.instrument_id || image.observation_date"
             rounded
-            class="side-panel"
+            class="basic-info-sheet"
           >
             <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
             <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
             <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
             <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
           </v-sheet>
-          <line-plot
-            :y-axis-luminosity="lineProfile"
-            :x-axis-arcsecs="lineProfileLength"
-            :start-coords="startCoords"
-            :end-coords="endCoords"
-            :position-angle="positionAngle"
-          />
+          <v-sheet
+            class="line-plot-sheet"
+            rounded
+          >
+            <line-plot
+              :y-axis-luminosity="lineProfile"
+              :x-axis-arcsecs="lineProfileLength"
+              :start-coords="startCoords"
+              :end-coords="endCoords"
+              :position-angle="positionAngle"
+            />
+          </v-sheet>
         </div>
       </div>
     </v-sheet>
@@ -184,24 +189,39 @@ a{
   color: var(--tan);
   font-family: 'Open Sans', sans-serif;
 }
+.analysis-sheet{
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 .analysis-toolbar{
   color: var(--tan);
   background-color: var(--metal);
 }
 .analysis-content{
+  flex: 1;
+  display: flex;
+  flex-direction: row;
   padding: 1rem;
 }
 .side-panel-container {
   display: flex;
-  flex-direction: column
+  flex-direction: column;
+  margin-left: 10px;
+  width: 45vw;
 }
-.side-panel{
+.basic-info-sheet{
   padding: 1rem;
   color: var(--tan);
   background-color: var(--metal);
-  margin-left: 10px;
 }
-/* Fits Header Info Table */
+.line-plot-sheet {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--metal);
+  height: 100%;
+}
+/* FITS Header Info Table */
 .v-table{
   background-color: var(--dark-blue);
   color: var(--tan);
