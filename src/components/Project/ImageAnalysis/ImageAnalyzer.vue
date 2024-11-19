@@ -75,23 +75,22 @@ function handleAnalysisOutput(response, action, action_callback){
 }
 
 function showHeaderDialog() {
-
   if(headerData.value && Object.keys(headerData.value).length > 0) {
     headerDialog.value = true
-    return
   }
-
-  const archiveHeadersUrl = configStore.datalabArchiveApiUrl + 'frames/' + props.image.id + '/headers/'
-  fetchApiCall({url: archiveHeadersUrl, method: 'GET', 
-    successCallback: (response) => {
-      headerData.value = response.data
-      headerDialog.value = true
-    },
-    failCallback: (error) => {
-      console.error('Failed to fetch headers:', error)
-      alertsStore.setAlert('error', `Could not fetch headers for frame ${props.image.id}`)
-    }
-  })
+  else{
+    const archiveHeadersUrl = configStore.datalabArchiveApiUrl + 'frames/' + props.image.id + '/headers/'
+    fetchApiCall({url: archiveHeadersUrl, method: 'GET', 
+      successCallback: (response) => {
+        headerData.value = response.data
+        headerDialog.value = true
+      },
+      failCallback: (error) => {
+        console.error('Failed to fetch headers:', error)
+        alertsStore.setAlert('error', `Could not fetch headers for frame ${props.image.id}`)
+      }
+    })
+  }
 }
 
 </script>
@@ -134,20 +133,25 @@ function showHeaderDialog() {
           <v-sheet
             v-if="image.site_id || image.telescope_id || image.instrument_id || image.observation_date"
             rounded
-            class="side-panel"
+            class="basic-info-sheet"
           >
             <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
             <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
             <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
             <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
           </v-sheet>
-          <line-plot
-            :y-axis-luminosity="lineProfile"
-            :x-axis-arcsecs="lineProfileLength"
-            :start-coords="startCoords"
-            :end-coords="endCoords"
-            :position-angle="positionAngle"
-          />
+          <v-sheet
+            class="line-plot-sheet"
+            rounded
+          >
+            <line-plot
+              :y-axis-luminosity="lineProfile"
+              :x-axis-arcsecs="lineProfileLength"
+              :start-coords="startCoords"
+              :end-coords="endCoords"
+              :position-angle="positionAngle"
+            />
+          </v-sheet>
         </div>
       </div>
     </v-sheet>
@@ -181,11 +185,45 @@ a{
   color: var(--tan);
 }
 .v-sheet{
-  background-color: var(--metal);
+  background-color: var(--dark-blue);
   color: var(--tan);
+  font-family: 'Open Sans', sans-serif;
 }
-.v-table{
+.analysis-sheet{
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.analysis-toolbar{
+  color: var(--tan);
   background-color: var(--metal);
+}
+.analysis-content{
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+}
+.side-panel-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  width: 45vw;
+}
+.basic-info-sheet{
+  padding: 1rem;
+  color: var(--tan);
+  background-color: var(--metal);
+}
+.line-plot-sheet {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--metal);
+  height: 100%;
+}
+/* FITS Header Info Table */
+.v-table{
+  background-color: var(--dark-blue);
   color: var(--tan);
   max-width: 60ch;
 }
@@ -193,72 +231,4 @@ a{
   font-weight: bold;
   font-size: large;
 }
-.analysis-sheet{
-  background-color: var(--dark-blue);
-  font-family: 'Open Sans', sans-serif;
-  text-transform: uppercase;
-}
-.analysis-toolbar{
-  color: var(--tan);
-  background-color: var(--metal);
-}
-.analysis-content{
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-.side-panel-container {
-  margin-top: 2%;
-  display: flex;
-  flex-direction: column
-}
-.side-panel{
-  padding: 1rem;
-  color: var(--tan);
-  margin-left: 10px;
-  margin-bottom: 5%;
-}
-@media (min-width: 1201px) {
-  .side-panel-container {
-    margin-left: 20%;
-  }
-}
-@media (max-width: 1200px) {
-.analysis-sheet {
-  overflow: hidden !important;
-}
-.side-panel {
-  font-size: 0.75em;
-}
-}
-@media (max-width: 900px) {
-.analysis-sheet {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden !important;
-}
-.analysis-content {
-  flex-direction: column;
-}
-.side-panel-container {
-  margin-left: 11%;
-  margin-top: 5%;
-  flex-direction: row;
-  height: 30%;
-}
-.side-panel {
-  width: 25%;
-  height: 50%;
-  margin: 0;
-}
-.line-plot {
-  flex-grow: 1;
-  height: 100%;
-}
-.image-viewer {
-  order: -1;
-  height: 70%;
-}
-}
-
 </style>

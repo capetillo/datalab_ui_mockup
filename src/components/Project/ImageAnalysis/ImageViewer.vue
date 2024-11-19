@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, ref, nextTick, computed, watch } from 'vue'
+import { onMounted, ref, nextTick, watch } from 'vue'
 import L from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet/dist/leaflet.css'
+import { useAlertsStore } from '@/stores/alerts'
 
 const props = defineProps({
   imageSrc: {
@@ -19,84 +20,92 @@ const props = defineProps({
 
 const emit = defineEmits(['analysisAction'])
 
-const isLoading = ref(true)
-
-const imageContainer = ref(null)
-let image = null
+let imageMap = null
 let imageOverlay = null
 let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
-let lastDrawnLine = null
+let lineLayer = null
 let layerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
+const isLoading = ref(true)
+const imageContainer = ref(null)
+const alerts = useAlertsStore()
 
-const scaledHeight = computed(() => imageHeight.value * 0.7)
-const scaledWidth = computed(() => imageWidth.value * 0.7)
+onMounted(() => {
+  loadImageOverlay()
+  leafletSetup()
+  resizeMap()
+})
+
+watch(() => props.catalog, () => {
+  createCatalogLayer()
+})
 
 // loads image overlay and set bounds
-const loadImageOverlay = () => {
+function loadImageOverlay() {
   // Create leaflet map (here referred to as image)
-  image = L.map(imageContainer.value, {
+  imageMap = L.map(imageContainer.value, {
     center: [0, 0],
-    zoom: 1,
+    maxZoom: 6,
     crs: L.CRS.Simple,
-    minZoom: 0,
-    dragging: false,
+    attributionControl: false,
+    maxBoundsViscosity: 1.0,
   })
 
-  // Can add new layers to this control and they will be able to be turned on and off in the top right corner of the map
-  layerControl = L.control.layers().addTo(image)
+  // Layer control allows the toggling of layers on the map
+  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
 
   const img = new Image()
+  img.src = props.imageSrc
+  
   img.onload = () => {
     imageWidth.value = img.width
     imageHeight.value = img.height
 
+    // source catalog requires image dimensions to be fetched
+    fetchCatalog()
+
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]]
     if (imageOverlay) {
-      image.removeLayer(imageOverlay)
+      imageMap.removeLayer(imageOverlay)
     }
 
-    fetchCatalog()
-
     // Add new overlay with correct bounds
-    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(image)
+    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(imageMap)
     // Fit image view to the bounds of the image
-    image.fitBounds(imageBounds)
-    image.setMaxBounds(imageBounds)
+    imageMap.fitBounds(imageBounds)
+    imageMap.setMaxBounds(imageBounds)
 
     // waits for DOM to load then recalculates image's size and position after the container's dimensions have changed (built in method of Leaflet)
     nextTick(() => {
-      image.invalidateSize()
+      imageMap.invalidateSize()
     })
 
-    initialCenter = image.getCenter()
-    initialZoom = image.getZoom()
+    initialCenter = imageMap.getCenter()
+    initialZoom = imageMap.getZoom()
     isLoading.value = false
   }
-  img.src = props.imageSrc
 }
 
 function leafletSetup(){
   // Create custom control to reset view after zooming in
-  image.pm.Toolbar.createCustomControl({
+  imageMap.pm.Toolbar.createCustomControl({
     name: 'resetView',
     block: 'custom',
     title: 'Reset View',
     className: 'custom-reset-zoom-icon',
     onClick: () => {
-      image.setView(initialCenter, initialZoom)
+      imageMap.setView(initialCenter, initialZoom)
     },
     actions: [],
     toggle: false,
-    disabled: false,
   })
 
   // Disabling default controls
-  image.pm.addControls({
+  imageMap.pm.addControls({
     position: 'topleft',
     drawMarker: false,
     drawCircle: false,
@@ -105,96 +114,65 @@ function leafletSetup(){
     drawText: false,
     drawRectangle: false,
     editMode: true,
-    dragMode: true,
+    dragMode: false,
     cutPolygon: false,
     rotateMode: false,
     removalMode: true
   })
 
-  const zoomedInThreshold = 1
-
-  // Disable dragging until zoomed in
-  image.on('zoomend', () => {
-    if (image.getZoom() >= zoomedInThreshold) {
-      image.dragging.enable()
-    } else {
-      image.dragging.disable()
-    }
-  })
-
-  // Finish line after 2 points (default is multiple points for a line)
-  image.on('pm:drawstart', ({ workingLayer }) => {
+  imageMap.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
-    if (lastDrawnLine && image.hasLayer(lastDrawnLine)) {
-      image.removeLayer(lastDrawnLine)
+    if (lineLayer && imageMap.hasLayer(lineLayer)) {
+      imageMap.removeLayer(lineLayer)
     }
-    let pointsCount = 0
+    // Limit line to 2 points
     workingLayer.on('pm:vertexadded', () => {
-      pointsCount++
-      if (pointsCount === 2) {
-        image.pm.Draw.Line._finishShape()
+      if (imageMap.pm.Draw.Line._markers.length === 2) {
+        imageMap.pm.Draw.Line._finishShape()
       }
     })
   })
 
   // Get coordinates of the line
-  image.on('pm:create', (e) => {
+  imageMap.on('pm:create', (e) => {
     // Save last drawn line
-    lastDrawnLine = e.layer
-    e.layer.on('pm:edit', handleEdit)
-    requestLineProfile(e.layer.getLatLngs())
+    lineLayer = e.layer
+    lineLayer.on('pm:edit', handleEdit)
+    requestLineProfile(lineLayer.getLatLngs())
   })
 }
 
-// Checks if the point is within the bounds of the image
-function isWithinBounds(point) {
-  const latWithinBounds = point.lat >= 0 && point.lat <= imageBounds[1][0]
-  const lngWithinBounds = point.lng >= 0 && point.lng <= imageBounds[1][1]
-  return latWithinBounds && lngWithinBounds
+// Recalculates image size and position after the container's dimensions have changed
+function resizeMap(){
+  const resizeObserver = new ResizeObserver(() => {
+    imageMap.invalidateSize()
+  })
+  if(imageContainer.value){
+    resizeObserver.observe(imageContainer.value)
+  }
 }
 
 // Adjusts the point to be within the bounds of the image
 function adjustToBounds(point) {
   const lat = Math.max(0, Math.min(imageBounds[1][0], point.lat))
   const lng = Math.max(0, Math.min(imageBounds[1][1], point.lng))
-  // Returns a new point with adjusted coordinates if the point is outside the bounds
   return L.latLng(lat, lng)
 }
 
-// Callback function for when a line is edited and checks if it's within bounds
-function handleEdit(event) {
-  let latLngs = event.layer.getLatLngs()
-
-  // Checking if the line is within the bounds
-  const adjustedLatLngs = latLngs.map(point => {
-    return isWithinBounds(point) ? point : adjustToBounds(point)
-  })
-
-  // Removes the existing layer from the image
-  image.removeLayer(event.layer)
-
-  // Creates a new line with the adjusted coordinates
-  const newLine = L.polyline(adjustedLatLngs)
-  newLine.addTo(image)
-
-  // Re-enable editing and attach the edit handler
-  newLine.pm.enable({
-    allowSelfIntersection: false,
-  })
-
-  // Set this new line as the last drawn line if you're tracking that
-  lastDrawnLine = newLine
-
-  // Re-attach the edit handling logic
-  newLine.on('pm:edit', handleEdit)
-
-  requestLineProfile(event.layer.getLatLngs())
+// Adjust edited lines to bounds and requests line profile
+function handleEdit() {
+  const boundedLatLngs = lineLayer.getLatLngs().map(adjustToBounds)
+  lineLayer.setLatLngs(boundedLatLngs)
+  requestLineProfile(lineLayer.getLatLngs())
 }
 
 // Event handler for drawn lines, emits an action that will trigger an api call in the parent
 function requestLineProfile(latLngs) {
   // Check that there are two points to calculate the line length
-  if (latLngs.length < 2) return
+  if (latLngs.length != 2){
+    alerts.setAlert('error', 'Please draw a line with two points')
+    return
+  }
 
   const startCoordinates = { x1: latLngs[0].lat, y1: latLngs[0].lng }
   const endCoordinates = { x2: latLngs[1].lat, y2: latLngs[1].lng }
@@ -211,9 +189,12 @@ function requestLineProfile(latLngs) {
 
 // When we get the catalog data this creates a layer of circles on the map
 function createCatalogLayer(){
-  if (!props.catalog) return
+  if (!props.catalog){
+    alerts.setAlert('info', 'No source catalog data for this image')
+    return
+  }
 
-  let catalogMarkers = []
+  let sourceCatalogMarkers = []
 
   props.catalog.forEach((source) => {
     let sourceMarker = L.circle([source.y, source.x], {
@@ -221,18 +202,19 @@ function createCatalogLayer(){
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10,
-      // TODO: Figure out a way to make this uneditable without pmIgnore. This breaks the snap to source functionality :(
-      //pmIgnore: true // Ignore this layer for geoman editing
+      pmIgnore: true, // Ignore this layer for editing
+      snapIgnore: false, // Allow snapping to this layer
     })
 
     sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
-    catalogMarkers.push(sourceMarker)
+    sourceCatalogMarkers.push(sourceMarker)
   })
 
-  let catalogLayerGroup = L.layerGroup(catalogMarkers)
+  // Associate all source markers with a single layer group
+  let catalogLayerGroup = L.layerGroup(sourceCatalogMarkers)
 
-  // Shows the catalog layer by default
-  catalogLayerGroup.addTo(image)
+  // Displays the catalog layer by default
+  catalogLayerGroup.addTo(imageMap)
 
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
@@ -245,92 +227,67 @@ function fetchCatalog(){
   emit('analysisAction', 'source-catalog', catalogInput)
 }
 
-watch(() => props.catalog, () => {
-  createCatalogLayer()
-})
-
-onMounted(() => {
-  loadImageOverlay()
-  leafletSetup()
-})
-
 </script>
-
-
 <template>
-  <div
-    class="wrapper"
-    :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }"
-  >
-    <div
-      v-if="isLoading"
-      class="image-loading-container"
-    >
-      <v-progress-circular
-        indeterminate
-        model-value="20"
-        :size="50"
-        :width="9"
-      />
-    </div>
-    <div
-      ref="imageContainer"
-      class="leaflet-map-container"
-      :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+  <template v-if="isLoading">
+    <v-progress-circular
+      indeterminate
+      model-value="20"
+      :size="50"
+      :width="9"
     />
-  </div>
+  </template>
+  <div
+    ref="imageContainer"
+    :style="{ width: imageWidth + 'px' }"
+  />
 </template>
 <style>
-.leaflet-map-container .marker-icon-middle {
-  display: none !important;
-}
+/* Custom icons for leaflet-geoman */
 .custom-reset-zoom-icon {
-  background-image: url('../../../assets/images/stock-vector-arrows-of-four-directions-linear-icon-black-symbol-on-transparent-background-1277674303.png');
-  background-size: 24px 24px;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 24px;
-  height: 24px;
+  background-image: url('../../../assets/images/resize.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-delete {
+  background-image: url('../../../assets/images/delete.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-polyline {
+  background-image: url('../../../assets/images/vector-line.svg');
+}
+
+.leaflet-pm-toolbar .leaflet-pm-icon-edit {
+  background-image: url('../../../assets/images/vector-polyline-edit.svg');
+}
+/* Custom styling for toolbar */
+.leaflet-bar a:hover{
+  background-color: var(--dark-green);
+}
+
+.leaflet-bar a{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+
+.leaflet-bar a.leaflet-disabled{
+  background-color: var(--metal);
+  color: var(--dark-blue);
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover{
+  background-color: var(--dark-green);
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+/* Custom styling for Layer Control */
+.leaflet-control-layers-expanded{
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+  user-select: none;
 }
 </style>
 <style scoped>
-.wrapper{
-  background-color: var(--dark-blue);
-}
-.leaflet-map-container {
-  background-color: transparent;
-  margin-left: 2%;
-  margin-top: 2%;
-}
-.leaflet-image-layer {
-  width: 100% !important;
-  height: 100% !important;
-}
-.leaflet-tooltip {
-  display: none !important;
-}
-.button-container.active .leaflet-pm-actions-container {
-  display: none !important;
-}
-@media (max-width: 1200px) {
-  .wrapper {
-    overflow: visible;
-  }
-  .leaflet-map-container{
-    transform: scale(0.6);
-    transform-origin: top left;
-    background-color: transparent;
-  }
-}
-@media (max-width: 900px) {
-  .wrapper {
-    overflow: visible;
-    margin-left: 10%;
-  }
-  .leaflet-map-container{
-    transform: scale(0.7);
-    transform-origin: top left;
-    background-color: transparent;
-  }
-}
 </style>
