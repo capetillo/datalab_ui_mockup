@@ -3,7 +3,7 @@ import { ref, onMounted, computed, defineEmits, defineProps} from 'vue'
 import { fetchApiCall, handleError } from '@/utils/api'
 import { calculateColumnSpan } from '@/utils/common'
 import ImageGrid from '../Global/ImageGrid'
-import ImageScalingGroup from '../Global/ImageScalingGroup'
+import ImageScalingGroup from '../Global/Scaling/ImageScalingGroup'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 
