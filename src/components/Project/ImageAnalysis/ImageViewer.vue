@@ -31,12 +31,12 @@ const imageWidth = ref(0)
 const imageHeight = ref(0)
 const isLoading = ref(true)
 const imageContainer = ref(null)
-const DRAGGING_DISABLED_ZOOM = 1
 const alerts = useAlertsStore()
 
 onMounted(() => {
   loadImageOverlay()
   leafletSetup()
+  resizeMap()
 })
 
 watch(() => props.catalog, () => {
@@ -50,8 +50,8 @@ function loadImageOverlay() {
     center: [0, 0],
     maxZoom: 6,
     crs: L.CRS.Simple,
-    dragging: false,
     attributionControl: false,
+    maxBoundsViscosity: 1.0,
   })
 
   // Layer control allows the toggling of layers on the map
@@ -120,11 +120,6 @@ function leafletSetup(){
     removalMode: true
   })
 
-  // Disable dragging until zoomed in
-  imageMap.on('zoomend', () => {
-    imageMap.getZoom() >= DRAGGING_DISABLED_ZOOM ? imageMap.dragging.enable() : imageMap.dragging.disable()
-  })
-
   imageMap.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
     if (lineLayer && imageMap.hasLayer(lineLayer)) {
@@ -145,6 +140,16 @@ function leafletSetup(){
     lineLayer.on('pm:edit', handleEdit)
     requestLineProfile(lineLayer.getLatLngs())
   })
+}
+
+// Recalculates image size and position after the container's dimensions have changed
+function resizeMap(){
+  const resizeObserver = new ResizeObserver(() => {
+    imageMap.invalidateSize()
+  })
+  if(imageContainer.value){
+    resizeObserver.observe(imageContainer.value)
+  }
 }
 
 // Adjusts the point to be within the bounds of the image
@@ -234,7 +239,7 @@ function fetchCatalog(){
   </template>
   <div
     ref="imageContainer"
-    :style="{ width: imageWidth + 'px', height: imageHeight + 'px' }"
+    :style="{ width: imageWidth + 'px' }"
   />
 </template>
 <style>
