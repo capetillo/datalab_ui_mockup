@@ -3,6 +3,7 @@ import { ref, computed, onMounted, defineEmits, defineProps } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { fetchApiCall } from '@/utils/api'
 import RawScaledImage from './RawScaledImage.vue'
+import HistogramSlider from './HistogramSlider.vue'
 
 // This component gets the raw image data from the server for an image
 // and then displays the image and the scaling controls under it
@@ -33,7 +34,7 @@ const isLoading = ref(true)
 const errorReason = ref('')
 const rawData = ref({})
 const sliderRange = ref([0, 65535])
-var zScaleValues = null
+const zScaleValues = ref([0, 65535])
 
 const titleText = computed(() => {
   return props.imageName.replace('_', ' ')
@@ -49,23 +50,28 @@ const maxPixelValue = computed(() => {
   }
 })
 
-function updateLowerScale(value) {
-  sliderRange.value = [Number(value), sliderRange.value[1]]
-  emit('updateScaling', props.imageName, sliderRange.value[0], sliderRange.value[1])
-}
-
-function updateUpperScale(value) {
-  sliderRange.value = [sliderRange.value[0], Number(value)]
-  emit('updateScaling', props.imageName, sliderRange.value[0], sliderRange.value[1])
-}
-
-function zScaleImage() {
-  if (zScaleValues){
-    sliderRange.value = [...zScaleValues]
+const histogram = computed(() => {
+  if (rawData.value && rawData.value.histogram) {
+    return rawData.value.histogram
   }
+  else {
+    return [0, 10, 10, 5, 4, 3, 2, 1]
+  }
+})
+
+const bins = computed(() => {
+  if (rawData.value && rawData.value.bins) {
+    return rawData.value.bins
+  }
+  else {
+    return [0, 1, 2, 3, 4, 5, 6, 7]
+  }
+})
+
+function updateScaleRange(lowerValue, upperValue) {
+  sliderRange.value = [Number(lowerValue), Number(upperValue)]
   emit('updateScaling', props.imageName, sliderRange.value[0], sliderRange.value[1])
 }
-
 
 onMounted(async () => {
   const url = dataSessionsUrl + 'analysis/raw-data/'
@@ -77,8 +83,7 @@ onMounted(async () => {
   fetchApiCall({url: url, method: 'POST', body: body,
     successCallback: (response) => {
       rawData.value = response
-      zScaleValues = [response.zmin, response.zmax]
-      zScaleImage()
+      zScaleValues.value = [response.zmin, response.zmax]
       isLoading.value = false
     },
     failCallback: (error) => {
@@ -106,46 +111,17 @@ onMounted(async () => {
       </raw-scaled-image>
     </v-row>
     <v-row>
-      <v-range-slider
-        v-model="sliderRange"
-        step="500"
-        :max=maxPixelValue
-        :max-width="props.maxSize + 100"
-        strict
-        thumb-label="always"
-        @update:modelValue="emit('updateScaling', props.imageName, sliderRange[0], sliderRange[1])"
-      >
-        <template v-slot:prepend>
-          <v-text-field
-            v-model="sliderRange[0]"
-            density="compact"
-            type="number"
-            variant="outlined"
-            step="100"
-            style="width: 100px"
-            hide-details
-            single-line
-            @update:modelValue="updateLowerScale">
-          </v-text-field>
-        </template>
-        <template v-slot:append>
-          <v-text-field
-            v-model="sliderRange[1]"
-            density="compact"
-            type="number"
-            variant="outlined"
-            step="100"
-            style="width: 100px"
-            hide-details
-            single-line
-            @update:modelValue="updateUpperScale">
-          </v-text-field>
-          <v-btn
-            class="ml-2"
-            @click="zScaleImage"
-          >ZScale</v-btn>
-        </template>
-      </v-range-slider>
+      <v-col>
+        <histogram-slider
+          :histogram="histogram"
+          :bins="bins"
+          :max-value="maxPixelValue"
+          :z-min="zScaleValues[0]"
+          :z-max="zScaleValues[1]"
+          @update-scaling="updateScaleRange"
+        >
+        </histogram-slider>
+      </v-col>
     </v-row>
   </div>
 </template>
