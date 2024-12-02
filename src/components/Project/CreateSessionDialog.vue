@@ -39,6 +39,8 @@ async function addImagesToExistingSession(session){
   const inputData = [...existingSession.input_data, ...props.newImages.map(image => ({
     'source': 'archive',
     'basename': image.basename.replace('-small', '') || image.basename.replace('-large', ''),
+    'id': image.id,
+    'url': image.url,
     'filter': image.FILTER
   }))]
   const requestBody = {
@@ -57,6 +59,8 @@ async function createNewDataSession(){
   const inputData = props.newImages.map(image => ({
     'source': 'archive',
     'basename': image.basename.replace('-small', '') || image.basename.replace('-large', ''),
+    'id': image.id,
+    'url': image.url,
     'filter': image.FILTER
   }))
   const requestBody = {

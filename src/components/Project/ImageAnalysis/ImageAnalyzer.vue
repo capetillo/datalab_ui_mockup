@@ -39,6 +39,7 @@ function closeDialog() {
   startCoords.value = null
   endCoords.value = null
   headerData.value = null
+  positionAngle.value = null
   emit('update:modelValue', false)
 }
 
@@ -47,6 +48,7 @@ function requestAnalysis(action, input, action_callback=null){
   const url = configStore.datalabApiBaseUrl + 'analysis/' + action + '/'
   const body = {
     'basename': props.image.basename,
+    'source': props.image.source,
     ...input
   }
   fetchApiCall({url: url, method: 'POST', body: body, successCallback: (response) => {handleAnalysisOutput(response, action, action_callback)}})
@@ -111,10 +113,13 @@ function showHeaderDialog() {
         />
         <v-toolbar-title>{{ image.basename || "Unknown" }}</v-toolbar-title>
         <image-download-menu
-          :image="image"
+          :image-name="image.basename"
+          :fits-url="image.url || image.fits_url"
+          :jpg-url="image.largeCachedUrl"
           @analysis-action="requestAnalysis"
         />
         <v-btn
+          v-if="image.id"
           icon="mdi-information"
           @click="showHeaderDialog"
         />
@@ -145,8 +150,8 @@ function showHeaderDialog() {
             rounded
           >
             <line-plot
-              :y-axis-luminosity="lineProfile"
-              :x-axis-arcsecs="lineProfileLength"
+              :y-axis-data="lineProfile"
+              :x-axis-length="lineProfileLength"
               :start-coords="startCoords"
               :end-coords="endCoords"
               :position-angle="positionAngle"
@@ -212,11 +217,11 @@ a{
 }
 .basic-info-sheet{
   padding: 1rem;
+  margin-bottom: 1rem;
   color: var(--tan);
   background-color: var(--metal);
 }
 .line-plot-sheet {
-  margin-top: 1rem;
   padding: 1rem;
   background-color: var(--metal);
   height: 100%;

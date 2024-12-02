@@ -54,9 +54,6 @@ function loadImageOverlay() {
     maxBoundsViscosity: 1.0,
   })
 
-  // Layer control allows the toggling of layers on the map
-  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
-
   const img = new Image()
   img.src = props.imageSrc
   
@@ -215,6 +212,9 @@ function createCatalogLayer(){
 
   // Displays the catalog layer by default
   catalogLayerGroup.addTo(imageMap)
+
+  // Layer control allows the toggling of layers on the map
+  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
 
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }
