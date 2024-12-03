@@ -203,7 +203,7 @@ function createCatalogLayer(){
       snapIgnore: false, // Allow snapping to this layer
     })
 
-    sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
+    sourceMarker.bindPopup(`Flux: ${source.flux ?? 'N/A'}<br>Ra: ${source.ra ?? 'N/A'}<br>Dec: ${source.dec ?? 'N/A'}`)
     sourceCatalogMarkers.push(sourceMarker)
   })
 
