@@ -50,7 +50,7 @@ function createChart (){
     options: {
       scales: {
         x: {
-          title: { display: true, text: distanceLabel(), color: tan, size: 14 },
+          title: { display: true, text: distanceLabel(), color: tan },
           border: { color: tan, width: 2 },
           ticks: { color: tan, autoSkip: true, autoSkipPadding: 10 , maxRotation: 0 },
           grid: { color: darkBlue },
