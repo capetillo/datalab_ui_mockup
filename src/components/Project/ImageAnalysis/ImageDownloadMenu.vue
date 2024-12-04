@@ -24,17 +24,16 @@ defineEmits(['analysisAction'])
 const alertStore = useAlertsStore()
 
 function downloadLink(link, filename, fileType='file'){
-  if(!link){
-    alertStore.setAlert('error', `No ${fileType} available for download`)
-    return
+  try{
+    const a = document.createElement('a')
+    a.href = link
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  } catch (error) {
+    alertStore.setAlert('error', `Failed to download ${fileType} file`)
   }
-  // Create a link element and click it to download the file
-  const a = document.createElement('a')
-  a.href = link
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
 }
 
 </script>
