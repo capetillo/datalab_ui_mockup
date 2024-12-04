@@ -1,7 +1,23 @@
 <script setup>
 import { useAlertsStore } from '@/stores/alerts'
 
-const props = defineProps(['image', 'tifUrl'])
+const props = defineProps({
+  imageName: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  fitsUrl: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  jpgUrl: {
+    type: String,
+    required: false,
+    default: null,
+  },
+})
 
 defineEmits(['analysisAction'])
 
@@ -12,6 +28,7 @@ function downloadLink(link, filename, fileType='file'){
     alertStore.setAlert('error', `No ${fileType} available for download`)
     return
   }
+  // Create a link element and click it to download the file
   const a = document.createElement('a')
   a.href = link
   a.download = filename
@@ -33,19 +50,21 @@ function downloadLink(link, filename, fileType='file'){
       />
     </template>
     <v-btn
+      v-if="props.fitsUrl"
       key="1"
       text=".FITS"
-      @click="downloadLink(props.image.url, props.image.basename, 'FITs')"
+      @click="downloadLink(props.fitsUrl, props.imageName, 'FITs')"
     />
     <v-btn
       key="2"
       text=".TIF"
-      @click="$emit('analysisAction', 'get-tif', {'basename': props.image.basename}, downloadLink)"
+      @click="$emit('analysisAction', 'get-tif', {'basename': props.imageName}, downloadLink)"
     />
     <v-btn
+      v-if="props.jpgUrl"
       key="3"
       text=".JPG"
-      @click="downloadLink(props.image.largeCachedUrl, props.image.basename, 'JPG')"
+      @click="downloadLink(props.jpgUrl, props.imageName, 'JPG')"
     />
   </v-speed-dial>
 </template>

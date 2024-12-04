@@ -1,140 +1,138 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import * as d3 from 'd3'
+import Chart from 'chart.js/auto'
+import { ref, watch } from 'vue'
 
-const svg = ref(null)
+const chartRef = ref(null)
+let lineProfileChart = null
 
-const props = defineProps(['yAxisLuminosity', 'xAxisArcsecs', 'startCoords', 'endCoords', 'positionAngle'])
-
-// Setting dimensions and margins for the plot
-const margin = { top: 0, right: 40, bottom: 50, left: 60 },
-  svgWidth = 500,
-  svgHeight = 350,
-  width = svgWidth - margin.left - margin.right,
-  height = svgHeight - margin.top - margin.bottom
-
-// Configuring linear scales for positioning data points
-let x = d3.scaleLinear().range([0, width])
-let y = d3.scaleLinear().range([height, 0])
-let svgElement
-
-
-// Mapping an array of data points to an SVG path
-const line = d3.line()
-// index of each point for x
-  .x((d, i) => x((i / (props.yAxisLuminosity.length - 1)) * props.xAxisArcsecs))
-  // value for y
-  .y(d => y(d))
-
-
-const updateAxes = () => {
-  const maxX = props.xAxisArcsecs
-  // Add 5% to the largest number to buffer the plot
-  const maxY = d3.max(props.yAxisLuminosity) * 1.05
-
-  x.domain([0, maxX])
-  y.domain([0, maxY])
-
-  svgElement.select('.x.axis').call(d3.axisBottom(x))
-  svgElement.select('.y.axis').call(d3.axisLeft(y))
-
-  updatePlot()
-}
-
-const updatePlot = () => {
-  // Clearing the existing line before drawing a new one
-  svgElement.selectAll('.line').remove()
-  // Getting new data points and drawing a new line
-  svgElement.append('path')
-    .datum(props.yAxisLuminosity)
-    .attr('class', 'line')
-    .attr('d', line)
-    .attr('fill', 'none')
-    .attr('stroke', 'steelblue')
-    .attr('stroke-width', 1)
-}
-
-watch(() => [props.yAxisLuminosity, props.xAxisArcsecs], () => {
-  updateAxes()
+const props = defineProps({
+  yAxisData: { type: Array, required: true },
+  xAxisLength: { type: Number, default: null },
+  startCoords: { type: Array, default: null },
+  endCoords: { type: Array, default: null },
+  positionAngle: { type: Number, default: null },
 })
 
-onMounted(() => {
-  svgElement = d3.select(svg.value)
-    .append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`)
+// chartJs can't use css vars as strings, so we need to get the actual value
+var style = getComputedStyle(document.body)
+const tan = style.getPropertyValue('--tan')
+const darkBlue = style.getPropertyValue('--dark-blue')
+const lightBlue = style.getPropertyValue('--light-blue')
+const darkGreen = style.getPropertyValue('--dark-green')
 
-  const xAxis = svgElement.append('g')
-    .attr('class', 'x axis')
-    .attr('transform', `translate(0,${height})`)
-
-  const yAxis = svgElement.append('g')
-    .attr('class', 'y axis')
-
-  updateAxes()
-
-  // Labeling and styling axes
-  xAxis.append('text')
-    .attr('class', 'axis-label')
-    .attr('x', width / 2)
-    .attr('y', margin.bottom)
-    .attr('fill', 'var(--tan)')
-    .style('font-size', '16px')
-    .style('font-family', 'Open Sans, sans-serif')
-    .style('text-anchor', 'middle')
-    .text('Arcseconds')
-
-  yAxis.append('text')
-    .attr('class', 'axis-label')
-    .attr('transform', 'rotate(-90)')
-    .attr('y', -margin.left)
-    .attr('x', -(height / 2))
-    .attr('dy', '1em')
-    .attr('fill', 'var(--tan)')
-    .style('font-size', '16px')
-    .style('font-family', 'Open Sans, sans-serif')
-    .style('text-anchor', 'middle')
-    .text('Luminosity')
-
+watch(() => [props.yAxisData, props.xAxisLength], () => {
+  lineProfileChart ? updateChart() : createChart()
 })
+
+function createChart (){
+  lineProfileChart = new Chart(chartRef.value, {
+    type: 'line',
+    data: {
+      labels: generateLabels(),
+      datasets: [
+        {
+          label: 'Flux',
+          data: props.yAxisData,
+          // Line styling
+          borderColor: lightBlue,
+          borderWidth: 2,
+          borderJoinStyle: 'round',
+          backgroundColor: lightBlue,
+          // Point styling
+          pointRadius: 0,
+          // Point hover styling
+          pointHitRadius: 10,
+          pointHoverBorderColor: darkGreen,
+          pointHoverBackgroundColor: darkGreen,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        x: {
+          title: { display: true, text: distanceLabel(), color: tan },
+          border: { color: tan, width: 2 },
+          ticks: { color: tan, autoSkip: true, autoSkipPadding: 10 , maxRotation: 0 },
+          grid: { color: darkBlue },
+        },
+        y: {
+          title: { display: true, text: 'Luminosity', color: tan },
+          border: { color: tan, width: 2 },
+          ticks: { color: tan, autoSkip: true, },
+          grid: { color: darkBlue },
+        },
+      },
+      plugins: {
+        title: { display: true, text: 'Line Profile', color: tan },
+        legend: { display: false },
+        tooltip: {
+          titleAlign: 'center',
+          titleColor: tan,
+          bodyAlign: 'center',
+          bodyColor: tan,
+          backgroundColor: darkGreen,
+          displayColors: false,
+        },
+      },
+    },
+  })
+}
+
+function updateChart(){
+  lineProfileChart.data.labels = generateLabels()
+  lineProfileChart.data.datasets[0].data = props.yAxisData
+  lineProfileChart.options.scales.x.title.text = distanceLabel()
+  lineProfileChart.update()
+}
+
+// Creates the labels for the x-axis
+function generateLabels() {
+  const length = props.xAxisLength
+  const data = props.yAxisData
+  
+  if (!length) {
+    // If image has no pixScale or WCS we don't have the arcsec length, use data to find pixel length
+    return Array.from({ length: data.length }, (_, i) => i)
+  }
+
+  const step = length / (data.length - 1)
+  return Array.from({ length: data.length }, (_, i) => (i * step).toFixed(0))
+}
+
+function distanceLabel(){
+  if(props.xAxisLength){ 
+    return 'Distance ' + (props.xAxisLength.toFixed(6) + ' (arcseconds)') 
+  }
+  else { 
+    return 'Distance ' + (props.yAxisData.length + ' (pixels)') 
+  }
+}
 </script>
 
 <template>
-  <div class="svg-wrapper">
-    <svg
-      ref="svg"
-      class="line-plot"
-      :width="svgWidth"
-      :height="svgHeight"
-    />
-  </div>
-  <div
-    class="line-details"
-  >
-    <p v-if="xAxisArcsecs">
-      Distance: {{ xAxisArcsecs.toFixed(3) }} arcseconds
-    </p>
+  <canvas
+    ref="chartRef"
+    class="line-plot"
+  />
+  <div class="line-details">
     <p v-if="startCoords">
-      Start: RA {{ startCoords[0].toFixed(3) }} DEC {{ startCoords[1].toFixed(3) }}
+      <b>Start:</b> RA {{ startCoords[0].toFixed(6) }} DEC {{ startCoords[1].toFixed(6) }}
     </p>
     <p v-if="endCoords">
-      End: RA {{ endCoords[0].toFixed(3) }} DEC {{ endCoords[1].toFixed(3) }}
+      <b>End:</b> RA {{ endCoords[0].toFixed(6) }} DEC {{ endCoords[1].toFixed(6) }}
     </p>
     <p v-if="positionAngle">
-      Position Angle: {{ positionAngle.toFixed(3) }}° East of North
+      <v-tooltip
+        activator="parent"
+        text="Angle showing how a celestial object is rotated in the sky"
+      />
+      <b>Position Angle:</b> {{ positionAngle.toFixed(3) }}° East of North
     </p>
   </div>
 </template>
 
 <style scoped>
-.line-plot {
-  color: var(--tan);
-  font-family: 'Open Sans', sans-serif;
-}
-.axis-label {
-  color: var(--tan);
-}
-.line-details {
-  color: var(--tan);
-  font-family: 'Open Sans', sans-serif;
+.line-details{
+  margin-top: 2rem;
 }
 </style>

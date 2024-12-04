@@ -54,9 +54,6 @@ function loadImageOverlay() {
     maxBoundsViscosity: 1.0,
   })
 
-  // Layer control allows the toggling of layers on the map
-  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
-
   const img = new Image()
   img.src = props.imageSrc
   
@@ -206,7 +203,7 @@ function createCatalogLayer(){
       snapIgnore: false, // Allow snapping to this layer
     })
 
-    sourceMarker.bindPopup(`Flux: ${source.flux}<br>Ra: ${source.ra}<br>Dec: ${source.dec}`)
+    sourceMarker.bindPopup(`Flux: ${source.flux ?? 'N/A'}<br>Ra: ${source.ra ?? 'N/A'}<br>Dec: ${source.dec ?? 'N/A'}`)
     sourceCatalogMarkers.push(sourceMarker)
   })
 
@@ -215,6 +212,9 @@ function createCatalogLayer(){
 
   // Displays the catalog layer by default
   catalogLayerGroup.addTo(imageMap)
+
+  // Layer control allows the toggling of layers on the map
+  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
 
   layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
 }

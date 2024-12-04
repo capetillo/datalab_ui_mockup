@@ -1,5 +1,6 @@
 import { useUserDataStore } from '@/stores/userData'
 import { useConfigurationStore } from '@/stores/configuration'
+import { useAlertsStore } from '@/stores/alerts'
 
 // handles api requests for datasessions with configurable parameters and callback functions
 async function fetchApiCall({ url, method, body = null, header, successCallback = null, failCallback = handleError }) {
@@ -28,7 +29,6 @@ async function fetchApiCall({ url, method, body = null, header, successCallback 
     } else {
       const responseData = await response.json()
       if (!response.ok) {
-        console.error('Response not OK', responseData)
         failCallback ? failCallback(responseData, response.status) : null
       } else {
         // Invoking success callback with responseData
@@ -43,8 +43,9 @@ async function fetchApiCall({ url, method, body = null, header, successCallback 
 }
 
 // manages api call failures by logging errors
-const handleError = (error) => {
-  console.error('API call failed with error:', error)
+const handleError = (response) => {
+  const alert = useAlertsStore()
+  response.error ? alert.setAlert('error', response.error) : console.error('API call failed with error:', response)
 }
 
 function deleteOperation(sessionId, operationId, successCallback, failCallback = handleError) {
