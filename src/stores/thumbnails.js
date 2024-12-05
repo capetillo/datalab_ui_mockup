@@ -114,14 +114,14 @@ export const useThumbnailsStore = defineStore('thumbnails', {
       if (cachedUrl === undefined || cachedUrl === ''){
         return getImageFromBasename(size, archive, url, basename).then((response) => {
           if (response){
-            // Convert to image/jpeg for caching as S3 presigned URLs blobs default to binary/octet-stream
-            response.headers.set('content-type', 'image/jpeg')
             return response.blob()
           }
           return undefined
         })
           .then((responseBlob) => {
             if (responseBlob) {
+              // Convert to image/jpeg for caching as S3 presigned URLs blobs default to binary/octet-stream
+              responseBlob = new Blob([responseBlob], {type: 'image/jpeg'})
               const responseUrl = URL.createObjectURL(responseBlob)
               if (size == 'large'){
                 this.largeThumbnailsCache.set(basename, responseUrl)
