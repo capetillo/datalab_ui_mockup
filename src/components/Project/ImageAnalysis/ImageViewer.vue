@@ -26,7 +26,6 @@ let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
 let lineLayer = null
-let layerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 const isLoading = ref(true)
@@ -101,7 +100,7 @@ function leafletSetup(){
     toggle: false,
   })
 
-  // Disabling default controls
+  // Geoman settings setup
   imageMap.pm.addControls({
     position: 'topleft',
     drawMarker: false,
@@ -117,6 +116,7 @@ function leafletSetup(){
     removalMode: true
   })
 
+  // Logic to only allow the user to draw one line with two points
   imageMap.on('pm:drawstart', ({ workingLayer }) => {
     // Remove last drawn line when starting new one
     if (lineLayer && imageMap.hasLayer(lineLayer)) {
@@ -130,7 +130,7 @@ function leafletSetup(){
     })
   })
 
-  // Get coordinates of the line
+  // Requests a Line Profile when a line is drawn/edited
   imageMap.on('pm:create', (e) => {
     // Save last drawn line
     lineLayer = e.layer
@@ -214,9 +214,7 @@ function createCatalogLayer(){
   catalogLayerGroup.addTo(imageMap)
 
   // Layer control allows the toggling of layers on the map
-  layerControl = L.control.layers(null, null, {collapsed:false}).addTo(imageMap)
-
-  layerControl.addOverlay(catalogLayerGroup, 'Source Catalog')
+  L.control.layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
 }
 
 function fetchCatalog(){
