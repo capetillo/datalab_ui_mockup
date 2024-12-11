@@ -26,10 +26,11 @@ let imageBounds
 let initialCenter = [0, 0]
 let initialZoom = 1
 let lineLayer = null
+let catalogLayerGroup = null
+let catalogLayerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
-const isLoading = ref(true)
-const imageContainer = ref(null)
+const leafletDiv = ref(null)
 const alerts = useAlertsStore()
 
 onMounted(() => {
@@ -45,7 +46,7 @@ watch(() => props.catalog, () => {
 // loads image overlay and set bounds
 function loadImageOverlay() {
   // Create leaflet map (here referred to as image)
-  imageMap = L.map(imageContainer.value, {
+  imageMap = L.map(leafletDiv.value, {
     center: [0, 0],
     maxZoom: 6,
     crs: L.CRS.Simple,
@@ -82,7 +83,6 @@ function loadImageOverlay() {
 
     initialCenter = imageMap.getCenter()
     initialZoom = imageMap.getZoom()
-    isLoading.value = false
   }
 }
 
@@ -144,8 +144,8 @@ function resizeMap(){
   const resizeObserver = new ResizeObserver(() => {
     imageMap.invalidateSize()
   })
-  if(imageContainer.value){
-    resizeObserver.observe(imageContainer.value)
+  if(leafletDiv.value){
+    resizeObserver.observe(leafletDiv.value)
   }
 }
 
@@ -186,35 +186,31 @@ function requestLineProfile(latLngs) {
 
 // When we get the catalog data this creates a layer of circles on the map
 function createCatalogLayer(){
-  if (!props.catalog){
-    alerts.setAlert('info', 'No source catalog data for this image')
-    return
-  }
-
-  let sourceCatalogMarkers = []
-
-  props.catalog.forEach((source) => {
-    let sourceMarker = L.circle([source.y, source.x], {
+  // Function to create a marker for a source
+  function createSourceMarker(source){
+    return new L.Circle([source.y, source.x], {
       color: 'var(--tangerine)',
       fillColor: 'var(--tangerine)',
       fillOpacity: 0.2,
       radius: 10,
       pmIgnore: true, // Ignore this layer for editing
       snapIgnore: false, // Allow snapping to this layer
-    })
+    }).bindPopup(`Flux: ${source.flux ?? 'N/A'}<br>Ra: ${source.ra ?? 'N/A'}<br>Dec: ${source.dec ?? 'N/A'}`)
+  }
 
-    sourceMarker.bindPopup(`Flux: ${source.flux ?? 'N/A'}<br>Ra: ${source.ra ?? 'N/A'}<br>Dec: ${source.dec ?? 'N/A'}`)
-    sourceCatalogMarkers.push(sourceMarker)
-  })
+  const sourceCatalogMarkers = props.catalog.map(createSourceMarker)
 
-  // Associate all source markers with a single layer group
-  let catalogLayerGroup = L.layerGroup(sourceCatalogMarkers)
+  // Remove the previous catalog layer group/control if it exists
+  if (catalogLayerGroup || catalogLayerControl) {
+    imageMap.removeLayer(catalogLayerGroup)
+    imageMap.removeControl(catalogLayerControl)
+  }
 
-  // Displays the catalog layer by default
+  catalogLayerGroup = new L.LayerGroup(sourceCatalogMarkers)
   catalogLayerGroup.addTo(imageMap)
 
   // Layer control allows the toggling of layers on the map
-  L.control.layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
+  catalogLayerControl = new L.Control.Layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
 }
 
 function fetchCatalog(){
@@ -227,16 +223,8 @@ function fetchCatalog(){
 
 </script>
 <template>
-  <template v-if="isLoading">
-    <v-progress-circular
-      indeterminate
-      model-value="20"
-      :size="50"
-      :width="9"
-    />
-  </template>
   <div
-    ref="imageContainer"
+    ref="leafletDiv"
     :style="{ width: imageWidth + 'px' }"
   />
 </template>
