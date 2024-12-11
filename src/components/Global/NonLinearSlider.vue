@@ -8,8 +8,6 @@ import { ref, watch } from 'vue'
  * - max: Maximum value of the range
  * - stepCount: Number of steps to use in the range slider, default is 200, higher values will result in a smoother slider
  * - scaling: The scaling function to use, default is log10
- * Emits:
- * - updateRange: This is emitted when the range slider is moved, returns a tuple of the range values
  */
 
 const props = defineProps({
@@ -40,8 +38,7 @@ const customScale = ref([])
 const sliderRange = ref([])
 
 function updateRange() {
-  // We are essentially mapping the range slider values to the custom scale
-  // so if the slider is at 0 and 3, we use the custom scale values at those indices
+  // Mapping the range slider values to the custom scale
   const [start, end] = sliderRange.value
   scaledRange.value = [customScale.value[start], customScale.value[end]]
 }
@@ -68,7 +65,7 @@ watch(() => [props.max, props.min], () => {
   sliderRange.value = [0, customScale.value.length-1]
 
   updateRange()
-},{ deep: true, immediate: true })
+},{ immediate: true })
 
 </script>
 <template>
