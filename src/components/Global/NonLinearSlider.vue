@@ -34,10 +34,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['updateRange'])
+const scaledRange = defineModel({ type: Array })
 
 const customScale = ref([])
-const scaledRange = ref([])
 const sliderRange = ref([])
 
 function updateRange() {
@@ -45,7 +44,6 @@ function updateRange() {
   // so if the slider is at 0 and 3, we use the custom scale values at those indices
   const [start, end] = sliderRange.value
   scaledRange.value = [customScale.value[start], customScale.value[end]]
-  emit('updateRange', scaledRange.value)
 }
 
 function calcCustomScale(){

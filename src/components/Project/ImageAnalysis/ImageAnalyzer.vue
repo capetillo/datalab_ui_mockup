@@ -149,10 +149,10 @@ function showHeaderDialog() {
           >
             <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
             <non-linear-slider
+              v-model="fluxSliderRange"
               prepend-icon="mdi-flare"
               :max="Math.max(...catalog.map((source) => source.flux))"
               :min="Math.min(...catalog.map((source) => source.flux))"
-              @update-range="(range) => {fluxSliderRange = range}"
             />
           </v-sheet>
           <v-sheet
