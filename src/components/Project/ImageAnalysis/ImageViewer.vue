@@ -200,17 +200,19 @@ function createCatalogLayer(){
 
   const sourceCatalogMarkers = props.catalog.map(createSourceMarker)
 
-  // Remove the previous catalog layer group/control if it exists
-  if (catalogLayerGroup || catalogLayerControl) {
-    imageMap.removeLayer(catalogLayerGroup)
-    imageMap.removeControl(catalogLayerControl)
+  // update or create the catalog layer group
+  if (catalogLayerGroup) {
+    catalogLayerGroup.clearLayers()
+    sourceCatalogMarkers.forEach((marker) => catalogLayerGroup.addLayer(marker))
+  } else {
+    catalogLayerGroup = new L.LayerGroup(sourceCatalogMarkers)
+    catalogLayerGroup.addTo(imageMap)
   }
 
-  catalogLayerGroup = new L.LayerGroup(sourceCatalogMarkers)
-  catalogLayerGroup.addTo(imageMap)
-
   // Layer control allows the toggling of layers on the map
-  catalogLayerControl = new L.Control.Layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
+  if(!catalogLayerControl){
+    catalogLayerControl = new L.Control.Layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
+  }
 }
 
 function fetchCatalog(){
