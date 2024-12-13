@@ -152,8 +152,8 @@ watch(
         variant="outlined"
         step="10"
         hide-details
-        @update:modelValue="updateLowerScale">
-      </v-text-field>
+        @update:model-value="updateLowerScale"
+      />
     </v-col>
     <v-col cols="4">
       <v-text-field
@@ -165,33 +165,34 @@ watch(
         variant="outlined"
         step="10"
         hide-details
-        @update:modelValue="updateUpperScale">
-      </v-text-field>
+        @update:model-value="updateUpperScale"
+      />
     </v-col>
     <v-col cols="4">
       <v-btn
         class="ml-2"
         variant="outlined"
         @click="zScaleImage"
-      >Z-Scale</v-btn>
+      >
+        Z-Scale
+      </v-btn>
     </v-col>
   </v-row>
   <v-row class="ma-0">
     <v-sheet class="stackSheet">
       <v-sparkline
-        smooth=true
-        fill=true
+        :smooth="true"
+        :fill="true"
         line-width="0.1"
         height="50"
         :gradient="gradient"
-        gradient-direction='left'
+        gradient-direction="left"
         :model-value="props.histogram"
         auto-draw
-      >
-      </v-sparkline>
+      />
       <v-range-slider
-        class="stackControls"
         v-model="sliderRange"
+        class="stackControls"
         step="1"
         track-size="0"
         :track-color="backgroundColor"
@@ -202,9 +203,9 @@ watch(
         thumb-label="always"
         strict
         hide-details
-        @update:modelValue="updateScaleRange"
+        @update:model-value="updateScaleRange"
       >
-        <template v-slot:thumb-label="{ modelValue }">
+        <template #thumb-label="{ modelValue }">
           {{ labelSliderToScaleValue(modelValue) }}
         </template>
       </v-range-slider>

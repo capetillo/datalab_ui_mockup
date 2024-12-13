@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { fetchApiCall } from '../../../utils/api'
 import { useConfigurationStore } from '@/stores/configuration'
 import { useAlertsStore } from '@/stores/alerts'
 import ImageViewer from './ImageViewer.vue'
 import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
+import NonLinearSlider from '@/components/Global/NonLinearSlider.vue'
 import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
 import { siteIDToName } from '@/utils/common'
 
@@ -32,9 +33,15 @@ const catalog = ref([])
 const positionAngle = ref()
 const headerDialog = ref(false)
 const headerData = ref({})
+const fluxSliderRange = ref([0, 10000])
+
+const filteredCatalog = computed(() => {
+  return catalog.value.filter((source) => source.flux >= fluxSliderRange.value[0] && source.flux <= fluxSliderRange.value[1])
+})
 
 function closeDialog() {
   lineProfile.value = []
+  catalog.value = []
   lineProfileLength.value = 0
   startCoords.value = null
   endCoords.value = null
@@ -131,19 +138,22 @@ function showHeaderDialog() {
       <div class="analysis-content">
         <image-viewer
           :image-src="image.largeCachedUrl"
-          :catalog="catalog"
+          :catalog="filteredCatalog"
           @analysis-action="requestAnalysis"
         />
         <div class="side-panel-container">
           <v-sheet
-            v-if="image.site_id || image.telescope_id || image.instrument_id || image.observation_date"
+            v-if="catalog.length"
             rounded
-            class="basic-info-sheet"
+            class="image-controls-sheet"
           >
-            <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
-            <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
-            <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
-            <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
+            <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
+            <non-linear-slider
+              v-model="fluxSliderRange"
+              prepend-icon="mdi-flare"
+              :max="Math.max(...catalog.map((source) => source.flux))"
+              :min="Math.min(...catalog.map((source) => source.flux))"
+            />
           </v-sheet>
           <v-sheet
             class="line-plot-sheet"
@@ -166,7 +176,11 @@ function showHeaderDialog() {
     width="auto"
   >
     <v-sheet class="pa-12">
-      <h1 class="mb-8">
+      <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
+      <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
+      <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
+      <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
+      <h1 class="mb-4 mt-4">
         FITS Headers
       </h1>
       <v-table>
@@ -215,7 +229,7 @@ a{
   margin-left: 10px;
   width: 45vw;
 }
-.basic-info-sheet{
+.image-controls-sheet{
   padding: 1rem;
   margin-bottom: 1rem;
   color: var(--tan);
