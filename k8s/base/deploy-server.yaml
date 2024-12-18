@@ -15,9 +15,9 @@ spec:
         app.kubernetes.io/component: frontend
     spec:
       volumes:
-        - name: tmp
+        - name: static-files
           emptyDir:
-            sizeLimit: "32Mi"
+            sizeLimit: "512Mi"
       initContainers:
         - name: copy-static-files
           image: datalab-ui
@@ -38,7 +38,7 @@ spec:
               cpu: 2000m
               memory: 512Mi
           volumeMounts:
-            - name: dist
+            - name: static-files
               mountPath: /app/volume
       containers:
         - name: default
@@ -63,10 +63,8 @@ spec:
               cpu: 1000m
               memory: 256Mi
           volumeMounts:
-            - name: dist
+            - name: static-files
               mountPath: /app/dist
-            - name: app-config
-              mountPath: /app/dist/config
           ports:
             - name: frontend
               containerPort: 8080

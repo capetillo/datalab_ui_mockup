@@ -16,7 +16,7 @@ build:
 manifests:
   kustomize:
     paths:
-      - k8s/envs/local/
+      - k8s/base
 deploy:
   kubectl: {}
   logs:
