@@ -2,16 +2,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: frontend
   labels:
     app.kubernetes.io/component: server
   annotations:
-    internal.kpt.dev/upstream-identifier: '|Service|default|datalab-ui'
+    internal.kpt.dev/upstream-identifier: '|Service|default|Datalab'
 spec:
   type: ClusterIP
   selector:
-    app.kubernetes.io/component: server
+    app.kubernetes.io/component: frontend
   ports:
-  - name: http
+  - name: frontend
     port: 8080
-    targetPort: http
+    targetPort: frontend
