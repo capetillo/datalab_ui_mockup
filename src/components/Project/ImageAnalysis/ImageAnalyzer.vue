@@ -29,6 +29,7 @@ const lineProfile = ref([])
 const lineProfileLength = ref()
 const startCoords = ref()
 const endCoords = ref()
+const catalogToggle = ref(true)
 const catalog = ref([])
 const positionAngle = ref()
 const headerDialog = ref(false)
@@ -36,7 +37,12 @@ const headerData = ref({})
 const fluxSliderRange = ref([0, 10000])
 
 const filteredCatalog = computed(() => {
-  return catalog.value.filter((source) => source.flux >= fluxSliderRange.value[0] && source.flux <= fluxSliderRange.value[1])
+  if(catalogToggle.value){
+    return catalog.value.filter((source) => source.flux >= fluxSliderRange.value[0] && source.flux <= fluxSliderRange.value[1])
+  }
+  else{
+    return []
+  }
 })
 
 function closeDialog() {
@@ -147,13 +153,17 @@ function showHeaderDialog() {
             rounded
             class="image-controls-sheet"
           >
-            <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
+            <v-icon
+              icon="mdi-flare"
+              :color="catalogToggle ? 'var(--light-blue)' : 'var(--tan)'"
+              @click="() => catalogToggle = !catalogToggle"
+            />
             <non-linear-slider
               v-model="fluxSliderRange"
-              prepend-icon="mdi-flare"
               :max="Math.max(...catalog.map((source) => source.flux))"
               :min="Math.min(...catalog.map((source) => source.flux))"
             />
+            <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
           </v-sheet>
           <v-sheet
             class="line-plot-sheet"

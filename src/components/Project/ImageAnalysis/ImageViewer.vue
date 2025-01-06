@@ -27,7 +27,6 @@ let initialCenter = [0, 0]
 let initialZoom = 1
 let lineLayer = null
 let catalogLayerGroup = null
-let catalogLayerControl = null
 const imageWidth = ref(0)
 const imageHeight = ref(0)
 const leafletDiv = ref(null)
@@ -207,11 +206,6 @@ function createCatalogLayer(){
   } else {
     catalogLayerGroup = new L.LayerGroup(sourceCatalogMarkers)
     catalogLayerGroup.addTo(imageMap)
-  }
-
-  // Layer control allows the toggling of layers on the map
-  if(!catalogLayerControl){
-    catalogLayerControl = new L.Control.Layers(null, { 'Source Catalog': catalogLayerGroup }, { collapsed: false }).addTo(imageMap)
   }
 }
 
