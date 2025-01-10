@@ -78,9 +78,7 @@ watch(
 
 </script>
 <template>
-  <div
-    :id="'image-container-' + imageName"
-  >
+  <div :id="'image-container-' + imageName">
     <canvas
       ref="imageCanvas"
       class="raw-scaled-canvas"
