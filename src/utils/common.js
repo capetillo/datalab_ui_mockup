@@ -27,6 +27,19 @@ const filterToPixelIndex = (filter) => {
   }
 }
 
+const filterToColor = (filter) => {
+  switch (filter) {
+  case 'R': case 'rp':
+    return 'red'
+  case 'V': case 'gp':
+    return 'green'
+  case 'B':
+    return 'blue'
+  default:
+    return 'var(--light-blue)'
+  }
+}
+
 function siteIDToName(siteID) {
   const siteIDMap = {
     'COJ': 'Siding Spring Observatory @ New South Wales',
@@ -54,4 +67,40 @@ function initializeDate(dateString = 'none', defaultOffsetDays = 0) {
   return isNaN(date.getTime()) ? new Date(Date.now() + defaultOffsetDays * 24 * 3600 * 1000) : date
 }
 
-export { calculateColumnSpan, siteIDToName, initializeDate, convertFilter, filterToPixelIndex }
+function scaleImageData(imageData, targetWidth, targetHeight) {
+  // Create a temporary canvas to draw the original ImageData
+  const tempCanvas = document.createElement('canvas')
+  tempCanvas.width = imageData.width
+  tempCanvas.height = imageData.height
+  const tempContext = tempCanvas.getContext('2d')
+  tempContext.putImageData(imageData, 0, 0)
+
+  // Create another canvas for the scaled version
+  const outputCanvas = document.createElement('canvas')
+  outputCanvas.width = targetWidth
+  outputCanvas.height = targetHeight
+  const outputContext = outputCanvas.getContext('2d')
+
+  // Calculate scaling to maintain aspect ratio
+  const scale = Math.min(
+    targetWidth / imageData.width,
+    targetHeight / imageData.height
+  )
+
+  // Calculate centered position
+  const scaledWidth = imageData.width * scale
+  const scaledHeight = imageData.height * scale
+  const x = (targetWidth - scaledWidth) / 2
+  const y = (targetHeight - scaledHeight) / 2
+
+  // Draw the scaled image centered on the output canvas
+  outputContext.drawImage(
+    tempCanvas,
+    0, 0, imageData.width, imageData.height,  // source rectangle
+    x, y, scaledWidth, scaledHeight           // destination rectangle
+  )
+
+  return outputContext.getImageData(0, 0, targetWidth, targetHeight)
+}
+
+export { calculateColumnSpan, siteIDToName, initializeDate, convertFilter, filterToPixelIndex, scaleImageData, filterToColor }

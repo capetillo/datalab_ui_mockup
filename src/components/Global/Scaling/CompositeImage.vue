@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineProps, computed, watch, onMounted } from 'vue'
 import { useScalingStore } from '@/stores/scaling'
+import { scaleImageData } from '@/utils/common'
 
 // This component draws a composite RGB image from the scaling store
 
@@ -32,7 +33,9 @@ const ableToDraw = computed(() => {
 
 function redrawImage() {
   if (ableToDraw.value) {
-    context.putImageData(store.scaledImageArrays[props.imageName].combined, 0, 0)
+    const compositeImage = store.scaledImageArrays[props.imageName].combined
+    const scaledCompositeImage = scaleImageData(compositeImage, props.width, props.height)
+    context.putImageData(scaledCompositeImage, 0, 0)
   }
 }
 
@@ -51,10 +54,22 @@ watch(
 
 </script>
 <template>
-  <div class="image-container mt-4" :id="'image-container-' + imageName" :style="'max-width: ' + props.width">
-    <canvas ref="imageCanvas" :width="props.width" :height="props.height">
-    </canvas>
-    <v-progress-circular v-show="isLoading" color="primary" size="200" indeterminate></v-progress-circular>
+  <div
+    :id="'image-container-' + imageName"
+    class="image-container"
+    :style="'max-width: ' + props.width"
+  >
+    <canvas
+      ref="imageCanvas"
+      :width="props.width"
+      :height="props.height"
+    />
+    <v-progress-circular
+      v-show="isLoading"
+      color="primary"
+      size="200"
+      indeterminate
+    />
   </div>
 </template>
 <style scoped>

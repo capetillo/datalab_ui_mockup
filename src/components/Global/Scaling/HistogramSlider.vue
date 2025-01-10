@@ -32,22 +32,26 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 65500
-  }
+  },
+  selectedColor: {
+    type: String,
+    required: false,
+    default: 'var(--light-blue)'
+  },
 })
 
 const emit = defineEmits(['updateScaling'])
 
 const scaleRange = ref([props.bins[0], props.bins[props.bins.length-1]])
 const sliderRange = ref([0, props.bins.length-1])
-const selectedColor = 'rgb(20,182,246)'
-const backgroundColor = 'rgb(204,208,211)'
+const backgroundColor = 'var(--light-gray)'
 
 const gradient = computed(() => {
   // This function computes a "gradient" for the histogram sparkline, showing the selected region as highlighted
   let gradientArray = []
   for (let i = 0; i < props.bins.length; i++) {
     if (i > (sliderRange.value[0]+1) && i < (sliderRange.value[1]-1)) {
-      gradientArray.push(selectedColor)
+      gradientArray.push(props.selectedColor)
     }
     else {
       gradientArray.push(backgroundColor)
@@ -141,7 +145,7 @@ watch(
 
 </script>
 <template>
-  <v-row class="ml-4">
+  <v-row class="histogram-range-controls">
     <v-col cols="4">
       <v-text-field
         v-model="scaleRange[0]"
@@ -171,60 +175,52 @@ watch(
     <v-col cols="4">
       <v-btn
         class="ml-2"
-        variant="outlined"
+        color="var(--light-blue)"
         @click="zScaleImage"
       >
         Z-Scale
       </v-btn>
     </v-col>
   </v-row>
-  <v-row class="ma-0">
-    <v-sheet class="stackSheet">
-      <v-sparkline
-        :smooth="true"
-        :fill="true"
-        line-width="0.1"
-        height="50"
-        :gradient="gradient"
-        gradient-direction="left"
-        :model-value="props.histogram"
-        auto-draw
-      />
-      <v-range-slider
-        v-model="sliderRange"
-        class="stackControls"
-        step="1"
-        track-size="0"
-        :track-color="backgroundColor"
-        :track-fill-color="selectedColor"
-        :thumb-color="selectedColor"
-        thumb-size="16"
-        :max="props.bins.length-1"
-        thumb-label="always"
-        strict
-        hide-details
-        @update:model-value="updateScaleRange"
-      >
-        <template #thumb-label="{ modelValue }">
-          {{ labelSliderToScaleValue(modelValue) }}
-        </template>
-      </v-range-slider>
-    </v-sheet>
+  <v-row class="histogram-range-slider">
+    <v-sparkline
+      :smooth="true"
+      :fill="true"
+      line-width="0.1"
+      height="50"
+      :gradient="gradient"
+      gradient-direction="left"
+      :model-value="props.histogram"
+      auto-draw
+    />
+    <v-range-slider
+      v-model="sliderRange"
+      step="1"
+      track-size="0"
+      :track-color="backgroundColor"
+      :track-fill-color="selectedColor"
+      thumb-color="var(--dark-green)"
+      thumb-size="16"
+      :max="props.bins.length-1"
+      strict
+      hide-details
+      @update:model-value="updateScaleRange"
+    >
+      <template #thumb-label="{ modelValue }">
+        {{ labelSliderToScaleValue(modelValue) }}
+      </template>
+    </v-range-slider>
   </v-row>
 </template>
 <style scoped>
-
-.stackSheet {
+.histogram-range-slider {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   position: relative;
-  width: 500px;
-  margin-left: 10px;
 }
 
-.stackControls {
-  position: absolute;
-  bottom: -6px;
-  left: 5px;
-  width: 473px;
+.v-range-slider {
+  position: relative;
+  bottom: 30px;
 }
-
 </style>
