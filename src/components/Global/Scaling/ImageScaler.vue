@@ -132,8 +132,7 @@ onMounted(async () => {
   background-color: var(--metal);
 }
 .image-scale-title {
-  width: 100%;
-  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-align: center;
   color: var(--tan);
   font-weight: bold;

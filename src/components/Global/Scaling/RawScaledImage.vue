@@ -78,17 +78,15 @@ watch(
 
 </script>
 <template>
-  <div :id="'image-container-' + imageName">
-    <canvas
-      ref="imageCanvas"
-      class="raw-scaled-canvas"
-      :width="props.maxSize"
-      :height="props.maxSize"
-    />
-  </div>
+  <canvas
+    ref="imageCanvas"
+    class="raw-scaled-canvas"
+    :width="props.maxSize"
+    :height="props.maxSize"
+  />
 </template>
 <style scoped>
-.raw-scaled-canvas {
+.raw-scaled-canvas{
   width: 200px;
   height: 200px;
 }

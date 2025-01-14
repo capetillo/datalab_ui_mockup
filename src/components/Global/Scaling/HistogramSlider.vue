@@ -182,7 +182,7 @@ watch(
       </v-btn>
     </v-col>
   </v-row>
-  <v-row class="histogram-range-slider">
+  <div class="histogram-range-slider">
     <v-sparkline
       :smooth="true"
       :fill="true"
@@ -210,13 +210,13 @@ watch(
         {{ labelSliderToScaleValue(modelValue) }}
       </template>
     </v-range-slider>
-  </v-row>
+  </div>
 </template>
 <style scoped>
 .histogram-range-slider {
+  position: relative;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  position: relative;
 }
 
 .v-range-slider {

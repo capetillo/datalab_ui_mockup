@@ -17,7 +17,7 @@ const props = defineProps({
   }
 })
 
-const compositeImageMaxWidth = window.innerWidth * 0.45
+const compositeImageMaxWidth = window.innerWidth * 0.4
 
 const emit = defineEmits(['updateScaling'])
 
@@ -50,7 +50,7 @@ const scaleGroupings = computed(() => {
         :image-name="groupName"
       />
     </div>
-    <v-col class="scale-controls-col ma-0 pa-0">
+    <div class="scale-controls">
       <image-scaler
         v-for="(groupInput, groupInputName ) in groupInputs"
         :key="groupName + '-' + groupInputName"
@@ -59,7 +59,7 @@ const scaleGroupings = computed(() => {
         :composite-name="groupName"
         @update-scaling="(imageName, zmin, zmax) => emit('updateScaling', imageName, zmin, zmax)"
       />
-    </v-col>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -67,15 +67,22 @@ const scaleGroupings = computed(() => {
   height: 80vh;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 .composite-image-container{
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.scale-controls-col {
-  max-width: 50%;
-  min-width: 590px;
+.scale-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  min-width: 532px;
+}
+.image-scaler{
+  width: 100%;
 }
 </style>
