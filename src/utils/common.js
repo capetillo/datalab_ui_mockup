@@ -27,6 +27,19 @@ const filterToPixelIndex = (filter) => {
   }
 }
 
+const filterToColor = (filter) => {
+  switch (filter) {
+  case 'R': case 'rp':
+    return 'red'
+  case 'V': case 'gp':
+    return 'green'
+  case 'B':
+    return 'blue'
+  default:
+    return 'var(--light-blue)'
+  }
+}
+
 function siteIDToName(siteID) {
   const siteIDMap = {
     'COJ': 'Siding Spring Observatory @ New South Wales',
@@ -54,4 +67,4 @@ function initializeDate(dateString = 'none', defaultOffsetDays = 0) {
   return isNaN(date.getTime()) ? new Date(Date.now() + defaultOffsetDays * 24 * 3600 * 1000) : date
 }
 
-export { calculateColumnSpan, siteIDToName, initializeDate, convertFilter, filterToPixelIndex }
+export { calculateColumnSpan, siteIDToName, initializeDate, convertFilter, filterToPixelIndex, filterToColor }

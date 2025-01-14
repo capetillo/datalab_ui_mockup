@@ -20,9 +20,7 @@ const props = defineProps({
 })
 
 const store = useScalingStore()
-// This isn't currently used by can be used to trigger showing a spinning circular
-// loading icon over the image if we add a debounce to the redraw in the future
-const isLoading = ref(false)
+const isLoading = ref(false) // not being used yet
 const imageCanvas = ref(null)
 var context = null
 
@@ -32,7 +30,12 @@ const ableToDraw = computed(() => {
 
 function redrawImage() {
   if (ableToDraw.value) {
-    context.putImageData(store.scaledImageArrays[props.imageName].combined, 0, 0)
+    const compositeImage = store.scaledImageArrays[props.imageName].combined
+    // convert to ImageBitMap to use drawImage
+    createImageBitmap(compositeImage).then((compositeImageBitMap) => {
+      // scale image to fit canvas
+      context.drawImage(compositeImageBitMap, 0, 0, compositeImageBitMap.width, compositeImageBitMap.height, 0, 0, props.width, props.height)
+    })
   }
 }
 
@@ -51,18 +54,22 @@ watch(
 
 </script>
 <template>
-  <div class="image-container mt-4" :id="'image-container-' + imageName" :style="'max-width: ' + props.width">
-    <canvas ref="imageCanvas" :width="props.width" :height="props.height">
-    </canvas>
-    <v-progress-circular v-show="isLoading" color="primary" size="200" indeterminate></v-progress-circular>
-  </div>
+  <canvas
+    ref="imageCanvas"
+    :width="props.width"
+    :height="props.height"
+  />
+  <v-progress-circular
+    v-show="isLoading"
+    color="primary"
+    size="200"
+    indeterminate
+  />
 </template>
 <style scoped>
-
 .v-progress-circular {
   position:fixed;
   bottom: 40%;
   left: 60%;
 }
-
 </style>

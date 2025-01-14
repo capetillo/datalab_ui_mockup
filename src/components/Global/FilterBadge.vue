@@ -1,5 +1,6 @@
 <script setup>
-import { computed } from 'vue'
+import { filterToColor } from '@/utils/common'
+
 const props = defineProps({
   filter: {
     type: String,
@@ -7,23 +8,11 @@ const props = defineProps({
   }
 })
 
-const badgeColor = computed(() => {
-  switch (props.filter) {
-  case 'R': case 'rp':
-    return 'red'
-  case 'V': case 'gp':
-    return 'green'
-  case 'B':
-    return 'blue'
-  default:
-    return 'var(--metal)'
-  }
-})
 </script>
 <template>
   <p
     class="filter-badge"
-    :style="{ backgroundColor: badgeColor}"
+    :style="{ backgroundColor: filterToColor(props.filter) }"
   >
     {{ props.filter }}
   </p>

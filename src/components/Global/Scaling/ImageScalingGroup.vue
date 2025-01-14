@@ -1,10 +1,9 @@
 <script setup>
-import { ref, watch, defineEmits, defineProps, computed } from 'vue'
+import { defineEmits, defineProps, computed } from 'vue'
 import CompositeImage from './CompositeImage.vue'
 import ImageScaler from './ImageScaler.vue'
 
 // This component defines a page in the OperationWizard that takes in operation wizard
-// input descriptions and selected input and creates a tab view for all the groupings
 // of input images that you want scaling parameters for.
 
 const props = defineProps({
@@ -18,9 +17,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['updateScaling'])
-const tab = ref('rgb')
+const compositeImageMaxWidth = window.innerWidth * 0.4
 
+const emit = defineEmits(['updateScaling'])
 
 const scaleGroupings = computed(() => {
   var scaleGroups = {}
@@ -36,104 +35,54 @@ const scaleGroupings = computed(() => {
   return scaleGroups
 })
 
-watch(
-  () => props.inputDescription, () => {
-    tab.value = Object.keys(scaleGroupings.value)[0]
-  },
-  { immediate: true }
-)
-
 </script>
 <template>
-  <v-card>
-    <v-tabs
-      v-model="tab"
-      class="tabs"
-      next-icon="mdi-arrow-right-bold-box-outline"
-      prev-icon="mdi-arrow-left-bold-box-outline"
-      show-arrows
-    >
-      <v-tab
-        v-for="(groupInputs, groupName) in scaleGroupings"
-        :key="groupName"
-        :value="groupName"
-        class="pr-0 tab"
-      >
-        {{ groupName }}
-      </v-tab>
-    </v-tabs>
-    <v-card-text>
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item
-          v-for="(groupInputs, groupName) in scaleGroupings"
-          :key="groupName"
-          :value="groupName"
-        >
-            <v-container
-              fluid
-              pa-0
-              class="d-flex flex-column flex-grow-1 fill-parent-height"
-            >
-              <v-row no-gutters>
-                <v-col
-                  cols="6"
-                  class="flex-grow-1 flex-shrink-1 fill-parent-height scaled-images"
-                >
-                  <v-row
-                    v-for="(groupInput, groupInputName ) in groupInputs"
-                    :key="groupName + '-' + groupInputName"
-                    no-gutters
-                  >
-                    <image-scaler
-                      v-if="groupInput"
-                      :image="groupInput"
-                      :image-name="groupInputName"
-                      :composite-name="groupName"
-                      @update-scaling="(imageName, zmin, zmax) => emit('updateScaling', imageName, zmin, zmax)"
-                    />
-                    <v-divider />
-                  </v-row>
-                </v-col>
-                <v-col
-                  v-if="groupName != 'default'"
-                  cols="6"
-                  class="flex-grow-0 flex-shrink-0 fill-parent-height mt-8"
-                >
-                  <v-row no-gutters>
-                    <composite-image
-                      :width="500"
-                      :height="500"
-                      :image-name="groupName"
-                    />
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-container>
-        </v-tabs-window-item>
-      </v-tabs-window>
-    </v-card-text>
-  </v-card>
+  <div
+    v-for="(groupInputs, groupName) in scaleGroupings"
+    :key="groupName"
+    class="image-scaling-group"
+    :value="groupName"
+  >
+    <div class="composite-image-container">
+      <composite-image
+        :width="compositeImageMaxWidth"
+        :height="compositeImageMaxWidth"
+        :image-name="groupName"
+      />
+    </div>
+    <div class="scale-controls">
+      <image-scaler
+        v-for="(groupInput, groupInputName ) in groupInputs"
+        :key="groupName + '-' + groupInputName"
+        :image="groupInput"
+        :image-name="groupInputName"
+        :composite-name="groupName"
+        @update-scaling="(imageName, zmin, zmax) => emit('updateScaling', imageName, zmin, zmax)"
+      />
+    </div>
+  </div>
 </template>
 <style scoped>
-.tab {
-  font-size: 1.2rem;
-  text-decoration: none;
-  color: var(--tan);
-  font-weight: 600;
-  background-color: var(--metal);
+.image-scaling-group{
+  height: 80vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
-
-.tabs {
-  background-color: var(--metal);
-  border-bottom: 0.1rem solid var(--tan);
+.composite-image-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-.fill-parent-height {
-  height: 100%;
+.scale-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  min-width: 532px;
 }
-
-.scaled-images {
-  overflow-y: auto;
-  max-height:550px;
+.image-scaler{
+  width: 100%;
 }
 </style>
