@@ -8,7 +8,7 @@ import DeleteOperationDialog from '@/components/Global/DeleteOperationDialog.vue
 
 const store = useConfigurationStore()
 const alertStore = useAlertsStore()
-const emit = defineEmits(['operationCompleted', 'selectOperation', 'deleteOperation', 'operationWasDeleted'])
+const emit = defineEmits(['operationCompleted', 'selectOperation', 'deleteOperation', 'operationWasDeleted', 'viewGraph'])
 
 const props = defineProps({
   operations: {
@@ -19,13 +19,16 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  selectedOperation: {
+    type: Number,
+    required: true
+  },
   active: {
     type: Boolean,
     required: true
   }
 })
 
-const selectedOperation = ref(-1)
 const operationPollingTimers = {}
 const operationPercentages = ref({})
 const deleteOperationId = ref(-1)
@@ -35,13 +38,7 @@ const DEC_TO_PERCENT = 100
 const COMPLETE_PERCENT = 100
 
 function selectOperation(index) {
-  if (index == selectedOperation.value) {
-    selectedOperation.value = -1
-  }
-  else {
-    selectedOperation.value = index
-  }
-  emit('selectOperation', selectedOperation.value)
+  emit('selectOperation', index)
 }
 
 async function pollOperationCompletion(operationID) {
@@ -92,7 +89,7 @@ function openDeleteOperationDialog(operation) {
 
 function itemDeleted(){
   // Reset the selected operation after its deleted, otherwise the next operation will be selected 
-  selectedOperation.value = -1
+  emit('selectOperation', -1)
   emit('operationWasDeleted')
 }
 
@@ -142,6 +139,7 @@ onBeforeUnmount(() => {
 <template>
   <h3 class="operations">
     OPERATIONS
+    <v-btn density='compact' icon='mdi-graph-outline' title='View Operations Graph' @click="emit('viewGraph')"/>
   </h3>
   <v-row
     v-for="(operation, index) in operations"
@@ -150,7 +148,7 @@ onBeforeUnmount(() => {
     class="operation mb-2"
   >
     <load-bar-button
-      :class="{selected: index == selectedOperation}"
+      :class="{selected: index == props.selectedOperation}"
       class="operation_button"
       :progress="operationPercentages[operation.id] ?? 0"
       @click="selectOperation(index)"
@@ -161,7 +159,7 @@ onBeforeUnmount(() => {
     </load-bar-button>
     <v-slide-x-transition hide-on-leave>
       <v-btn
-        v-if="index == selectedOperation"
+        v-if="index == props.selectedOperation"
         variant="plain"
         icon="mdi-close"
         color="var(--cancel)"
