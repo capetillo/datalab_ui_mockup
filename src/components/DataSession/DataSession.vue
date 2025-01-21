@@ -139,71 +139,77 @@ onMounted(() => {
 
 <template>
   <v-card>
-    <v-tabs v-model="tab" class="hide-tabs">
-      <v-tab value="graph" class='d-none'></v-tab>
-      <v-tab value="main" class='d-none'></v-tab>
+    <v-tabs
+      v-model="tab"
+      class="hide-tabs"
+    >
+      <v-tab
+        value="graph"
+        class="d-none"
+      />
+      <v-tab
+        value="main"
+        class="d-none"
+      />
     </v-tabs>
-    <v-card-text>
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item value="graph">
-          <v-container class="d-lg-flex ds-container graph-container">
-            <operation-pipeline-flow
+    <v-tabs-window v-model="tab">
+      <v-tabs-window-item value="graph">
+        <v-container class="d-lg-flex ds-container graph-container">
+          <operation-pipeline-flow
+            :session-id="data.id"
+            :operations="data.operations"
+            :selected-operation="selectedOperationIndex"
+            :images="images"
+            :active="props.active"
+            @select-operation="selectOperation"
+            @close-graph="tab = 'main'"
+          />
+        </v-container>
+      </v-tabs-window-item>
+      <v-tabs-window-item value="main">
+        <v-container class="d-lg-flex ds-container">
+          <v-col
+            cols="3"
+            align="center"
+          >
+            <!-- The operations bar list goes here -->
+            <operation-pipeline
               :session-id="data.id"
               :operations="data.operations"
-              :selected-operation="selectedOperationIndex"
-              :images="images"
               :active="props.active"
+              :selected-operation="selectedOperationIndex"
+              @operation-completed="addCompletedOperation"
               @select-operation="selectOperation"
-              @close-graph="tab = 'main'"
-              >
-            </operation-pipeline-flow>
-          </v-container>
-        </v-tabs-window-item>
-        <v-tabs-window-item value="main">
-          <v-container class="d-lg-flex ds-container">
-            <v-col
-              cols="3"
-              align="center"
-            >
-              <!-- The operations bar list goes here -->
-              <operation-pipeline
-                :session-id="data.id"
-                :operations="data.operations"
-                :active="props.active"
-                :selected-operation="selectedOperationIndex"
-                @operation-completed="addCompletedOperation"
-                @select-operation="selectOperation"
-                @operation-was-deleted="emit('reloadSession')"
-                @delete-operation="(operationID) => deleteOperation(props.data.id, operationID, emit('reloadSession'))"
-                @view-graph="tab = 'graph'"
-              />
-              <v-btn
-                variant="flat"
-                class="addop_button"
-              >
-                Add Operation
-                <v-dialog
-                  v-model="showWizardDialog"
-                  activator="parent"
-                  fullscreen
-                  transition="dialog-bottom-transition"
-                >
-                  <operation-wizard
-                    :images="images"
-                    @close-wizard="showWizardDialog = false"
-                    @add-operation="addOperation"
-                  />
-                </v-dialog>
-              </v-btn>
-            </v-col>
-            <image-grid
-              :images="filteredImages"
-              :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)"
+              @operation-was-deleted="emit('reloadSession')"
+              @delete-operation="(operationID) => deleteOperation(props.data.id, operationID, emit('reloadSession'))"
+              @view-graph="tab = 'graph'"
             />
-          </v-container>
-        </v-tabs-window-item>
-      </v-tabs-window>
-    </v-card-text>
+            <v-btn
+              variant="flat"
+              class="addop_button"
+            >
+              Add Operation
+              <v-dialog
+                v-model="showWizardDialog"
+                activator="parent"
+                fullscreen
+                transition="dialog-bottom-transition"
+              >
+                <operation-wizard
+                  :images="images"
+                  @close-wizard="showWizardDialog = false"
+                  @add-operation="addOperation"
+                />
+              </v-dialog>
+            </v-btn>
+          </v-col>
+          <image-grid
+            :images="filteredImages"
+            :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)"
+          />
+        </v-container>
+      </v-tabs-window-item>
+    </v-tabs-window>
   </v-card>
 </template>
 

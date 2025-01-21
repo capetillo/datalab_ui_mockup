@@ -2,6 +2,7 @@
 import OperationNode from '@/components/DataSession/OperationGraph/OperationNode.vue'
 import ImagesNode from '@/components/DataSession/OperationGraph/ImagesNode.vue'
 import { VueFlow, useVueFlow, Panel } from '@vue-flow/core'
+import { Background } from '@vue-flow/background'
 import { nextTick, ref, watch } from 'vue'
 import _ from 'lodash'
 import { useLayout } from '@/components/DataSession/OperationGraph/useLayout.js'
@@ -152,22 +153,37 @@ onPaneReady(() => {
 </script>
 <template>
   <VueFlow
+    id="operations-pipeline-vue-flow"
     v-model:nodes="nodes"
     v-model:edges="edges"
     :nodes-draggable="false"
     :snap-to-grid="true"
     :elements-selectable="false"
-    id='operations-pipeline-vue-flow'
     class="operation-pipeline-node-flow"
   >
+    <Background pattern-color="var(--light-blue)" />
     <template #node-operation="item">
-      <OperationNode :id="item.id" :selected-id="props.selectedOperation" :data="item.data" @select-operation="selectOperation(item.id)"/>
+      <OperationNode
+        :id="item.id"
+        :selected-id="props.selectedOperation"
+        :data="item.data"
+        @select-operation="selectOperation(item.id)"
+      />
     </template>
     <template #node-images="item">
-      <ImagesNode :id="item.id" :data="item.data"/>
+      <ImagesNode
+        :id="item.id"
+        :data="item.data"
+      />
     </template>
-    <Panel position='top-right'>
-      <v-btn title='Close Graph' density='default' icon='mdi-close' @click="emit('closeGraph')"/>
+    <Panel position="top-right">
+      <v-btn
+        color="var(--light-blue)"
+        title="Close Graph"
+        density="default"
+        icon="mdi-arrow-right-bold"
+        @click="emit('closeGraph')"
+      />
     </Panel>
   </VueFlow>
 </template>

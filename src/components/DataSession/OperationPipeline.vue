@@ -139,7 +139,14 @@ onBeforeUnmount(() => {
 <template>
   <h3 class="operations">
     OPERATIONS
-    <v-btn density='compact' icon='mdi-graph-outline' title='View Operations Graph' @click="emit('viewGraph')"/>
+    <v-btn
+      variant="plain"
+      color="var(--light-blue)"
+      density="compact"
+      icon="mdi-graph-outline"
+      title="View Operations Graph"
+      @click="emit('viewGraph')"
+    />
   </h3>
   <v-row
     v-for="(operation, index) in operations"
