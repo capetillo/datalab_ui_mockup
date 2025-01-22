@@ -78,9 +78,16 @@ watch(
 
 </script>
 <template>
-  <div class="image-container mt-4" :id="'image-container-' + imageName" :style="'max-width: ' + props.maxSize">
-    <canvas ref="imageCanvas" :width="props.maxSize" :height="props.maxSize"></canvas>
-  </div>
+  <canvas
+    ref="imageCanvas"
+    class="raw-scaled-canvas"
+    :width="props.maxSize"
+    :height="props.maxSize"
+  />
 </template>
 <style scoped>
+.raw-scaled-canvas{
+  width: 200px;
+  height: 200px;
+}
 </style>

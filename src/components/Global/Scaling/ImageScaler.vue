@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, defineEmits, defineProps } from 'vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { fetchApiCall } from '@/utils/api'
+import { filterToColor } from '@/utils/common'
 import RawScaledImage from './RawScaledImage.vue'
 import HistogramSlider from './HistogramSlider.vue'
 
@@ -96,38 +97,42 @@ onMounted(async () => {
 
 </script>
 <template>
-  <div :style="'max-width: ' + props.maxSize">
-    <v-row class="mt-4">
-      <h3 class="image-scale-title">Adjust Scaling for <span class="text-capitalize">{{ titleText }}</span></h3>
-    </v-row>
-    <v-row class="mt-1">
-      <raw-scaled-image
-        :image-data="rawData"
-        :scale-points="sliderRange"
-        :filter="props.image.filter"
-        :image-name="props.imageName"
-        :composite-name="props.compositeName"
-      >
-      </raw-scaled-image>
-    </v-row>
-    <v-row>
-      <v-col>
-        <histogram-slider
-          :histogram="histogram"
-          :bins="bins"
-          :max-value="maxPixelValue"
-          :z-min="zScaleValues[0]"
-          :z-max="zScaleValues[1]"
-          @update-scaling="updateScaleRange"
-        >
-        </histogram-slider>
-      </v-col>
-    </v-row>
-  </div>
+  <v-sheet
+    class="image-scaler"
+    rounded
+  >
+    <raw-scaled-image
+      :max-size="props.maxSize"
+      :image-data="rawData"
+      :scale-points="sliderRange"
+      :filter="props.image.filter"
+      :image-name="props.imageName"
+      :composite-name="props.compositeName"
+    />
+    <v-col>
+      <h3 class="image-scale-title text-capitalize">
+        {{ titleText }}
+      </h3>
+      <histogram-slider
+        :selected-color="filterToColor(props.image.filter)"
+        :histogram="histogram"
+        :bins="bins"
+        :max-value="maxPixelValue"
+        :z-min="zScaleValues[0]"
+        :z-max="zScaleValues[1]"
+        @update-scaling="updateScaleRange"
+      />
+    </v-col>
+  </v-sheet>
 </template>
 <style scoped>
+.image-scaler{
+  display: flex;
+  padding: 1rem;
+  background-color: var(--metal);
+}
 .image-scale-title {
-  width: 100%;
+  margin-bottom: 0.5rem;
   text-align: center;
   color: var(--tan);
   font-weight: bold;

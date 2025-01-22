@@ -5,9 +5,10 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import router from './router'
-import 'leaflet/dist/leaflet.css'
 
+import 'leaflet/dist/leaflet.css'
 import './assets/css/custom-colors.css'
+import '@vue-flow/core/dist/style.css'
 
 loadFonts()
 

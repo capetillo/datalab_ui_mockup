@@ -1,11 +1,12 @@
 <script setup>
 import { ref, defineEmits, defineProps, onMounted, watch } from 'vue'
 import OperationPipeline from './OperationPipeline.vue'
-import { fetchApiCall, handleError, deleteOperation } from '../../utils/api'
+import OperationPipelineFlow from './OperationGraph/OperationPipelineFlow.vue'
+import { fetchApiCall, handleError, deleteOperation } from '@/utils/api.js'
 import { calculateColumnSpan } from '@/utils/common'
 import { useConfigurationStore } from '@/stores/configuration'
-import ImageGrid from '../Global/ImageGrid'
-import OperationWizard from './OperationWizard.vue'
+import ImageGrid from '@/components/Global/ImageGrid.vue'
+import OperationWizard from '@/components/DataSession/OperationWizard.vue'
 
 const props = defineProps({
   data: {
@@ -24,11 +25,13 @@ const emit = defineEmits(['reloadSession'])
 const images = ref([...props.data.input_data])
 const filteredImages = ref([...images.value])
 const showWizardDialog = ref(false)
+const tab = ref('main')
 
 const dataSessionsUrl = store.datalabApiBaseUrl + 'datasessions/'
 const imagesPerRow = 4
 var operationMap = {}
 var selectedOperation = -1
+var selectedOperationIndex = ref(-1)
 
 async function addCompletedOperationsOutput() {
   const url = dataSessionsUrl + props.data.id + '/operations/'
@@ -67,15 +70,15 @@ function addCompletedOperation(operationResponse) {
 }
 
 function selectOperation(operationIndex) {
-  if (operationIndex != operationMap[selectedOperation]) {
-    if (operationIndex == -1) {
-      selectedOperation = -1
-    }
-    else {
-      selectedOperation = props.data.operations[operationIndex].id
-    }
-    reconcileFilteredImages()
+  if (operationIndex == selectedOperationIndex.value) {
+    selectedOperationIndex.value = -1
+    selectedOperation = -1
   }
+  else {
+    selectedOperation = props.data.operations[operationIndex].id
+    selectedOperationIndex.value = operationIndex
+  }
+  reconcileFilteredImages()
 }
 
 function reconcileOperationImages() {
@@ -135,51 +138,92 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container class="d-lg-flex ds-container">
-    <v-col
-      cols="3"
-      align="center"
+  <v-card>
+    <v-tabs
+      v-model="tab"
+      class="hide-tabs"
     >
-      <!-- The operations bar list goes here -->
-      <operation-pipeline
-        :session-id="data.id"
-        :operations="data.operations"
-        :active="props.active"
-        @operation-completed="addCompletedOperation"
-        @select-operation="selectOperation"
-        @operation-was-deleted="emit('reloadSession')"
-        @delete-operation="(operationID) => deleteOperation(props.data.id, operationID, emit('reloadSession'))"
+      <v-tab
+        value="graph"
+        class="d-none"
       />
-      <v-btn
-        variant="flat"
-        class="addop_button"
-      >
-        Add Operation
-        <v-dialog
-          v-model="showWizardDialog"
-          activator="parent"
-          fullscreen
-          transition="dialog-bottom-transition"
-        >
-          <operation-wizard
+      <v-tab
+        value="main"
+        class="d-none"
+      />
+    </v-tabs>
+    <v-tabs-window v-model="tab">
+      <v-tabs-window-item value="graph">
+        <v-container class="d-lg-flex ds-container graph-container">
+          <operation-pipeline-flow
+            :session-id="data.id"
+            :operations="data.operations"
+            :selected-operation="selectedOperationIndex"
             :images="images"
-            @close-wizard="showWizardDialog = false"
-            @add-operation="addOperation"
+            :active="props.active"
+            @select-operation="selectOperation"
+            @close-graph="tab = 'main'"
           />
-        </v-dialog>
-      </v-btn>
-    </v-col>
-    <image-grid
-      :images="filteredImages"
-      :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)"
-    />
-  </v-container>
+        </v-container>
+      </v-tabs-window-item>
+      <v-tabs-window-item value="main">
+        <v-container class="d-lg-flex ds-container">
+          <v-col
+            cols="3"
+            align="center"
+          >
+            <!-- The operations bar list goes here -->
+            <operation-pipeline
+              :session-id="data.id"
+              :operations="data.operations"
+              :active="props.active"
+              :selected-operation="selectedOperationIndex"
+              @operation-completed="addCompletedOperation"
+              @select-operation="selectOperation"
+              @operation-was-deleted="emit('reloadSession')"
+              @delete-operation="(operationID) => deleteOperation(props.data.id, operationID, emit('reloadSession'))"
+              @view-graph="tab = 'graph'"
+            />
+            <v-btn
+              variant="flat"
+              class="addop_button"
+            >
+              Add Operation
+              <v-dialog
+                v-model="showWizardDialog"
+                activator="parent"
+                fullscreen
+                transition="dialog-bottom-transition"
+              >
+                <operation-wizard
+                  :images="images"
+                  @close-wizard="showWizardDialog = false"
+                  @add-operation="addOperation"
+                />
+              </v-dialog>
+            </v-btn>
+          </v-col>
+          <image-grid
+            :images="filteredImages"
+            :column-span="calculateColumnSpan(filteredImages.length, imagesPerRow)"
+          />
+        </v-container>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </v-card>
 </template>
 
 <style scoped>
+.hide-tabs {
+  height:0px;
+}
 .ds-container {
   background-color: var(--metal);
   display: flex;
+}
+.graph-container {
+  padding: 0;
+  height: 800px;
 }
 .addop_button {
   font-size: 1rem;
