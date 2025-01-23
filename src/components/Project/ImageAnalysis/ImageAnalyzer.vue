@@ -173,8 +173,11 @@ function showHeaderDialog() {
           >
             <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
             <div class="d-flex justify-end">
-              <v-icon
-                class="mr-4 mt-1"
+              <v-btn
+                class="mr-2"
+                variant="text"
+                title="Toggle Catalog"
+                density="comfortable"
                 icon="mdi-flare"
                 :color="catalogToggle ? 'var(--light-blue)' : 'var(--tan)'"
                 @click="() => catalogToggle = !catalogToggle"
