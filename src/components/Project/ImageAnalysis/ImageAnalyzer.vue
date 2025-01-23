@@ -29,6 +29,7 @@ const lineProfile = ref([])
 const lineProfileLength = ref()
 const startCoords = ref()
 const endCoords = ref()
+const catalogToggle = ref(true)
 const catalog = ref([])
 const positionAngle = ref()
 const headerDialog = ref(false)
@@ -36,7 +37,12 @@ const headerData = ref({})
 const fluxSliderRange = ref([0, 10000])
 
 const filteredCatalog = computed(() => {
-  return catalog.value.filter((source) => source.flux >= fluxSliderRange.value[0] && source.flux <= fluxSliderRange.value[1])
+  if(catalogToggle.value){
+    return catalog.value.filter((source) => source.flux >= fluxSliderRange.value[0] && source.flux <= fluxSliderRange.value[1])
+  }
+  else{
+    return []
+  }
 })
 
 function closeDialog() {
@@ -108,7 +114,7 @@ function showHeaderDialog() {
     :model-value="modelValue"
     fullscreen
   >
-    <v-sheet class="analysis-sheet">
+    <v-sheet class="analysis-page">
       <v-toolbar
         class="analysis-toolbar"
         density="comfortable"
@@ -143,20 +149,48 @@ function showHeaderDialog() {
         />
         <div class="side-panel-container">
           <v-sheet
-            v-if="catalog.length"
+            v-if="image.site_id || image.telescope_id || image.instrument_id || image.observation_date"
+            class="side-panel-item pa-4"
             rounded
-            class="image-controls-sheet"
           >
-            <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
-            <non-linear-slider
-              v-model="fluxSliderRange"
-              prepend-icon="mdi-flare"
-              :max="Math.max(...catalog.map((source) => source.flux))"
-              :min="Math.min(...catalog.map((source) => source.flux))"
-            />
+            <p v-if="image.site_id">
+              <v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) }}
+            </p>
+            <p v-if="image.telescope_id">
+              <v-icon icon="mdi-telescope" /> {{ image.telescope_id }}
+            </p>
+            <p v-if="image.instrument_id">
+              <v-icon icon="mdi-camera" /> {{ image.instrument_id }}
+            </p>
+            <p v-if="image.observation_date">
+              <v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}
+            </p>
           </v-sheet>
           <v-sheet
-            class="line-plot-sheet"
+            v-if="catalog.length"
+            rounded
+            class="side-panel-item image-controls-sheet"
+          >
+            <b>{{ filteredCatalog.length }} Sources with Flux between {{ fluxSliderRange[0] }} and {{ fluxSliderRange[1] }}</b>
+            <div class="d-flex justify-end">
+              <v-btn
+                class="mr-2"
+                variant="text"
+                title="Toggle Catalog"
+                density="comfortable"
+                icon="mdi-flare"
+                :color="catalogToggle ? 'var(--light-blue)' : 'var(--tan)'"
+                @click="() => catalogToggle = !catalogToggle"
+              />
+              <non-linear-slider
+                v-model="fluxSliderRange"
+                :max="Math.max(...catalog.map((source) => source.flux))"
+                :min="Math.min(...catalog.map((source) => source.flux))"
+              />
+            </div>
+          </v-sheet>
+          <v-sheet
+            class="side-panel-item line-plot-sheet"
             rounded
           >
             <line-plot
@@ -176,10 +210,6 @@ function showHeaderDialog() {
     width="auto"
   >
     <v-sheet class="pa-12">
-      <p><v-icon icon="mdi-earth" /> {{ siteIDToName(image.site_id) ?? 'Missing Site' }}</p>
-      <p><v-icon icon="mdi-telescope" /> {{ image.telescope_id ?? 'Missing Telescope ID' }}</p>
-      <p><v-icon icon="mdi-camera" /> {{ image.instrument_id ?? 'Missing Instrument ID' }} </p>
-      <p><v-icon icon="mdi-clock" /> {{ new Date(image.observation_date).toLocaleString() }}</p>
       <h1 class="mb-4 mt-4">
         FITS Headers
       </h1>
@@ -200,15 +230,11 @@ function showHeaderDialog() {
   </v-dialog>
 </template>
 <style scoped>
-a{
-  color: var(--tan);
-}
-.v-sheet{
+/* Main Sections */
+.analysis-page{
   background-color: var(--dark-blue);
   color: var(--tan);
   font-family: 'Open Sans', sans-serif;
-}
-.analysis-sheet{
   max-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -223,22 +249,22 @@ a{
   flex-direction: row;
   padding: 1rem;
 }
+/* Side Panel */
 .side-panel-container {
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
+  margin-left: 1rem;
   width: 45vw;
 }
-.image-controls-sheet{
+.side-panel-item{
   padding: 1rem;
-  margin-bottom: 1rem;
   color: var(--tan);
   background-color: var(--metal);
+  margin-bottom: 1rem;
 }
 .line-plot-sheet {
-  padding: 1rem;
-  background-color: var(--metal);
   height: 100%;
+  margin-bottom: 0;
 }
 /* FITS Header Info Table */
 .v-table{
