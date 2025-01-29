@@ -114,7 +114,7 @@ function showHeaderDialog() {
 <template>
   <v-dialog
     :model-value="modelValue"
-    persistent="true"
+    persistent
     fullscreen
   >
     <v-sheet class="analysis-page">
