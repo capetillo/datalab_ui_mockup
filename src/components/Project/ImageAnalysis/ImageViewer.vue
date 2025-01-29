@@ -21,10 +21,7 @@ const props = defineProps({
 const emit = defineEmits(['analysisAction'])
 
 let imageMap = null
-let imageOverlay = null
-let imageBounds
-let initialCenter = [0, 0]
-let initialZoom = 1
+let imageBounds = null
 let lineLayer = null
 let catalogLayerGroup = null
 const imageWidth = ref(0)
@@ -35,7 +32,6 @@ const alerts = useAlertsStore()
 onMounted(() => {
   loadImageOverlay()
   leafletSetup()
-  resizeMap()
 })
 
 watch(() => props.catalog, () => {
@@ -46,8 +42,10 @@ watch(() => props.catalog, () => {
 function loadImageOverlay() {
   // Create leaflet map (here referred to as image)
   imageMap = L.map(leafletDiv.value, {
-    center: [0, 0],
-    maxZoom: 6,
+    maxZoom: 5,
+    minZoom: -3,
+    zoomSnap: 0,
+    zoomDelta: 0.5,
     crs: L.CRS.Simple,
     attributionControl: false,
     maxBoundsViscosity: 1.0,
@@ -65,23 +63,23 @@ function loadImageOverlay() {
 
     // Getting image bounds based on img's size
     imageBounds = [[0, 0], [imageHeight.value, imageWidth.value]]
-    if (imageOverlay) {
-      imageMap.removeLayer(imageOverlay)
-    }
 
     // Add new overlay with correct bounds
-    imageOverlay = L.imageOverlay(props.imageSrc, imageBounds).addTo(imageMap)
-    // Fit image view to the bounds of the image
-    imageMap.fitBounds(imageBounds)
-    imageMap.setMaxBounds(imageBounds)
+    L.imageOverlay(img, imageBounds).addTo(imageMap)
 
-    // waits for DOM to load then recalculates image's size and position after the container's dimensions have changed (built in method of Leaflet)
+    /**
+     * This code ensures the image fills the map space and sets a minZoom level.
+     * Next tick is used here otherwise the methods will not work due to bugs in leaflets code. 
+     * 
+     * MinZoom needs to be set to a high negative value in the settings to over-fit the whole image
+     * then we fit the image and update the minZoom to the fitted zoom level.
+     */
     nextTick(() => {
       imageMap.invalidateSize()
+      imageMap.fitBounds(imageBounds)
+      imageMap.setMaxBounds(imageBounds)
+      imageMap.setMinZoom(imageMap.getZoom())
     })
-
-    initialCenter = imageMap.getCenter()
-    initialZoom = imageMap.getZoom()
   }
 }
 
@@ -93,7 +91,7 @@ function leafletSetup(){
     title: 'Reset View',
     className: 'custom-reset-zoom-icon',
     onClick: () => {
-      imageMap.setView(initialCenter, initialZoom)
+      imageMap.fitBounds(imageBounds)
     },
     actions: [],
     toggle: false,
@@ -136,16 +134,6 @@ function leafletSetup(){
     lineLayer.on('pm:edit', handleEdit)
     requestLineProfile(lineLayer.getLatLngs())
   })
-}
-
-// Recalculates image size and position after the container's dimensions have changed
-function resizeMap(){
-  const resizeObserver = new ResizeObserver(() => {
-    imageMap.invalidateSize()
-  })
-  if(leafletDiv.value){
-    resizeObserver.observe(leafletDiv.value)
-  }
 }
 
 // Adjusts the point to be within the bounds of the image
@@ -269,6 +257,10 @@ function fetchCatalog(){
   background-color: var(--light-blue);
   color: var(--dark-blue);
   user-select: none;
+}
+.leaflet-container {
+  background-color: var(--metal);
+  border-radius: 0.25rem;
 }
 </style>
 <style scoped>

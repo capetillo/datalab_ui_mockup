@@ -8,6 +8,7 @@ import LinePlot from './LinePlot.vue'
 import FilterBadge from '@/components/Global/FilterBadge.vue'
 import NonLinearSlider from '@/components/Global/NonLinearSlider.vue'
 import ImageDownloadMenu from '@/components/Project/ImageAnalysis/ImageDownloadMenu.vue'
+import FitsHeaderTable from './FitsHeaderTable.vue'
 import { siteIDToName } from '@/utils/common'
 
 const props = defineProps({
@@ -89,6 +90,7 @@ function handleAnalysisOutput(response, action, action_callback){
   }
 }
 
+// Toggles header dialog visibility, fetches headers from archive if they are not present
 function showHeaderDialog() {
   if(headerData.value && Object.keys(headerData.value).length > 0) {
     headerDialog.value = true
@@ -112,6 +114,7 @@ function showHeaderDialog() {
 <template>
   <v-dialog
     :model-value="modelValue"
+    persistent
     fullscreen
   >
     <v-sheet class="analysis-page">
@@ -138,6 +141,7 @@ function showHeaderDialog() {
         />
         <v-btn
           icon="mdi-close"
+          color="var(--cancel)"
           @click="closeDialog()"
         />
       </v-toolbar>
@@ -207,26 +211,10 @@ function showHeaderDialog() {
   </v-dialog>
   <v-dialog
     v-model="headerDialog"
-    width="auto"
+    width="600px"
+    height="85vh"
   >
-    <v-sheet class="pa-12">
-      <h1 class="mb-4 mt-4">
-        FITS Headers
-      </h1>
-      <v-table>
-        <tbody>
-          <tr
-            v-for="(value, key) in headerData"
-            :key="key"
-          >
-            <td class="table_key">
-              {{ key }}
-            </td>
-            <td>{{ value }}</td>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-sheet>
+    <fits-header-table :header-data="headerData" />
   </v-dialog>
 </template>
 <style scoped>
@@ -265,15 +253,5 @@ function showHeaderDialog() {
 .line-plot-sheet {
   height: 100%;
   margin-bottom: 0;
-}
-/* FITS Header Info Table */
-.v-table{
-  background-color: var(--dark-blue);
-  color: var(--tan);
-  max-width: 60ch;
-}
-.table_key{
-  font-weight: bold;
-  font-size: large;
 }
 </style>
