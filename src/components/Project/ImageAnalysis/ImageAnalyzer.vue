@@ -114,6 +114,7 @@ function showHeaderDialog() {
 <template>
   <v-dialog
     :model-value="modelValue"
+    persistent="true"
     fullscreen
   >
     <v-sheet class="analysis-page">
@@ -140,6 +141,7 @@ function showHeaderDialog() {
         />
         <v-btn
           icon="mdi-close"
+          color="var(--cancel)"
           @click="closeDialog()"
         />
       </v-toolbar>
